@@ -112,7 +112,7 @@ Render (FastAPI)  ← CORS: Vercel 도메인 허용
 
 ### 관리자
 ```
-- 관리자: 김하늘 (기업사업개발2담당 / 기업사업개발2팀)
+- 관리자: 김하늘 (기업사업개발1담당 / 기업사업개발2팀)
 - users 테이블 is_admin = true
 - 회원가입 후 Supabase에서 직접 is_admin = true 설정
 - /admin 페이지: is_admin = true인 사용자만 접근 가능
@@ -813,7 +813,7 @@ VITE_KAKAO_MAP_KEY=...
 | LLM 모델 | claude-sonnet-4-6 (챗봇 + 매칭) |
 | 인증 | 4자리 숫자 PIN 회원가입/로그인 |
 | PIN 분실 | 관리자가 /admin에서 리셋 |
-| 관리자 | 김하늘 (기업사업개발2담당/기업사업개발2팀), is_admin=true |
+| 관리자 | 김하늘 (기업사업개발1담당/기업사업개발2팀), is_admin=true |
 | 조직 구조 | 담당(5) → 팀(21), 같은 팀명이 다른 담당에 존재 가능 |
 | 동명이인 | 같은 팀 내 없음으로 간주, UNIQUE(name, team_id) 유지 |
 | 토큰 | JWT, 만료 7일, localStorage 저장 |
