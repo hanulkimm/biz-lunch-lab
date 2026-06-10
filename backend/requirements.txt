@@ -1,0 +1,26 @@
+# ─── Web framework ───
+fastapi
+uvicorn[standard]
+
+# ─── Config / validation ───
+pydantic
+pydantic-settings
+python-dotenv
+
+# ─── Auth ───
+python-jose[cryptography]
+passlib[bcrypt]
+
+# ─── Database (Supabase / PostgreSQL) ───
+supabase
+
+# ─── AI / RAG ───
+anthropic
+openai
+pinecone
+langchain
+langchain-anthropic
+langchain-openai
+
+# ─── HTTP (Kakao API) ───
+httpx
