@@ -1,32 +1,39 @@
-// Map — Phase 1에서는 로그인 성공 랜딩 자리표시자. 카카오 지도는 Phase 2에서 구현.
+// 메인 지도 — 카카오 지도 풀스크린 + 헤더 + 마커 클릭 시 식당 패널.
+import { useEffect, useState } from "react";
+
+import { getRestaurants } from "../api/restaurants";
+import KakaoMap from "../components/Map/KakaoMap";
+import RestaurantPanel from "../components/RestaurantPanel/RestaurantPanel";
 import { useAuthStore } from "../store/authStore";
+import "./map.css";
 
 export default function Map() {
   const { user, logout } = useAuthStore();
+  const [restaurants, setRestaurants] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+
+  useEffect(() => {
+    getRestaurants().then(setRestaurants).catch(() => {});
+  }, []);
 
   return (
-    <div style={{ padding: 40, fontFamily: "sans-serif" }}>
-      <h1>🗺️ 맛집 지도</h1>
-      <p>
-        로그인됨: <b>{user?.name}</b>
-        {user?.is_admin && (
-          <span
-            style={{
-              marginLeft: 8,
-              padding: "2px 8px",
-              background: "#ffd43b",
-              borderRadius: 6,
-              fontSize: 12,
-            }}
-          >
-            관리자
-          </span>
-        )}
-      </p>
-      <p style={{ color: "#888" }}>(지도 + 챗봇은 Phase 2에서 구현됩니다)</p>
-      <button onClick={logout} style={{ marginTop: 16 }}>
-        로그아웃
-      </button>
+    <div className="map-page">
+      <header className="map-header">
+        <span className="brand">🍱 Biz Lunch Lab</span>
+        <span className="spacer" />
+        <span className="who">
+          {user?.name}
+          {user?.is_admin && <span className="admin-badge">관리자</span>}
+        </span>
+        <button className="logout" onClick={logout}>
+          로그아웃
+        </button>
+      </header>
+
+      <div className="map-body">
+        <KakaoMap restaurants={restaurants} onMarkerClick={(r) => setSelectedId(r.id)} />
+        <RestaurantPanel restaurantId={selectedId} onClose={() => setSelectedId(null)} />
+      </div>
     </div>
   );
 }

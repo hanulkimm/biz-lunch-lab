@@ -39,3 +39,31 @@ class UserOut(BaseModel):
 class AuthResponse(BaseModel):
     token: str
     user: UserOut
+
+
+# ─── 식당 ───
+class KakaoPlace(BaseModel):
+    kakao_place_id: str
+    name: str
+    category: str | None = None
+    address: str | None = None
+    road_address: str | None = None
+    phone: str | None = None
+    latitude: float
+    longitude: float
+    kakao_url: str | None = None
+
+
+class RestaurantOut(BaseModel):
+    id: str
+    kakao_place_id: str
+    name: str
+    category: str | None = None
+    address: str | None = None
+    road_address: str | None = None
+    phone: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    kakao_url: str | None = None
+    review_count: int = 0
+    avg_rating: float | None = None
