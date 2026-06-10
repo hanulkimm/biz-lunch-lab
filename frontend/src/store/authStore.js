@@ -14,6 +14,12 @@ export const useAuthStore = create((set) => ({
 
   setUser: (user) => set({ user }),
 
+  // 로그인/회원가입 성공 시 토큰+유저 한 번에 저장
+  loginSuccess: (token, user) => {
+    localStorage.setItem("token", token);
+    set({ token, user });
+  },
+
   logout: () => {
     localStorage.removeItem("token");
     set({ token: null, user: null });

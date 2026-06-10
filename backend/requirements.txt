@@ -9,7 +9,7 @@ python-dotenv
 
 # ─── Auth ───
 python-jose[cryptography]
-passlib[bcrypt]
+bcrypt
 
 # ─── Database (Supabase / PostgreSQL) ───
 supabase
