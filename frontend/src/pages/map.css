@@ -92,6 +92,7 @@
   padding: 24px;
   overflow-y: auto;
   animation: slideIn 0.2s ease;
+  z-index: 100;
 }
 
 @keyframes slideIn {
