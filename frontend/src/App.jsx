@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Login from "./pages/Login";
 import Map from "./pages/Map";
+import ReviewWrite from "./pages/ReviewWrite";
 import Signup from "./pages/Signup";
 
 export default function App() {
@@ -16,6 +17,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Map />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/review/write"
+          element={
+            <ProtectedRoute>
+              <ReviewWrite />
             </ProtectedRoute>
           }
         />

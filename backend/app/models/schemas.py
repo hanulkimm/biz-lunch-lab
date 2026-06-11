@@ -67,3 +67,28 @@ class RestaurantOut(BaseModel):
     kakao_url: str | None = None
     review_count: int = 0
     avg_rating: float | None = None
+
+
+# ─── 리뷰 ───
+class ReviewCreate(BaseModel):
+    place: KakaoPlace                       # 카카오 검색으로 고른 식당
+    rating: int = Field(ge=1, le=5)
+    comment: str | None = None
+    tag_ids: list[str] = []
+
+
+class ReviewUpdate(BaseModel):
+    rating: int = Field(ge=1, le=5)
+    comment: str | None = None
+    tag_ids: list[str] = []
+
+
+# ─── 챗봇 ───
+class ChatMessage(BaseModel):
+    role: str  # "user" | "assistant"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list[ChatMessage] = []

@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import auth, departments, restaurants, reviews, chat, lunch
+from app.routers import auth, departments, restaurants, reviews, chat, lunch, tags
 
 app = FastAPI(title="Biz Lunch Lab API")
 
@@ -33,5 +33,6 @@ app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(departments.router, prefix="/api/departments", tags=["departments"])
 app.include_router(restaurants.router, prefix="/api/restaurants", tags=["restaurants"])
 app.include_router(reviews.router, prefix="/api/reviews", tags=["reviews"])
+app.include_router(tags.router, prefix="/api/tags", tags=["tags"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(lunch.router, prefix="/api/lunch", tags=["lunch"])

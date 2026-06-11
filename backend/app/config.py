@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     # OpenAI
     openai_api_key: str = ""
     embedding_model: str = "text-embedding-3-small"
+    # Pinecone 인덱스(biz-lunch-reviews)가 512차원으로 생성되어 거기에 맞춤.
+    # text-embedding-3-small은 dimensions 파라미터로 출력 차원 축소를 지원.
+    embedding_dimensions: int = 512
 
     # Pinecone
     pinecone_api_key: str = ""
