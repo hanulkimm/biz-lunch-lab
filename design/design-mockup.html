@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Biz Lunch Lab — 현재 화면 목업 (디자인 핸드오프)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+<style>
+  :root {
+    --accent: #4f7cff;
+    --bg: #f4f5f7;
+    --line: #e5e6ea;
+    --text: #1f2230;
+    --muted: #888;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #e9ebef; color: var(--text);
+    font-family: Pretendard, system-ui, "Segoe UI", sans-serif;
+  }
+  .page { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+  .intro { background:#fff; border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin-bottom:32px; }
+  .intro h1 { margin:0 0 8px; font-size:20px; }
+  .intro p { margin:4px 0; font-size:14px; color:#555; line-height:1.6; }
+  .screen-label { font-size:13px; font-weight:700; color:#666; margin:36px 0 10px; letter-spacing:.02em; }
+  .frame {
+    background: var(--bg); border:1px solid var(--line); border-radius:14px;
+    overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,.04);
+  }
+
+  /* ── auth ── */
+  .auth-wrap { display:flex; align-items:center; justify-content:center; padding:40px; min-height:560px; }
+  .auth-card { width:360px; background:#fff; border-radius:16px; padding:32px 28px; box-shadow:0 8px 28px rgba(0,0,0,.08); display:flex; flex-direction:column; }
+  .auth-title { margin:0; font-size:22px; text-align:center; }
+  .auth-sub { margin:4px 0 20px; text-align:center; color:#888; font-size:14px; }
+  .auth-card label { font-size:13px; font-weight:600; color:#444; margin:12px 0 4px; }
+  .auth-card select, .auth-card input { height:42px; padding:0 12px; border:1px solid #d9dce1; border-radius:8px; font-size:15px; background:#fff; }
+  .auth-card button { margin-top:22px; height:46px; border:none; border-radius:8px; background:var(--accent); color:#fff; font-size:15px; font-weight:600; cursor:pointer; }
+  .auth-foot { margin:18px 0 0; text-align:center; font-size:13px; color:#666; }
+  .auth-foot a { color:var(--accent); font-weight:600; text-decoration:none; }
+
+  /* ── app header ── */
+  .app-header { display:flex; align-items:center; gap:12px; height:56px; padding:0 20px; background:#fff; border-bottom:1px solid var(--line); }
+  .app-header .brand { font-weight:700; font-size:16px; }
+  .app-header .nav-btn { border:1px solid #d9dce1; background:#fff; border-radius:8px; height:34px; padding:0 12px; cursor:pointer; font-size:13px; }
+  .app-header .spacer { flex:1; }
+  .app-header .who { font-size:14px; color:#333; display:flex; align-items:center; gap:6px; }
+  .admin-badge { background:#ffd43b; border-radius:6px; padding:2px 8px; font-size:12px; }
+  .app-header .logout { border:1px solid #d9dce1; background:#fff; border-radius:8px; height:34px; padding:0 12px; cursor:pointer; font-size:13px; }
+
+  /* ── map ── */
+  .map-body { position:relative; height:520px; }
+  .map-fake {
+    width:100%; height:100%;
+    background:
+      linear-gradient(#dfe3e8 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, #dfe3e8 1px, transparent 1px) 0 0 / 40px 40px,
+      #eef1f4;
+    position:relative;
+  }
+  .pin { position:absolute; width:22px; height:22px; background:var(--accent); border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.3); }
+  .pin::after { content:''; position:absolute; inset:6px; background:#fff; border-radius:50%; }
+  .map-hint { position:absolute; top:12px; left:12px; background:rgba(255,255,255,.85); border-radius:8px; padding:6px 12px; font-size:12px; color:#666; }
+
+  /* ── side panel ── */
+  .panel { position:absolute; top:0; right:0; width:360px; height:100%; background:#fff; box-shadow:-4px 0 20px rgba(0,0,0,.08); padding:24px; overflow-y:auto; z-index:5; }
+  .panel-close { position:absolute; top:16px; right:16px; border:none; background:transparent; font-size:18px; cursor:pointer; color:#888; }
+  .panel-title { margin:0 0 4px; font-size:20px; }
+  .panel-cat { margin:0 0 8px; color:#888; font-size:13px; }
+  .panel-addr { margin:0 0 8px; font-size:14px; color:#444; }
+  .panel-rating { margin:0 0 8px; font-weight:600; }
+  .panel-link { font-size:13px; color:var(--accent); text-decoration:none; }
+  .panel hr { border:none; border-top:1px solid #eee; margin:16px 0; }
+  .review-item { border:1px solid #eee; border-radius:10px; padding:12px; margin-bottom:10px; }
+  .review-head { display:flex; justify-content:space-between; font-size:14px; font-weight:600; }
+  .review-author { color:#888; font-weight:400; }
+  .review-tags { display:flex; flex-wrap:wrap; gap:4px; margin:8px 0; }
+  .tag { background:#eef2ff; color:var(--accent); border-radius:6px; padding:2px 8px; font-size:12px; }
+  .review-comment { margin:6px 0 0; font-size:14px; color:#333; line-height:1.5; }
+
+  /* ── chat ── */
+  .chat-list { display:flex; flex-direction:column; gap:10px; margin:12px 0; }
+  .chat-msg { display:flex; }
+  .chat-msg.user { justify-content:flex-end; }
+  .bubble { max-width:80%; padding:10px 14px; border-radius:14px; font-size:14px; line-height:1.5; }
+  .chat-msg.user .bubble { background:var(--accent); color:#fff; border-bottom-right-radius:4px; }
+  .chat-msg.assistant .bubble { background:#f1f3f5; color:#222; border-bottom-left-radius:4px; }
+  .chat-input { display:flex; gap:8px; margin-top:12px; }
+  .chat-input input { flex:1; height:40px; border:1px solid #d9dce1; border-radius:8px; padding:0 12px; font-size:14px; }
+  .chat-input button { border:none; background:var(--accent); color:#fff; border-radius:8px; padding:0 16px; cursor:pointer; font-weight:600; }
+
+  /* ── review write ── */
+  .rw { background:#fff; min-height:560px; }
+  .rw-head { display:flex; align-items:center; gap:12px; height:56px; padding:0 20px; border-bottom:1px solid var(--line); }
+  .rw-head .back { border:none; background:transparent; cursor:pointer; font-size:14px; color:var(--accent); }
+  .rw-head h2 { font-size:18px; margin:0; }
+  .rw-content { max-width:560px; margin:0 auto; padding:24px 20px; display:flex; flex-direction:column; gap:28px; }
+  .section-label { font-weight:700; font-size:15px; margin-bottom:10px; display:block; }
+  .picked { display:flex; justify-content:space-between; align-items:center; border:1px solid var(--accent); border-radius:8px; padding:14px 16px; }
+  .stars { font-size:32px; color:#ffc107; letter-spacing:4px; }
+  .tag-cat { font-size:13px; color:#888; display:block; margin-bottom:6px; }
+  .tag-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .chip { border:1px solid #d9dce1; background:#fff; border-radius:20px; padding:6px 14px; font-size:13px; }
+  .chip.on { background:#eef2ff; border-color:var(--accent); color:var(--accent); font-weight:600; }
+  .rw textarea { width:100%; border:1px solid #d9dce1; border-radius:8px; padding:12px; font-size:15px; font-family:inherit; }
+  .rw .submit { height:48px; font-size:16px; border:none; background:var(--accent); color:#fff; border-radius:8px; font-weight:600; cursor:pointer; }
+
+  /* ── generic page (mypage/roulette/lunch/admin) ── */
+  .pg { background:#fff; min-height:520px; }
+  .pg-content { max-width:640px; margin:0 auto; padding:24px 20px; }
+  .pg h2 { font-size:20px; margin:0 0 4px; }
+  .pg .desc { color:#888; font-size:14px; margin:0 0 20px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .row { display:flex; justify-content:space-between; align-items:center; }
+  .btn { border:1px solid #d9dce1; background:#fff; border-radius:8px; padding:6px 12px; font-size:13px; cursor:pointer; }
+  .btn.primary { background:var(--accent); color:#fff; border:none; }
+  .btn.danger { color:#e03131; border-color:#f1aeae; }
+
+  /* ── roulette ── */
+  .wheel { width:240px; height:240px; border-radius:50%; margin:20px auto; border:8px solid var(--accent);
+    background: conic-gradient(#ffe3e3 0 45deg,#fff3bf 45deg 90deg,#d3f9d8 90deg 135deg,#d0ebff 135deg 180deg,#ffe3e3 180deg 225deg,#fff3bf 225deg 270deg,#d3f9d8 270deg 315deg,#d0ebff 315deg 360deg);
+    display:flex; align-items:center; justify-content:center; position:relative; }
+  .wheel .center { width:64px; height:64px; border-radius:50%; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center; font-weight:700; }
+
+  /* ── bottom nav ── */
+  .bottom-nav { display:flex; background:#fff; border-top:1px solid var(--line); }
+  .bottom-nav div { flex:1; text-align:center; padding:10px 0 8px; font-size:11px; color:#888; }
+  .bottom-nav div.active { color:var(--accent); font-weight:600; }
+  .bottom-nav .ico { font-size:20px; display:block; }
+
+  .group-pill { display:inline-block; background:#eef2ff; color:var(--accent); border-radius:20px; padding:4px 10px; font-size:12px; margin:2px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="intro">
+    <h1>🍱 Biz Lunch Lab — 현재 화면 목업</h1>
+    <p>이 파일은 <b>현재 구현된 화면의 디자인 출발점</b>입니다. 기능(카카오 지도, 백엔드, AI)은 제거하고 레이아웃·콘텐츠만 가짜 데이터로 재현했습니다.</p>
+    <p><b>목표:</b> 지금은 "AI가 만든 개발 프로젝트" 같은 밋밋한 느낌입니다. 이걸 <b>실제 상용 서비스 수준</b>으로 리디자인하고 싶습니다. (자세한 요청은 동봉한 DESIGN_BRIEF.md 참고)</p>
+  </div>
+
+  <!-- 1. 로그인 -->
+  <div class="screen-label">1 / 로그인</div>
+  <div class="frame"><div class="auth-wrap"><div class="auth-card">
+    <h1 class="auth-title">🍱 Biz Lunch Lab</h1>
+    <p class="auth-sub">로그인</p>
+    <label>담당</label><select><option>기업사업개발1담당</option></select>
+    <label>팀</label><select><option>기업사업개발2팀</option></select>
+    <label>이름</label><input value="김하늘" />
+    <label>PIN (4자리)</label><input type="password" value="1125" />
+    <button>로그인</button>
+    <p class="auth-foot">계정이 없으신가요? <a>회원가입</a></p>
+  </div></div></div>
+
+  <!-- 2. 회원가입 -->
+  <div class="screen-label">2 / 회원가입</div>
+  <div class="frame"><div class="auth-wrap"><div class="auth-card">
+    <h1 class="auth-title">🍱 Biz Lunch Lab</h1>
+    <p class="auth-sub">회원가입</p>
+    <label>담당</label><select><option>기업사업개발1담당</option></select>
+    <label>팀</label><select><option>기업사업개발2팀</option></select>
+    <label>이름</label><input value="김하늘" />
+    <label>PIN (숫자 4자리)</label><input type="password" value="1125" />
+    <label>PIN 확인</label><input type="password" value="1125" />
+    <button>회원가입</button>
+    <p class="auth-foot">이미 계정이 있으신가요? <a>로그인</a></p>
+  </div></div></div>
+
+  <!-- 3. 지도 + 식당 패널 -->
+  <div class="screen-label">3 / 메인 지도 + 식당 정보 패널 (마커 클릭 시)</div>
+  <div class="frame">
+    <div class="app-header">
+      <span class="brand">🍱 Biz Lunch Lab</span>
+      <button class="nav-btn">🤖 AI 검색</button>
+      <button class="nav-btn">✍️ 리뷰 쓰기</button>
+      <span class="spacer"></span>
+      <span class="who">김하늘 <span class="admin-badge">관리자</span></span>
+      <button class="logout">로그아웃</button>
+    </div>
+    <div class="map-body">
+      <div class="map-fake">
+        <span class="map-hint">광화문 · 안국 · 시청 권역</span>
+        <span class="pin" style="top:180px;left:240px;"></span>
+        <span class="pin" style="top:260px;left:160px;"></span>
+        <span class="pin" style="top:140px;left:380px;"></span>
+      </div>
+      <aside class="panel">
+        <button class="panel-close">✕</button>
+        <h2 class="panel-title">한일관 광화문점</h2>
+        <p class="panel-cat">음식점 &gt; 한식 &gt; 한정식</p>
+        <p class="panel-addr">서울 종로구 종로1길 50</p>
+        <p class="panel-rating">⭐ 5.0 · 리뷰 1개</p>
+        <a class="panel-link">카카오맵에서 보기 →</a>
+        <hr />
+        <h3 style="margin:0 0 12px;font-size:15px;">리뷰</h3>
+        <div class="review-item">
+          <div class="review-head"><span>⭐ 5</span><span class="review-author">김하늘</span></div>
+          <div class="review-tags"><span class="tag">룸 예약 가능</span><span class="tag">조용한 분위기</span></div>
+          <p class="review-comment">룸이 넓고 조용해서 상급자 회식하기 좋았어요.</p>
+        </div>
+      </aside>
+    </div>
+    <div class="bottom-nav">
+      <div class="active"><span class="ico">🗺️</span>맛집 지도</div>
+      <div><span class="ico">🤖</span>AI 검색</div>
+      <div><span class="ico">🎲</span>메뉴 룰렛</div>
+      <div><span class="ico">🍱</span>랜덤 런치</div>
+      <div><span class="ico">👤</span>마이페이지</div>
+    </div>
+  </div>
+
+  <!-- 4. AI 챗봇 패널 -->
+  <div class="screen-label">4 / AI 맛집 검색 챗봇 (패널)</div>
+  <div class="frame">
+    <div class="app-header">
+      <span class="brand">🍱 Biz Lunch Lab</span>
+      <button class="nav-btn">🤖 AI 검색</button>
+      <button class="nav-btn">✍️ 리뷰 쓰기</button>
+      <span class="spacer"></span>
+      <span class="who">김하늘 <span class="admin-badge">관리자</span></span>
+      <button class="logout">로그아웃</button>
+    </div>
+    <div class="map-body">
+      <div class="map-fake"></div>
+      <aside class="panel">
+        <button class="panel-close">✕</button>
+        <h2 class="panel-title">🤖 AI 맛집 검색</h2>
+        <p style="color:#888;font-size:13px;margin:0 0 12px;">등록된 리뷰를 바탕으로 추천해드려요.</p>
+        <div class="chat-list">
+          <div class="chat-msg user"><div class="bubble">가성비 좋은 점심 추천해줘</div></div>
+          <div class="chat-msg assistant"><div class="bubble">경성한우국밥 경복궁점을 추천드려요! 점심 특선이 가성비 좋고, 빨리 나와서 회의 전 점심으로 딱이에요. (직원 리뷰 ⭐4)</div></div>
+        </div>
+        <div class="chat-input"><input value="" placeholder="메시지를 입력하세요" /><button>전송</button></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- 5. 리뷰 작성 -->
+  <div class="screen-label">5 / 리뷰 작성</div>
+  <div class="frame"><div class="rw">
+    <div class="rw-head"><button class="back">← 지도</button><h2>리뷰 작성</h2></div>
+    <div class="rw-content">
+      <div><span class="section-label">1. 식당 선택</span>
+        <div class="picked"><div><b>경성한우국밥 경복궁점</b> <span style="color:#888;font-size:12px;">한식 · 국밥</span></div><button class="btn">변경</button></div>
+      </div>
+      <div><span class="section-label">2. 별점</span><div class="stars">★★★★☆</div></div>
+      <div><span class="section-label">3. 태그 (선택)</span>
+        <span class="tag-cat">목적</span>
+        <div class="tag-list"><span class="chip">팀 점심 추천</span><span class="chip on">간단 미팅 추천</span><span class="chip">저녁 회식 추천</span></div>
+        <span class="tag-cat">메뉴/가격</span>
+        <div class="tag-list"><span class="chip on">가성비</span><span class="chip on">점심 특선 있음</span><span class="chip">가격대 높음</span></div>
+      </div>
+      <div><span class="section-label">4. 코멘트 (선택)</span><textarea rows="4">점심 특선이 가성비 좋아요. 빨리 나와서 회의 전에 딱.</textarea></div>
+      <button class="submit">리뷰 등록</button>
+    </div>
+  </div></div>
+
+  <!-- 6. 마이페이지 -->
+  <div class="screen-label">6 / 마이페이지 — 내 리뷰 (예정)</div>
+  <div class="frame"><div class="pg">
+    <div class="app-header"><span class="brand">🍱 Biz Lunch Lab</span><span class="spacer"></span><span class="who">김하늘 <span class="admin-badge">관리자</span></span></div>
+    <div class="pg-content">
+      <h2>마이페이지</h2><p class="desc">내가 작성한 리뷰 2개</p>
+      <div class="card"><div class="row"><b>경성한우국밥 경복궁점</b><span>⭐ 4</span></div>
+        <div class="review-tags"><span class="tag">가성비</span><span class="tag">점심 특선 있음</span></div>
+        <p class="review-comment">점심 특선이 가성비 좋아요.</p>
+        <div class="row" style="margin-top:10px;"><span style="color:#aaa;font-size:12px;">2026.06.11</span><span><button class="btn">수정</button> <button class="btn danger">삭제</button></span></div>
+      </div>
+      <div class="card"><div class="row"><b>한일관 광화문점</b><span>⭐ 5</span></div>
+        <div class="review-tags"><span class="tag">룸 예약 가능</span><span class="tag">조용한 분위기</span></div>
+        <p class="review-comment">룸이 넓고 조용해서 상급자 회식하기 좋았어요.</p>
+        <div class="row" style="margin-top:10px;"><span style="color:#aaa;font-size:12px;">2026.06.10</span><span><button class="btn">수정</button> <button class="btn danger">삭제</button></span></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- 7. 메뉴 룰렛 -->
+  <div class="screen-label">7 / 메뉴 룰렛 (예정)</div>
+  <div class="frame"><div class="pg">
+    <div class="app-header"><span class="brand">🍱 Biz Lunch Lab</span></div>
+    <div class="pg-content" style="text-align:center;">
+      <h2>🎲 메뉴 룰렛</h2><p class="desc">오늘 점심 뭐 먹지? 돌려서 정해요</p>
+      <div class="wheel"><div class="center">한식</div></div>
+      <button class="btn primary" style="padding:10px 24px;">돌리기</button>
+      <div class="card" style="text-align:left;margin-top:20px;">
+        <p style="margin:0 0 4px;color:#888;font-size:13px;">결과 · 한식</p>
+        <div class="row"><b>경성한우국밥 경복궁점</b><span>⭐ 4</span></div>
+        <div class="review-tags"><span class="tag">가성비</span></div>
+        <div style="margin-top:10px;"><button class="btn primary">지도에서 보기</button> <button class="btn">다시 돌리기</button></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- 8. 랜덤 런치 -->
+  <div class="screen-label">8 / 랜덤 런치 — 신청 & 결과 (예정)</div>
+  <div class="frame"><div class="pg">
+    <div class="app-header"><span class="brand">🍱 Biz Lunch Lab</span></div>
+    <div class="pg-content">
+      <h2>🍱 랜덤 런치</h2><p class="desc">6월 셋째 주 점심 모임 · 신청 24명</p>
+      <div class="card">
+        <span class="section-label">취향 입력</span>
+        <div class="tag-list"><span class="chip on">한식</span><span class="chip">일식</span><span class="chip on">분식</span><span class="chip">양식</span></div>
+        <textarea rows="2" placeholder="못 먹는 음식 (예: 오이, 해산물)" style="width:100%;border:1px solid #d9dce1;border-radius:8px;padding:10px;font-family:inherit;"></textarea>
+        <button class="btn primary" style="margin-top:12px;">신청하기</button>
+      </div>
+      <p class="desc" style="margin-top:24px;">매칭 결과</p>
+      <div class="card"><div class="row"><b>1조</b><span style="color:#888;font-size:12px;">5명</span></div>
+        <div style="margin:8px 0;"><span class="group-pill">김하늘</span><span class="group-pill">이서연</span><span class="group-pill">박지훈</span><span class="group-pill">최민서</span><span class="group-pill">정우진</span></div>
+        <p style="font-size:13px;color:#555;margin:6px 0 0;">추천: <b>경성한우국밥 경복궁점</b> — 가성비 좋고 빨리 나와요</p>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- 9. 관리자 -->
+  <div class="screen-label">9 / 관리자 (예정)</div>
+  <div class="frame"><div class="pg">
+    <div class="app-header"><span class="brand">🍱 Biz Lunch Lab</span><span class="spacer"></span><span class="who">김하늘 <span class="admin-badge">관리자</span></span></div>
+    <div class="pg-content">
+      <h2>관리자</h2><p class="desc">랜덤 런치 회차 · 사용자 관리</p>
+      <div class="card"><div class="row"><b>6월 셋째 주 점심 모임</b><span style="color:#1c7c3c;font-size:12px;">신청중 (24명)</span></div>
+        <div style="margin-top:12px;"><button class="btn">신청 마감</button> <button class="btn primary">매칭 실행</button></div>
+      </div>
+      <button class="btn" style="margin-top:8px;">+ 새 회차 만들기</button>
+      <p class="desc" style="margin-top:24px;">사용자 PIN 리셋</p>
+      <div class="card"><div class="row"><span>이서연 · 기업사업개발1팀</span><button class="btn">PIN 리셋</button></div></div>
+    </div>
+  </div></div>
+
+</div>
+</body>
+</html>
