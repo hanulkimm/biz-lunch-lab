@@ -54,3 +54,30 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* ─── 전역 컴포넌트: 잎새 버튼 ─── */
+.btn-leaf {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 15px;
+  background: var(--leaf);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--leaf-dark);
+  text-decoration: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.btn-leaf:hover {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--leaf-dark);
+}
+.btn-leaf:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--leaf-dark);
+}
