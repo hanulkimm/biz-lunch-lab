@@ -65,18 +65,20 @@ export default function Map() {
       </header>
 
       <div className="map-body">
-        <KakaoMap
-          restaurants={restaurants}
-          onMarkerClick={(r) => {
-            setSelectedId(r.id);
-            setChatOpen(false);
-          }}
-        />
-        <div className="map-region">
-          <Navigation size={14} /> 광화문 마을
+        <div className="map-frame">
+          <KakaoMap
+            restaurants={restaurants}
+            onMarkerClick={(r) => {
+              setSelectedId(r.id);
+              setChatOpen(false);
+            }}
+          />
+          <div className="map-region">
+            <Navigation size={14} /> 광화문 마을
+          </div>
+          <RestaurantPanel restaurantId={selectedId} onClose={() => setSelectedId(null)} />
+          {chatOpen && <ChatPanel userName={user?.name} onClose={() => setChatOpen(false)} />}
         </div>
-        <RestaurantPanel restaurantId={selectedId} onClose={() => setSelectedId(null)} />
-        {chatOpen && <ChatPanel userName={user?.name} onClose={() => setChatOpen(false)} />}
       </div>
     </div>
   );
