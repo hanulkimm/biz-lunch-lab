@@ -11,7 +11,7 @@
   /* 이미지가 아직 없을 때 보일 폴백 배경(하늘→잔디) */
   background:
     linear-gradient(180deg, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.12)),
-    url("/landing-bg.jpg") center / cover no-repeat,
+    url("/landing-bg.png") center / cover no-repeat,
     linear-gradient(180deg, #8ed4f0 0%, #c3ebfa 55%, #8fcf63 55.2%, #6db344 100%);
 }
 
