@@ -1,6 +1,45 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+@import url("https://fonts.googleapis.com/css2?family=Jua&display=swap");
+
+/* ─── 동물의 숲 디자인 토큰 (design/Biz Lunch Lab - 동물의숲 기준) ─── */
 :root {
-  font-family: system-ui, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
-  color: #1f2230;
+  /* 팔레트 */
+  --leaf: #82c24a;
+  --leaf-dark: #4f8526;
+  --leaf-soft: #edf6de;
+  --sea: #6fcec6;
+  --sea-dark: #46b6bd;
+  --sea-soft: #e5f4f8;
+  --sun: #fbd45b;
+  --sun-dark: #e0b83c;
+  --sun-soft: #fcf1d6;
+  --coral: #f4796a;
+  --coral-dark: #db5c4d;
+  --sand: #ebd9a8;
+  --sand-dark: #d6c089;
+
+  /* 표면 */
+  --cream: #fffdf4;
+  --cream-2: #fbf5e4;
+  --page: #e9e2d3;
+
+  /* 텍스트 */
+  --ink: #5e4b2e;
+  --ink-green: #3f6b22;
+  --ink-green-2: #4f8a2a;
+  --muted: #9a8763;
+
+  /* 라인 */
+  --line: #e7d9b8;
+  --line-2: #ede0c4;
+  --star: #f7b500;
+
+  /* 폰트 */
+  --font-display: "Jua", system-ui, sans-serif;
+  --font-sans: Pretendard, system-ui, "Apple SD Gothic Neo", sans-serif;
+
+  font-family: var(--font-sans);
+  color: var(--ink);
 }
 
 * {
@@ -9,7 +48,7 @@
 
 body {
   margin: 0;
-  background: #f4f5f7;
+  background: var(--page);
 }
 
 #root {

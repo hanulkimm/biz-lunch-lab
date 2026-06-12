@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
+  <style>
+    body { margin:0; background:#E9E2D3; -webkit-font-smoothing:antialiased; }
+    *, *::before, *::after { box-sizing:border-box; }
+    @keyframes floaty { 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+    @keyframes floatpin { 0%,100%{ transform:rotate(-45deg) translate(0,0);} 50%{ transform:rotate(-45deg) translate(4px,-4px);} }
+    @keyframes sway { 0%,100%{ transform:rotate(-3deg);} 50%{ transform:rotate(3deg);} }
+    @keyframes bob { 0%,100%{ transform:translateY(0) scale(1);} 50%{ transform:translateY(-4px) scale(1.03);} }
+    ::-webkit-scrollbar { width:10px; height:10px; }
+    ::-webkit-scrollbar-thumb { background:#cdbf9d; border-radius:8px; border:2px solid transparent; background-clip:padding-box; }
+  </style>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</helmet>
+
+<div style="font-family:Pretendard, system-ui, sans-serif; color:#5E4B2E; padding:46px 24px 110px; background:radial-gradient(#D9CFB8 1.5px, transparent 1.6px) 0 0/22px 22px;">
+<div style="max-width:940px; margin:0 auto;">
+
+  <!-- ============ HERO ============ -->
+  <div style="position:relative; border-radius:32px; overflow:hidden; border:4px solid #FFFDF4; box-shadow:0 20px 50px rgba(94,75,46,.22); background:linear-gradient(#AEE6F2 0%, #C3ECF1 34%, #7FD3CB 34%, #6FCEC6 56%, #F1E3BD 56%, #ECDAAA 100%);">
+    <!-- sky -->
+    <div style="position:absolute; top:34px; right:54px; width:58px; height:58px; border-radius:50%; background:#FBD45B; box-shadow:0 0 0 12px rgba(251,212,91,.28); animation:floaty 6s ease-in-out infinite;"></div>
+    <div style="position:absolute; top:50px; left:48px; width:84px; height:26px; border-radius:999px; background:rgba(255,255,255,.85);"></div>
+    <div style="position:absolute; top:96px; left:150px; width:60px; height:20px; border-radius:999px; background:rgba(255,255,255,.7);"></div>
+    <!-- island -->
+    <div style="position:absolute; bottom:-30px; right:60px; width:230px; height:150px; border-radius:50%; background:#9FD06B; box-shadow:inset 0 -10px 0 #87BD52;"></div>
+    <div style="position:absolute; bottom:-14px; right:40px; width:270px; height:90px; border-radius:50%; background:#EBD9A8;"></div>
+    <!-- palm -->
+    <div style="position:absolute; bottom:48px; right:120px; animation:sway 5s ease-in-out infinite; transform-origin:bottom center;">
+      <div style="width:10px; height:64px; background:#9A7B4E; border-radius:6px; margin:0 auto;"></div>
+      <div style="position:absolute; top:-6px; left:-26px; width:40px; height:22px; border-radius:50%; background:#5C9A32;"></div>
+      <div style="position:absolute; top:-6px; left:-4px; width:40px; height:22px; border-radius:50%; background:#6BA838;"></div>
+      <div style="position:absolute; top:-14px; left:-12px; width:38px; height:22px; border-radius:50%; background:#7FB942;"></div>
+    </div>
+    <!-- content -->
+    <div style="position:relative; padding:42px 46px 64px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <!-- leaf logo -->
+        <div style="position:relative; width:46px; height:46px;">
+          <div style="position:absolute; inset:0; background:#82C24A; border-radius:50% 8% 50% 50%; transform:rotate(45deg); box-shadow:0 4px 0 #4F8526;"></div>
+          <div style="position:absolute; top:11px; left:21px; width:3px; height:22px; background:#FFFDF4; border-radius:2px; transform:rotate(45deg); transform-origin:top;"></div>
+        </div>
+        <span style="font-family:'Jua',sans-serif; font-size:21px; color:#fff; text-shadow:0 2px 0 rgba(94,75,46,.35);">비즈런치랩</span>
+      </div>
+      <div style="display:inline-block; margin-top:26px; padding:5px 14px; border-radius:999px; background:rgba(255,255,255,.85); font-family:'Jua',sans-serif; font-size:13px; color:#3F6B22;">광화문 점심 무인도에 어서 오세요</div>
+      <h1 style="margin:14px 0 0; font-family:'Jua',sans-serif; font-size:46px; color:#fff; line-height:1.12; letter-spacing:.005em; text-shadow:0 3px 0 rgba(94,75,46,.3);">오늘 점심,<br/>어디로 떠나볼까?</h1>
+      <p style="margin:16px 0 0; font-size:15px; color:#4A6B3C; line-height:1.6; max-width:380px; font-weight:600;">동료들이 발견한 맛집을 지도에 모으고, 별점과 태그로 기록하고, 랜덤 런치로 같이 떠나는 우리 본부의 점심 섬.</p>
+      <div style="display:flex; gap:12px; margin-top:26px;">
+        <button style="display:inline-flex; align-items:center; gap:8px; height:50px; padding:0 24px; border:none; border-radius:16px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:16px; cursor:pointer; box-shadow:0 5px 0 #4F8526; transition:all .12s;" style-hover="transform:translateY(2px); box-shadow:0 3px 0 #4F8526;"><i data-lucide="map" style="width:18px;height:18px;"></i>섬 둘러보기</button>
+        <button style="display:inline-flex; align-items:center; gap:8px; height:50px; padding:0 22px; border:3px solid #FFFDF4; border-radius:16px; background:rgba(255,255,255,.5); color:#3F6B22; font-family:'Jua',sans-serif; font-size:16px; cursor:pointer;">주민 등록</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SYSTEM STRIP ============ -->
+  <div style="margin-top:40px; display:flex; align-items:center; gap:10px;">
+    <i data-lucide="palette" style="width:18px;height:18px;color:#82C24A;"></i>
+    <h2 style="margin:0; font-family:'Jua',sans-serif; font-size:20px; color:#3F6B22;">디자인 키트</h2>
+  </div>
+  <div style="margin-top:14px; background:#FFFDF4; border:2px solid #E7D9B8; border-radius:24px; padding:24px; box-shadow:0 6px 0 rgba(231,217,184,.5);">
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
+      <!-- palette -->
+      <div>
+        <div style="font-family:'Jua',sans-serif; font-size:13px; color:#9A8763; margin-bottom:12px;">팔레트</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:5px;"><span style="width:36px;height:36px;border-radius:11px;background:#82C24A;box-shadow:0 3px 0 #4F8526;"></span><span style="font-size:10px;color:#9A8763;">잎새</span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:5px;"><span style="width:36px;height:36px;border-radius:11px;background:#6FCEC6;box-shadow:0 3px 0 #46B6BD;"></span><span style="font-size:10px;color:#9A8763;">바다</span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:5px;"><span style="width:36px;height:36px;border-radius:11px;background:#FBD45B;box-shadow:0 3px 0 #E0B83C;"></span><span style="font-size:10px;color:#9A8763;">햇살</span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:5px;"><span style="width:36px;height:36px;border-radius:11px;background:#F4796A;box-shadow:0 3px 0 #DB5C4D;"></span><span style="font-size:10px;color:#9A8763;">산호</span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:5px;"><span style="width:36px;height:36px;border-radius:11px;background:#EBD9A8;box-shadow:0 3px 0 #D6C089;"></span><span style="font-size:10px;color:#9A8763;">모래</span></div>
+        </div>
+      </div>
+      <!-- buttons -->
+      <div>
+        <div style="font-family:'Jua',sans-serif; font-size:13px; color:#9A8763; margin-bottom:12px;">버튼</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <button style="height:38px; padding:0 16px; border:none; border-radius:13px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:13px; cursor:pointer; box-shadow:0 4px 0 #4F8526;">기본</button>
+          <button style="height:38px; padding:0 16px; border:none; border-radius:13px; background:#FBD45B; color:#7A5A00; font-family:'Jua',sans-serif; font-size:13px; cursor:pointer; box-shadow:0 4px 0 #E0B83C;">강조</button>
+          <button style="height:38px; padding:0 16px; border:2px solid #E7D9B8; border-radius:13px; background:#fff; color:#5E4B2E; font-family:'Jua',sans-serif; font-size:13px; cursor:pointer;">서브</button>
+        </div>
+      </div>
+      <!-- tags + stars -->
+      <div>
+        <div style="font-family:'Jua',sans-serif; font-size:13px; color:#9A8763; margin-bottom:12px;">태그 · 별점</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+          <span style="display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:999px; background:#EDF6DE; border:1.5px solid #82C24A; color:#4F8A2A; font-size:12px; font-weight:600;"><i data-lucide="check" style="width:13px;height:13px;"></i>가성비</span>
+          <span style="padding:5px 11px; border-radius:999px; background:#fff; border:1.5px solid #E7D9B8; color:#9A8763; font-size:12px; font-weight:600;">룸 예약</span>
+        </div>
+        <div style="display:flex; gap:1px;"><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i><i data-lucide="star" style="width:18px;height:18px;color:#E4D6B5;"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 1 · LOGIN ============ -->
+  <div style="position:relative; margin-top:52px;">
+    <div style="position:absolute; top:-16px; left:24px; z-index:2; display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 16px; border-radius:999px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:14px; box-shadow:0 4px 0 #4F8526;"><i data-lucide="log-in" style="width:15px;height:15px;"></i>로그인</div>
+    <div style="border-radius:28px; overflow:hidden; border:3px solid #FFFDF4; box-shadow:0 16px 40px rgba(94,75,46,.18); background:#FBF5E4;">
+      <div style="display:flex; min-height:530px;">
+        <!-- scene -->
+        <div style="width:45%; position:relative; overflow:hidden; background:linear-gradient(#AEE6F2 0%, #C3ECF1 46%, #82C7BF 46%, #6FCEC6 70%, #ECDAAA 70%, #E3CE9C 100%);">
+          <div style="position:absolute; top:30px; right:30px; width:50px; height:50px; border-radius:50%; background:#FBD45B; box-shadow:0 0 0 10px rgba(251,212,91,.28); animation:floaty 5s ease-in-out infinite;"></div>
+          <div style="position:absolute; top:62px; left:26px; width:64px; height:20px; border-radius:999px; background:rgba(255,255,255,.85);"></div>
+          <!-- palm -->
+          <div style="position:absolute; bottom:70px; left:40px; animation:sway 5s ease-in-out infinite; transform-origin:bottom center;">
+            <div style="width:9px; height:56px; background:#9A7B4E; border-radius:5px; margin:0 auto;"></div>
+            <div style="position:absolute; top:-4px; left:-22px; width:34px; height:18px; border-radius:50%; background:#5C9A32;"></div>
+            <div style="position:absolute; top:-4px; left:-2px; width:34px; height:18px; border-radius:50%; background:#6BA838;"></div>
+            <div style="position:absolute; top:-12px; left:-10px; width:32px; height:18px; border-radius:50%; background:#7FB942;"></div>
+          </div>
+          <div style="position:absolute; bottom:-26px; right:-30px; width:150px; height:150px; border-radius:50%; background:#9FD06B;"></div>
+          <!-- brand -->
+          <div style="position:absolute; top:26px; left:26px; display:flex; align-items:center; gap:10px;">
+            <div style="position:relative; width:36px; height:36px;"><div style="position:absolute; inset:0; background:#82C24A; border-radius:50% 8% 50% 50%; transform:rotate(45deg); box-shadow:0 3px 0 #4F8526;"></div></div>
+            <span style="font-family:'Jua',sans-serif; font-size:16px; color:#fff; text-shadow:0 2px 0 rgba(94,75,46,.3);">비즈런치랩</span>
+          </div>
+          <!-- speech bubble -->
+          <div style="position:absolute; bottom:28px; left:22px; right:22px; background:#FFFDF4; border:2.5px solid #82C24A; border-radius:18px; padding:13px 15px; box-shadow:0 4px 0 rgba(94,75,46,.12);">
+            <div style="font-family:'Jua',sans-serif; font-size:14px; color:#3F6B22; line-height:1.4;">어서 와요 주민님! 오늘도 맛있는 하루 보내요~</div>
+            <div style="position:absolute; bottom:-9px; left:32px; width:15px; height:15px; background:#FFFDF4; border-right:2.5px solid #82C24A; border-bottom:2.5px solid #82C24A; transform:rotate(45deg);"></div>
+          </div>
+        </div>
+        <!-- form -->
+        <div style="flex:1; padding:44px; display:flex; flex-direction:column; justify-content:center;">
+          <h3 style="margin:0; font-family:'Jua',sans-serif; font-size:27px; color:#3F6B22;">주민 입도 수속</h3>
+          <p style="margin:6px 0 26px; font-size:13.5px; color:#9A8763;">담당·팀·이름과 비밀번호 4자리로 들어와요.</p>
+
+          <label style="font-family:'Jua',sans-serif; font-size:13px; color:#5E4B2E; margin-bottom:7px;">담당</label>
+          <div style="display:flex; align-items:center; justify-content:space-between; height:50px; padding:0 16px; border:2px solid #E7D9B8; border-radius:15px; background:#fff; margin-bottom:14px;"><span style="font-size:14px;">기업사업개발1담당</span><i data-lucide="chevron-down" style="width:18px;height:18px;color:#9A8763;"></i></div>
+
+          <label style="font-family:'Jua',sans-serif; font-size:13px; color:#5E4B2E; margin-bottom:7px;">이름</label>
+          <div style="display:flex; align-items:center; gap:9px; height:50px; padding:0 16px; border:2px solid #E7D9B8; border-radius:15px; background:#fff; margin-bottom:14px;"><i data-lucide="user-round" style="width:17px;height:17px;color:#9A8763;"></i><span style="font-size:14px;">김하늘</span></div>
+
+          <label style="font-family:'Jua',sans-serif; font-size:13px; color:#5E4B2E; margin-bottom:7px;">PIN</label>
+          <div style="display:flex; gap:10px; margin-bottom:28px;">
+            <div style="flex:1; height:56px; border:2.5px solid #82C24A; border-radius:17px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:22px; color:#3F6B22; box-shadow:0 3px 0 #EDF6DE;">●</div>
+            <div style="flex:1; height:56px; border:2.5px solid #E7D9B8; border-radius:17px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:22px; color:#CDBE9E;">●</div>
+            <div style="flex:1; height:56px; border:2.5px solid #E7D9B8; border-radius:17px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:22px; color:#CDBE9E;">●</div>
+            <div style="flex:1; height:56px; border:2.5px solid #E7D9B8; border-radius:17px; background:#fff;"></div>
+          </div>
+
+          <button style="height:56px; border:none; border-radius:17px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:18px; cursor:pointer; box-shadow:0 5px 0 #4F8526; transition:all .12s;" style-hover="transform:translateY(2px); box-shadow:0 3px 0 #4F8526;">입도하기</button>
+          <p style="margin:18px 0 0; text-align:center; font-size:13px; color:#9A8763;">아직 주민이 아니신가요? <a style="color:#82C24A; font-family:'Jua',sans-serif; text-decoration:none; cursor:pointer;">주민 등록</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 2 · MAP ============ -->
+  <div style="position:relative; margin-top:52px;">
+    <div style="position:absolute; top:-16px; left:24px; z-index:2; display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 16px; border-radius:999px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:14px; box-shadow:0 4px 0 #4F8526;"><i data-lucide="map-pin" style="width:15px;height:15px;"></i>맛집 지도</div>
+    <div style="border-radius:28px; overflow:hidden; border:3px solid #FFFDF4; box-shadow:0 16px 40px rgba(94,75,46,.18); background:#FFFDF4;">
+      <!-- header -->
+      <div style="display:flex; align-items:center; gap:10px; height:66px; padding:0 22px; background:#FFFDF4; border-bottom:2px solid #F0E7D0;">
+        <div style="display:flex; align-items:center; gap:9px; margin-right:6px;">
+          <div style="position:relative; width:32px; height:32px;"><div style="position:absolute; inset:0; background:#82C24A; border-radius:50% 8% 50% 50%; transform:rotate(45deg); box-shadow:0 3px 0 #4F8526;"></div></div>
+          <span style="font-family:'Jua',sans-serif; font-size:16px; color:#3F6B22;">비즈런치랩</span>
+        </div>
+        <nav style="display:flex; gap:4px;">
+          <span style="display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 14px; border-radius:999px; background:#EDF6DE; color:#4F8A2A; font-family:'Jua',sans-serif; font-size:13px; white-space:nowrap;"><i data-lucide="map-pin" style="width:15px;height:15px;"></i>지도</span>
+          <span style="display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 14px; border-radius:999px; color:#9A8763; font-size:13px; font-weight:600; white-space:nowrap;"><i data-lucide="sparkles" style="width:15px;height:15px;"></i>AI</span>
+          <span style="display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 14px; border-radius:999px; color:#9A8763; font-size:13px; font-weight:600; white-space:nowrap;"><i data-lucide="dices" style="width:15px;height:15px;"></i>룰렛</span>
+          <span style="display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 14px; border-radius:999px; color:#9A8763; font-size:13px; font-weight:600; white-space:nowrap;"><i data-lucide="users-round" style="width:15px;height:15px;"></i>런치</span>
+        </nav>
+        <div style="flex:1;"></div>
+        <button style="display:inline-flex; align-items:center; gap:6px; height:42px; padding:0 17px; border:none; border-radius:15px; background:#FBD45B; color:#7A5A00; font-family:'Jua',sans-serif; font-size:14px; cursor:pointer; box-shadow:0 4px 0 #E0B83C; white-space:nowrap;"><i data-lucide="pencil" style="width:15px;height:15px;"></i>리뷰 쓰기</button>
+        <div style="width:40px; height:40px; border-radius:50%; background:#9FDCEA; color:#2E6E7E; display:flex; align-items:center; justify-content:center; font-family:'Jua',sans-serif; font-size:16px; margin-left:6px; box-shadow:0 3px 0 #7FC0D2;">하</div>
+      </div>
+      <!-- map -->
+      <div style="position:relative; height:480px; background:linear-gradient(#A6D873,#8FC65A);">
+        <!-- sea edge -->
+        <div style="position:absolute; top:0; left:0; right:0; height:50px; background:linear-gradient(#7FD3CB,#A6D873);"></div>
+        <!-- pond -->
+        <div style="position:absolute; bottom:36px; left:46px; width:150px; height:92px; border-radius:50%; background:#7FD3CB; border:6px solid #C9E8B8;"></div>
+        <!-- dashed paths -->
+        <div style="position:absolute; top:70px; bottom:0; left:46%; width:36px; background:#E9DBB6; border-left:3px dashed #CFC093; border-right:3px dashed #CFC093;"></div>
+        <div style="position:absolute; left:0; right:336px; top:54%; height:32px; background:#E9DBB6; border-top:3px dashed #CFC093; border-bottom:3px dashed #CFC093;"></div>
+        <!-- trees -->
+        <div style="position:absolute; top:84px; left:80px;"><div style="width:32px;height:32px;border-radius:50%;background:#5C9A32;box-shadow:0 3px 0 #4A7E28;"></div></div>
+        <div style="position:absolute; top:320px; left:250px;"><div style="width:26px;height:26px;border-radius:50%;background:#5C9A32;box-shadow:0 3px 0 #4A7E28;"></div></div>
+        <div style="position:absolute; top:150px; left:330px;"><div style="width:22px;height:22px;border-radius:50%;background:#5C9A32;box-shadow:0 3px 0 #4A7E28;"></div></div>
+        <!-- region badge -->
+        <div style="position:absolute; top:16px; left:16px; display:flex; align-items:center; gap:7px; height:38px; padding:0 15px; background:#FFFDF4; border:2.5px solid #82C24A; border-radius:999px; box-shadow:0 4px 0 rgba(94,75,46,.1);"><i data-lucide="navigation" style="width:14px;height:14px;color:#82C24A;"></i><span style="font-family:'Jua',sans-serif; font-size:13px; color:#3F6B22;">광화문 마을</span></div>
+        <!-- pins -->
+        <div style="position:absolute; top:320px; left:150px;"><div style="width:26px;height:26px;background:#F4796A;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 7px rgba(0,0,0,.2);"></div></div>
+        <!-- selected -->
+        <div style="position:absolute; top:170px; left:230px; display:flex; flex-direction:column; align-items:center;">
+          <div style="margin-bottom:9px; padding:6px 14px; background:#FFFDF4; border:2.5px solid #82C24A; border-radius:999px; font-family:'Jua',sans-serif; font-size:13px; color:#3F6B22; white-space:nowrap; box-shadow:0 4px 0 rgba(94,75,46,.12);">한일관 ★5.0</div>
+          <div style="width:42px; height:42px; background:#F4796A; border-radius:50% 50% 50% 0; border:4px solid #fff; box-shadow:0 6px 13px rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; animation:floatpin 2.4s ease-in-out infinite;"><i data-lucide="utensils-crossed" style="width:17px;height:17px;color:#fff;transform:rotate(45deg);"></i></div>
+        </div>
+
+        <!-- panel -->
+        <aside style="position:absolute; top:14px; right:14px; bottom:14px; width:322px; background:#FFFDF4; border:2.5px solid #EDE0C4; border-radius:22px; box-shadow:0 12px 28px rgba(94,75,46,.18); padding:20px; overflow-y:auto;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="display:inline-block; padding:4px 12px; border-radius:999px; background:#EDF6DE; color:#4F8A2A; font-size:12px; font-weight:700;">한식 · 한정식</div>
+              <h2 style="margin:11px 0 0; font-family:'Jua',sans-serif; font-size:23px; color:#3F6B22;">한일관 광화문점</h2>
+            </div>
+            <button style="width:32px; height:32px; border:2px solid #EDE0C4; border-radius:12px; background:#fff; color:#9A8763; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
+          </div>
+          <div style="display:flex; align-items:center; gap:7px; margin-top:11px; font-size:12.5px; color:#9A8763;"><i data-lucide="map-pin" style="width:13px;height:13px;"></i>서울 종로구 종로1길 50</div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:13px;">
+            <div style="display:flex; gap:1px;"><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i><i data-lucide="star" style="width:18px;height:18px;color:#F7B500;fill:#F7B500;"></i></div>
+            <span style="font-family:'Jua',sans-serif; font-size:17px; color:#5E4B2E;">5.0</span>
+            <span style="font-size:12px; color:#9A8763;">리뷰 3</span>
+          </div>
+          <div style="display:flex; gap:6px; margin-top:14px; flex-wrap:wrap;">
+            <span style="padding:5px 12px; border-radius:999px; background:#EDF6DE; color:#4F8A2A; font-size:12px; font-weight:600; white-space:nowrap;">룸 예약</span>
+            <span style="padding:5px 12px; border-radius:999px; background:#E5F4F8; color:#2E6E7E; font-size:12px; font-weight:600; white-space:nowrap;">조용한 분위기</span>
+            <span style="padding:5px 12px; border-radius:999px; background:#FCF1D6; color:#9A6B0E; font-size:12px; font-weight:600; white-space:nowrap;">상급자 회식</span>
+          </div>
+          <div style="margin-top:16px; border:2px solid #F0E7D0; border-radius:16px; padding:13px;">
+            <div style="display:flex; align-items:center; gap:9px;">
+              <div style="width:32px; height:32px; border-radius:50%; background:#EDF6DE; color:#4F8A2A; display:flex; align-items:center; justify-content:center; font-family:'Jua',sans-serif; font-size:14px;">김</div>
+              <div style="flex:1;"><div style="font-size:13px; font-weight:700;">김하늘</div><div style="font-size:11px; color:#9A8763;">기업사업개발2팀 · 06.11</div></div>
+              <div style="display:flex; align-items:center; gap:2px;"><i data-lucide="star" style="width:13px;height:13px;color:#F7B500;fill:#F7B500;"></i><span style="font-size:12px; font-weight:700;">5</span></div>
+            </div>
+            <p style="margin:9px 0 0; font-size:13px; color:#5E4B2E; line-height:1.5;">룸이 넓고 조용해서 상급자 회식하기 좋았어요!</p>
+          </div>
+          <button style="width:100%; height:48px; margin-top:14px; border:none; border-radius:15px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:15px; cursor:pointer; box-shadow:0 4px 0 #4F8526;">길 안내 받기</button>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 3 · REVIEW ============ -->
+  <div style="position:relative; margin-top:52px;">
+    <div style="position:absolute; top:-16px; left:24px; z-index:2; display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 16px; border-radius:999px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:14px; box-shadow:0 4px 0 #4F8526;"><i data-lucide="pencil" style="width:15px;height:15px;"></i>리뷰 작성</div>
+    <div style="border-radius:28px; overflow:hidden; border:3px solid #FFFDF4; box-shadow:0 16px 40px rgba(94,75,46,.18); background:#FBF5E4;">
+      <div style="display:flex; align-items:center; gap:14px; height:64px; padding:0 24px; background:#FFFDF4; border-bottom:2px solid #F0E7D0;">
+        <button style="display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 14px; border:2px solid #E7D9B8; border-radius:13px; background:#fff; color:#9A8763; font-family:'Jua',sans-serif; font-size:13px; cursor:pointer;"><i data-lucide="arrow-left" style="width:15px;height:15px;"></i>지도</button>
+        <h2 style="margin:0; font-family:'Jua',sans-serif; font-size:19px; color:#3F6B22;">맛집 기록하기</h2>
+      </div>
+      <div style="padding:36px 24px 40px;">
+        <div style="max-width:540px; margin:0 auto; display:flex; flex-direction:column; gap:20px;">
+          <!-- 1 -->
+          <div style="background:#FFFDF4; border:2px solid #EDE0C4; border-radius:20px; padding:20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;"><span style="width:26px; height:26px; border-radius:50%; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:13px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 0 #4F8526;">1</span><span style="font-family:'Jua',sans-serif; font-size:16px; color:#3F6B22;">어느 가게였나요?</span></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:13px 15px; border:2px solid #82C24A; border-radius:15px; background:#EDF6DE;">
+              <div style="display:flex; align-items:center; gap:11px;">
+                <div style="width:40px; height:40px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 0 #D6C089;"><i data-lucide="utensils" style="width:18px;height:18px;color:#F4796A;"></i></div>
+                <div><div style="font-family:'Jua',sans-serif; font-size:15px; color:#3F6B22;">경성한우국밥 경복궁점</div><div style="font-size:11px; color:#9A8763; margin-top:2px;">한식 · 국밥</div></div>
+              </div>
+              <button style="height:34px; padding:0 14px; border:2px solid #BBD89A; border-radius:12px; background:#fff; color:#4F8A2A; font-family:'Jua',sans-serif; font-size:12px; cursor:pointer;">변경</button>
+            </div>
+          </div>
+          <!-- 2 -->
+          <div style="background:#FFFDF4; border:2px solid #EDE0C4; border-radius:20px; padding:20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;"><span style="width:26px; height:26px; border-radius:50%; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:13px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 0 #4F8526;">2</span><span style="font-family:'Jua',sans-serif; font-size:16px; color:#3F6B22;">별점을 콕!</span></div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <i data-lucide="star" style="width:38px;height:38px;color:#F7B500;fill:#F7B500;"></i>
+              <i data-lucide="star" style="width:38px;height:38px;color:#F7B500;fill:#F7B500;"></i>
+              <i data-lucide="star" style="width:38px;height:38px;color:#F7B500;fill:#F7B500;"></i>
+              <i data-lucide="star" style="width:38px;height:38px;color:#F7B500;fill:#F7B500;"></i>
+              <i data-lucide="star" style="width:38px;height:38px;color:#E4D6B5;"></i>
+              <span style="margin-left:12px; font-family:'Jua',sans-serif; font-size:22px; color:#5E4B2E;">4.0</span>
+              <span style="font-size:13px; color:#9A8763; align-self:center; margin-top:6px;">맛있어요!</span>
+            </div>
+          </div>
+          <!-- 3 -->
+          <div style="background:#FFFDF4; border:2px solid #EDE0C4; border-radius:20px; padding:20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;"><span style="width:26px; height:26px; border-radius:50%; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:13px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 0 #4F8526;">3</span><span style="font-family:'Jua',sans-serif; font-size:16px; color:#3F6B22;">어떤 점이 좋았어요?</span></div>
+            <div style="font-size:12px; color:#9A8763; font-weight:700; margin-bottom:9px;">목적</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+              <span style="padding:8px 15px; border-radius:999px; border:2px solid #E7D9B8; background:#fff; color:#9A8763; font-size:13px; font-weight:600;">팀 점심</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; padding:8px 15px; border-radius:999px; border:2px solid #82C24A; background:#EDF6DE; color:#4F8A2A; font-size:13px; font-weight:700;"><i data-lucide="check" style="width:14px;height:14px;"></i>간단 미팅</span>
+              <span style="padding:8px 15px; border-radius:999px; border:2px solid #E7D9B8; background:#fff; color:#9A8763; font-size:13px; font-weight:600;">저녁 회식</span>
+            </div>
+            <div style="font-size:12px; color:#9A8763; font-weight:700; margin-bottom:9px;">메뉴 · 가격</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <span style="display:inline-flex; align-items:center; gap:6px; padding:8px 15px; border-radius:999px; border:2px solid #82C24A; background:#EDF6DE; color:#4F8A2A; font-size:13px; font-weight:700;"><i data-lucide="check" style="width:14px;height:14px;"></i>가성비</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; padding:8px 15px; border-radius:999px; border:2px solid #82C24A; background:#EDF6DE; color:#4F8A2A; font-size:13px; font-weight:700;"><i data-lucide="check" style="width:14px;height:14px;"></i>점심 특선</span>
+              <span style="padding:8px 15px; border-radius:999px; border:2px solid #E7D9B8; background:#fff; color:#9A8763; font-size:13px; font-weight:600;">가격대 높음</span>
+            </div>
+          </div>
+          <!-- 4 -->
+          <div style="background:#FFFDF4; border:2px solid #EDE0C4; border-radius:20px; padding:20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;"><span style="width:26px; height:26px; border-radius:50%; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:13px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 0 #4F8526;">4</span><span style="font-family:'Jua',sans-serif; font-size:16px; color:#3F6B22;">한마디 남기기</span><span style="font-size:12px; color:#9A8763;">선택</span></div>
+            <div style="border:2px solid #E7D9B8; border-radius:15px; padding:14px; background:#fff;">
+              <p style="margin:0; font-size:14.5px; color:#5E4B2E; line-height:1.6;">점심 특선이 가성비 좋아요. 빨리 나와서 회의 전에 딱입니다!</p>
+              <div style="display:flex; justify-content:flex-end; margin-top:8px;"><span style="font-size:11px; color:#C0B393;">32 / 300</span></div>
+            </div>
+          </div>
+          <button style="height:56px; border:none; border-radius:17px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:18px; cursor:pointer; box-shadow:0 5px 0 #4F8526; transition:all .12s;" style-hover="transform:translateY(2px); box-shadow:0 3px 0 #4F8526;">섬에 기록하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 4 · CHATBOT ============ -->
+  <div style="position:relative; margin-top:52px;">
+    <div style="position:absolute; top:-16px; left:24px; z-index:2; display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 16px; border-radius:999px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:14px; box-shadow:0 4px 0 #4F8526;"><i data-lucide="sparkles" style="width:15px;height:15px;"></i>AI 추천</div>
+    <div style="border-radius:28px; overflow:hidden; border:3px solid #FFFDF4; box-shadow:0 16px 40px rgba(94,75,46,.18); background:#FFFDF4;">
+      <div style="display:flex; height:600px;">
+        <!-- map left -->
+        <div style="flex:1; position:relative; background:linear-gradient(#A6D873,#8FC65A);">
+          <div style="position:absolute; top:0; left:0; right:0; height:46px; background:linear-gradient(#7FD3CB,#A6D873);"></div>
+          <div style="position:absolute; top:60px; bottom:0; left:42%; width:34px; background:#E9DBB6; border-left:3px dashed #CFC093; border-right:3px dashed #CFC093;"></div>
+          <div style="position:absolute; inset:0; background:rgba(94,75,46,.08);"></div>
+          <div style="position:absolute; top:120px; left:90px;"><div style="width:28px;height:28px;border-radius:50%;background:#5C9A32;box-shadow:0 3px 0 #4A7E28;"></div></div>
+          <div style="position:absolute; top:230px; left:180px;"><div style="width:22px;height:22px;background:#E5A99B;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;"></div></div>
+          <!-- recommended pin -->
+          <div style="position:absolute; top:270px; left:250px; display:flex; flex-direction:column; align-items:center;">
+            <div style="margin-bottom:8px; padding:5px 12px; background:#82C24A; color:#fff; border-radius:999px; font-family:'Jua',sans-serif; font-size:12px; white-space:nowrap; box-shadow:0 4px 0 #4F8526;">요정 추천</div>
+            <div style="width:36px; height:36px; background:#82C24A; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:3.5px solid #fff; box-shadow:0 6px 14px rgba(79,133,38,.4); display:flex; align-items:center; justify-content:center; animation:floatpin 2.4s ease-in-out infinite;"><i data-lucide="sparkles" style="width:15px;height:15px;color:#fff;transform:rotate(45deg);"></i></div>
+          </div>
+        </div>
+        <!-- chat -->
+        <aside style="width:392px; background:#FBF5E4; display:flex; flex-direction:column; border-left:2px solid #EDE0C4;">
+          <div style="display:flex; align-items:center; gap:12px; padding:18px 20px; background:#FFFDF4; border-bottom:2px solid #F0E7D0;">
+            <div style="width:44px; height:44px; border-radius:50%; background:#82C24A; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 0 #4F8526; animation:bob 3s ease-in-out infinite;"><i data-lucide="sparkles" style="width:21px;height:21px;color:#fff;"></i></div>
+            <div style="flex:1;">
+              <div style="font-family:'Jua',sans-serif; font-size:16px; color:#3F6B22; display:flex; align-items:center; gap:7px;">런치 요정<span style="width:8px; height:8px; border-radius:50%; background:#82C24A;"></span></div>
+              <div style="font-size:11px; color:#9A8763;">340개 동료 리뷰로 추천해요</div>
+            </div>
+            <button style="width:32px; height:32px; border:2px solid #EDE0C4; border-radius:11px; background:#fff; color:#9A8763; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i data-lucide="x" style="width:15px;height:15px;"></i></button>
+          </div>
+          <div style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px;">
+            <!-- greeting -->
+            <div style="display:flex; gap:9px; align-items:flex-start;">
+              <div style="width:30px; height:30px; border-radius:50%; background:#82C24A; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 2px 0 #4F8526;"><i data-lucide="sparkles" style="width:14px;height:14px;color:#fff;"></i></div>
+              <div style="max-width:80%; padding:12px 15px; border-radius:6px 18px 18px 18px; background:#fff; border:2px solid #EDE0C4; color:#5E4B2E; font-size:14px; line-height:1.5;">안녕하세요 하늘 주민님! 🌿<br/>오늘은 어떤 점심을 찾으세요?</div>
+            </div>
+            <!-- suggestions -->
+            <div style="display:flex; gap:8px; flex-wrap:wrap; padding-left:39px;">
+              <span style="padding:8px 14px; border-radius:999px; background:#fff; border:2px solid #E7D9B8; color:#5E4B2E; font-size:13px; font-weight:600; cursor:pointer;">가성비 점심</span>
+              <span style="padding:8px 14px; border-radius:999px; background:#fff; border:2px solid #E7D9B8; color:#5E4B2E; font-size:13px; font-weight:600; cursor:pointer;">조용한 회식</span>
+              <span style="padding:8px 14px; border-radius:999px; background:#fff; border:2px solid #E7D9B8; color:#5E4B2E; font-size:13px; font-weight:600; cursor:pointer;">빨리 나오는 곳</span>
+            </div>
+            <!-- user -->
+            <div style="align-self:flex-end; max-width:80%; padding:12px 15px; border-radius:18px 18px 6px 18px; background:#82C24A; color:#fff; font-size:14px; line-height:1.5; box-shadow:0 3px 0 #4F8526;">가성비 좋은 점심 추천해줘</div>
+            <!-- reply + card -->
+            <div style="display:flex; gap:9px; align-items:flex-start;">
+              <div style="width:30px; height:30px; border-radius:50%; background:#82C24A; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 2px 0 #4F8526;"><i data-lucide="sparkles" style="width:14px;height:14px;color:#fff;"></i></div>
+              <div style="max-width:84%;">
+                <div style="padding:12px 15px; border-radius:6px 18px 18px 18px; background:#fff; border:2px solid #EDE0C4; color:#5E4B2E; font-size:14px; line-height:1.5;">경성한우국밥 경복궁점이 딱이에요! 점심 특선이 빨리 나와서 회의 전에 좋아요~</div>
+                <div style="margin-top:9px; border:2px solid #EDE0C4; border-radius:16px; overflow:hidden; background:#fff;">
+                  <div style="padding:13px 15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                      <div><div style="font-family:'Jua',sans-serif; font-size:15px; color:#3F6B22;">경성한우국밥 경복궁점</div><div style="font-size:11px; color:#9A8763; margin-top:2px;">한식 · 국밥</div></div>
+                      <div style="display:inline-flex; align-items:center; gap:3px; padding:3px 9px; background:#FCF1D6; border-radius:9px;"><i data-lucide="star" style="width:12px;height:12px;color:#F7B500;fill:#F7B500;"></i><span style="font-size:12px; font-weight:700; color:#9A6B0E;">4.0</span></div>
+                    </div>
+                    <div style="display:flex; gap:6px; margin-top:10px;"><span style="padding:4px 11px; border-radius:999px; background:#EDF6DE; color:#4F8A2A; font-size:11px; font-weight:600;">가성비</span><span style="padding:4px 11px; border-radius:999px; background:#EDF6DE; color:#4F8A2A; font-size:11px; font-weight:600;">점심 특선</span></div>
+                    <button style="display:flex; align-items:center; justify-content:center; gap:7px; width:100%; height:40px; margin-top:13px; border:none; border-radius:13px; background:#82C24A; color:#fff; font-family:'Jua',sans-serif; font-size:13px; cursor:pointer; box-shadow:0 3px 0 #4F8526;"><i data-lucide="map-pin" style="width:15px;height:15px;"></i>지도에서 보기</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:16px 20px; background:#FFFDF4; border-top:2px solid #F0E7D0;">
+            <div style="display:flex; align-items:center; gap:9px; padding:6px 6px 6px 16px; border:2px solid #E7D9B8; border-radius:16px; background:#fff;">
+              <span style="flex:1; font-size:14px; color:#B6A982;">메시지를 입력하세요</span>
+              <button style="width:42px; height:42px; border:none; border-radius:13px; background:#82C24A; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 0 #4F8526;"><i data-lucide="arrow-up" style="width:19px;height:19px;"></i></button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:54px; font-family:'Jua',sans-serif; font-size:13px; color:#9A8763;">🌿 비즈런치랩 · 광화문 점심 무인도</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { this.paintIcons(); }
+  componentDidUpdate() { this.paintIcons(); }
+  paintIcons() {
+    const go = () => {
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons();
+      } else {
+        setTimeout(go, 120);
+      }
+    };
+    go();
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
