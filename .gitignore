@@ -33,3 +33,5 @@ Thumbs.db
 *.log
 npm-debug.log*
 frontend/public/landing-hero.png
+frontend/public/landing-bg.jpg
+frontend/public/landing-bg.png

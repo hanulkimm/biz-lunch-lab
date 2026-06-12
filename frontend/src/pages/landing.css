@@ -1,147 +1,39 @@
 @import url("https://fonts.googleapis.com/css2?family=Jua&display=swap");
 
-/* ─── 동물의 숲 풍경 랜딩 ─── */
+/* ─── 배경 이미지 + 오른쪽 로그인 카드 ─── */
 .lp {
-  position: relative;
   min-height: 100vh;
-  overflow: hidden;
-  background: linear-gradient(180deg, #8ed4f0 0%, #c3ebfa 48%, #cdeffc 55%, #8fcf63 55.2%, #6db344 100%);
-  font-family: Pretendard, system-ui, sans-serif;
-}
-
-/* 해 */
-.lp-sun {
-  position: absolute;
-  top: 48px;
-  right: 90px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: #fff3b0;
-  box-shadow: 0 0 60px 25px rgba(255, 243, 176, 0.7);
-}
-
-/* 구름 */
-.lp-cloud {
-  position: absolute;
-  background: #fff;
-  border-radius: 60px;
-  opacity: 0.95;
-  animation: lp-drift 60s linear infinite;
-}
-.lp-cloud::before,
-.lp-cloud::after {
-  content: "";
-  position: absolute;
-  background: #fff;
-  border-radius: 50%;
-}
-.lp-cloud.c1 { top: 70px; left: 8%; width: 140px; height: 44px; }
-.lp-cloud.c1::before { width: 60px; height: 60px; top: -28px; left: 22px; }
-.lp-cloud.c1::after { width: 44px; height: 44px; top: -18px; left: 70px; }
-.lp-cloud.c2 { top: 260px; left: 76%; width: 100px; height: 34px; animation-delay: -20s; }
-.lp-cloud.c2::before { width: 44px; height: 44px; top: -20px; left: 16px; }
-.lp-cloud.c2::after { width: 32px; height: 32px; top: -12px; left: 52px; }
-.lp-cloud.c3 { top: 40px; left: 64%; width: 120px; height: 38px; animation-delay: -40s; }
-.lp-cloud.c3::before { width: 52px; height: 52px; top: -24px; left: 20px; }
-.lp-cloud.c3::after { width: 38px; height: 38px; top: -15px; left: 62px; }
-
-@keyframes lp-drift {
-  from { transform: translateX(0); }
-  50% { transform: translateX(60px); }
-  to { transform: translateX(0); }
-}
-
-/* 언덕 (지평선 둥근 능선) */
-.lp-hill {
-  position: absolute;
-  border-radius: 50%;
-  background: #a4dc7c;
-}
-.lp-hill.h1 { width: 900px; height: 320px; left: -200px; top: calc(55% - 110px); }
-.lp-hill.h2 { width: 760px; height: 280px; right: -160px; top: calc(55% - 80px); background: #93d168; }
-
-/* 풍경 장식 (나무·텐트) */
-.lp-deco {
-  position: absolute;
-  z-index: 1;
-}
-
-/* 본문 레이아웃 */
-.lp-main {
-  position: relative;
-  z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 72px;
-  min-height: 100vh;
-  padding: 48px 32px 90px;
-  flex-wrap: wrap;
-}
-
-/* 로고 */
-.lp-logo { text-align: center; }
-.lp-tag {
-  display: inline-block;
-  font-family: "Jua", sans-serif;
-  font-size: 26px;
-  color: #fff;
-  background: #62b8e8;
-  padding: 6px 22px;
-  border-radius: 999px;
-  transform: rotate(-3deg);
-  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
-}
-.lp-bubbles {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin: 18px 0 16px;
-}
-.lp-bubbles span {
-  font-family: "Jua", sans-serif;
-  font-size: 52px;
-  line-height: 1;
-  color: #fff;
-  padding: 18px 16px 14px;
-  border-radius: 24px;
-  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1);
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
-}
-.lp-bubbles .b1 { background: #6db344; transform: rotate(-5deg); }
-.lp-bubbles .b2 { background: #f08fb1; transform: rotate(3deg); }
-.lp-bubbles .b3 { background: #5fb7e8; transform: rotate(-2deg); border-radius: 50% 50% 45% 55%; }
-.lp-bubbles .b4 { background: #f5a623; transform: rotate(4deg); }
-.lp-bubbles .b5 { background: #2fa98c; transform: rotate(-3deg); }
-.lp-sub {
-  font-family: "Jua", sans-serif;
-  font-size: 17px;
-  color: #3c6e2f;
-  margin: 0;
-  background: rgba(255, 255, 255, 0.75);
-  display: inline-block;
-  padding: 6px 18px;
-  border-radius: 999px;
+  justify-content: flex-end;
+  padding: 32px 7% 32px 32px;
+  font-family: Pretendard, system-ui, sans-serif;
+  /* 이미지가 아직 없을 때 보일 폴백 배경(하늘→잔디) */
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.12)),
+    url("/landing-bg.jpg") center / cover no-repeat,
+    linear-gradient(180deg, #8ed4f0 0%, #c3ebfa 55%, #8fcf63 55.2%, #6db344 100%);
 }
 
 /* 로그인 카드 — 동숲 대화창 느낌 */
 .lp-card {
-  width: 360px;
-  background: #fdf6dd;
+  width: 370px;
+  max-width: 100%;
+  background: #fdf6ddf5;
   border-radius: 28px;
-  padding: 28px 28px 24px;
-  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.1), 0 16px 40px rgba(60, 90, 30, 0.25);
+  padding: 30px 30px 26px;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.12), 0 20px 50px rgba(40, 70, 20, 0.35);
   display: flex;
   flex-direction: column;
   border: 3px solid #fff;
 }
+
 .lp-card-title {
   font-family: "Jua", sans-serif;
-  font-size: 22px;
+  font-size: 24px;
   color: #7a5c3e;
   text-align: center;
-  margin: 0 0 4px;
+  margin: 0 0 2px;
 }
 .lp-card-sub {
   text-align: center;
@@ -149,6 +41,7 @@
   color: #b09a7c;
   margin: 0 0 14px;
 }
+
 .lp-card label {
   font-size: 13px;
   font-weight: 700;
@@ -170,6 +63,7 @@
 .lp-card select:focus,
 .lp-card input:focus { border-color: #6db344; }
 .lp-card select:disabled { background: #f3ecd7; color: #c0b291; }
+
 .lp-card button {
   margin-top: 20px;
   height: 50px;
@@ -186,6 +80,7 @@
 .lp-card button:hover { background: #79c150; }
 .lp-card button:active { transform: translateY(2px); border-bottom-width: 2px; }
 .lp-card button:disabled { background: #b5d49e; border-bottom-color: #93b37e; }
+
 .lp-error {
   margin: 12px 0 0;
   color: #d9480f;
@@ -202,21 +97,3 @@
   color: #8a6d4d;
 }
 .lp-foot a { color: #3f9460; font-weight: 700; text-decoration: none; }
-
-/* 바닥 잔디 스트립 (스캘럽) */
-.lp-grass {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 46px;
-  z-index: 1;
-  background: radial-gradient(circle at 12px -6px, #4e8c2b 22px, transparent 23px) repeat-x;
-  background-size: 44px 46px;
-}
-.lp-grass::after {
-  content: "";
-  position: absolute;
-  inset: 24px 0 0;
-  background: #4e8c2b;
-}
