@@ -1,10 +1,10 @@
-// 랜딩 + 로그인 합체 — 동물의 숲 배경 이미지 위 오른쪽 로그인 카드.
+// 로그인 — 영상 배경 위 동물의 숲 톤 카드(우측). 주민 입도 수속.
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getDepartments, getTeams, login } from "../api/auth";
 import { useAuthStore } from "../store/authStore";
-import "./landing.css";
+import "./login.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -49,10 +49,18 @@ export default function Login() {
   };
 
   return (
-    <div className="lp">
-      <form className="lp-card" onSubmit={onSubmit}>
-        <h2 className="lp-card-title">🍱 Biz Lunch Lab</h2>
-        <p className="lp-card-sub">기업사업본부 광화문 맛집 탐험 &amp; 랜덤 런치</p>
+    <div className="login-page">
+      <video className="login-video" src="/login-bg.mp4" autoPlay muted loop playsInline />
+      <div className="login-scrim" />
+
+      <form className="login-card" onSubmit={onSubmit}>
+        <div className="login-brand">
+          <span className="leaf-logo" aria-hidden="true" />
+          <span>비즈런치랩</span>
+        </div>
+
+        <h1 className="login-title">주민 입도 수속</h1>
+        <p className="login-sub">담당·팀·이름과 PIN 4자리로 마을에 들어와요.</p>
 
         <label>담당</label>
         <select value={deptId} onChange={(e) => setDeptId(e.target.value)}>
@@ -75,6 +83,7 @@ export default function Login() {
 
         <label>PIN (4자리)</label>
         <input
+          className="pin"
           type="password"
           inputMode="numeric"
           maxLength={4}
@@ -83,14 +92,14 @@ export default function Login() {
           placeholder="••••"
         />
 
-        {error && <p className="lp-error">{error}</p>}
+        {error && <p className="login-error">{error}</p>}
 
-        <button type="submit" disabled={submitting}>
-          {submitting ? "입장 중…" : "입장하기"}
+        <button type="submit" className="btn-leaf" disabled={submitting}>
+          {submitting ? "입도 중…" : "입도하기"}
         </button>
 
-        <p className="lp-foot">
-          처음이신가요? <Link to="/signup">주민등록 하러 가기</Link>
+        <p className="login-foot">
+          아직 주민이 아니신가요? <Link to="/signup">주민 등록</Link>
         </p>
       </form>
     </div>

@@ -1,0 +1,177 @@
+/* ─── 로그인 (영상 배경 + 우측 동물의 숲 카드) ─── */
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 32px 7% 32px 32px;
+}
+
+.login-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.login-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(58, 78, 38, 0) 40%,
+    rgba(58, 78, 38, 0.18) 100%
+  );
+}
+
+/* 카드 */
+.login-card {
+  position: relative;
+  z-index: 2;
+  width: 380px;
+  max-width: 100%;
+  background: var(--cream-2);
+  border: 3px solid var(--cream);
+  border-radius: 28px;
+  padding: 30px 30px 26px;
+  box-shadow: 0 12px 0 rgba(94, 75, 46, 0.12), 0 22px 50px rgba(40, 70, 20, 0.32);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 브랜드 */
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.login-brand .leaf-logo {
+  position: relative;
+  width: 38px;
+  height: 38px;
+}
+.login-brand .leaf-logo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--leaf);
+  border-radius: 50% 8% 50% 50%;
+  transform: rotate(45deg);
+  box-shadow: 0 3px 0 var(--leaf-dark);
+}
+.login-brand .leaf-logo::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  left: 17px;
+  width: 2.5px;
+  height: 18px;
+  background: var(--cream);
+  border-radius: 2px;
+  transform: rotate(45deg);
+  transform-origin: top;
+}
+.login-brand span {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--ink-green);
+}
+
+.login-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--ink-green);
+  margin: 0;
+}
+.login-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 5px 0 18px;
+}
+
+.login-card label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--ink);
+  margin: 12px 0 6px;
+}
+.login-card select,
+.login-card input {
+  height: 48px;
+  padding: 0 15px;
+  border: 2px solid var(--line);
+  border-radius: 15px;
+  font-size: 15px;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+  font-family: var(--font-sans);
+  transition: border-color 0.12s ease;
+}
+.login-card select:focus,
+.login-card input:focus {
+  border-color: var(--leaf);
+}
+.login-card select:disabled {
+  background: #f3ecd7;
+  color: #c0b291;
+}
+.login-card input.pin {
+  letter-spacing: 0.4em;
+  font-size: 18px;
+}
+
+.login-card .btn-leaf {
+  margin-top: 22px;
+  justify-content: center;
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 16px;
+  background: var(--leaf);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--leaf-dark);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.login-card .btn-leaf:hover {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 var(--leaf-dark);
+}
+.login-card .btn-leaf:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--leaf-dark);
+}
+.login-card .btn-leaf:disabled {
+  background: #b5d49e;
+  box-shadow: 0 5px 0 #93b37e;
+  cursor: not-allowed;
+}
+
+.login-error {
+  margin: 12px 0 0;
+  color: var(--coral-dark);
+  font-size: 13px;
+  text-align: center;
+  background: #fdece8;
+  border-radius: 12px;
+  padding: 9px;
+}
+.login-foot {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+.login-foot a {
+  color: var(--leaf);
+  font-family: var(--font-display);
+  text-decoration: none;
+}
