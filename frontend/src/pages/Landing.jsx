@@ -8,15 +8,15 @@ export default function Landing() {
     <div className="home">
       <video
         className="home-video"
-        src="/landing-bg-video.mp4"
+        src="/main-bg.mp4"
         autoPlay
         muted
         loop
         playsInline
       />
-      <div className="home-scrim" />
+      <div className="home-scrim reveal" />
 
-      <div className="home-content">
+      <div className="home-content reveal">
         <div className="home-brand">
           <span className="leaf-logo" aria-hidden="true" />
           <span>비즈런치랩</span>
@@ -45,7 +45,7 @@ export default function Landing() {
         </div>
       </div>
 
-      <div className="home-foot">🍱 비즈런치랩 · 광화문 점심 무인도</div>
+      <div className="home-foot reveal">🍱 비즈런치랩 · 광화문 점심 무인도</div>
     </div>
   );
 }

@@ -7,6 +7,25 @@
   align-items: center;
 }
 
+/* 첫 2초는 영상만 → 이후 문구·스크림 페이드인 */
+.reveal {
+  animation: home-reveal 1s ease 2s both;
+}
+.home-content.reveal {
+  animation: home-reveal-up 1s ease 2s both;
+}
+@keyframes home-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes home-reveal-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; }
+}
+
 .home-video {
   position: absolute;
   inset: 0;
