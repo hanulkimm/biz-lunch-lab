@@ -1,9 +1,10 @@
-// 메인 — 동물의 숲 게임 카드: 리본 배너 + (AC 톤 지도 ‖ 또리 챗봇) + 하단 네비.
+// 메인 — 상단 헤더 + 동물의 숲 게임 카드(리본 + 지도, AI 탭으로 또리 챗봇 토글).
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { LogOut, MapPin, Pencil } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { MapPin } from "lucide-react";
 
 import { getRestaurants } from "../api/restaurants";
+import AppHeader from "../components/common/AppHeader";
 import ChatPanel from "../components/ChatPanel/ChatPanel";
 import KakaoMap from "../components/Map/KakaoMap";
 import RestaurantPanel from "../components/RestaurantPanel/RestaurantPanel";
@@ -11,10 +12,11 @@ import { useAuthStore } from "../store/authStore";
 import "./map.css";
 
 export default function Map() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  const location = useLocation();
+  const { user } = useAuthStore();
   const [restaurants, setRestaurants] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [chatOpen, setChatOpen] = useState(!!location.state?.openChat);
 
   useEffect(() => {
     getRestaurants().then(setRestaurants).catch(() => {});
@@ -22,6 +24,8 @@ export default function Map() {
 
   return (
     <div className="gw-page">
+      <AppHeader active="map" aiOpen={chatOpen} onAi={() => setChatOpen(true)} />
+
       <div className="gw-wrap">
         <div className="game-card">
           <div className="gc-sea" />
@@ -49,22 +53,13 @@ export default function Map() {
               </div>
             </div>
 
-            <ChatPanel userName={user?.name} onFocusRestaurant={(id) => setSelectedId(id)} />
-          </div>
-
-          <div className="gc-hint">
-            <div className="pills">
-              <button className="hint-pill review" onClick={() => navigate("/review/write")}>
-                <Pencil size={15} /> 리뷰 쓰기
-              </button>
-              <button className="hint-pill" onClick={logout}>
-                <LogOut size={15} /> 로그아웃
-              </button>
-            </div>
-            <div className="gc-who">
-              {user?.name}
-              {user?.is_admin && <span className="gc-admin">관리자</span>}
-            </div>
+            {chatOpen && (
+              <ChatPanel
+                userName={user?.name}
+                onClose={() => setChatOpen(false)}
+                onFocusRestaurant={(id) => setSelectedId(id)}
+              />
+            )}
           </div>
         </div>
 

@@ -3,8 +3,11 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
+import Lunch from "./pages/Lunch";
 import Map from "./pages/Map";
+import MyPage from "./pages/MyPage";
 import ReviewWrite from "./pages/ReviewWrite";
+import Roulette from "./pages/Roulette";
 import Signup from "./pages/Signup";
 
 export default function App() {
@@ -30,6 +33,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/roulette" element={<ProtectedRoute><Roulette /></ProtectedRoute>} />
+        <Route path="/lunch" element={<ProtectedRoute><Lunch /></ProtectedRoute>} />
+        <Route path="/mypage" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

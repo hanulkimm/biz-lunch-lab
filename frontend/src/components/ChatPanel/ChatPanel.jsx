@@ -1,6 +1,6 @@
 // AI 맛집 추천 챗봇 "또리" — 지도 옆 상시 패널. 대화는 세션 동안만 유지.
 import { useRef, useState } from "react";
-import { ArrowUp, MapPin } from "lucide-react";
+import { ArrowUp, MapPin, Minus } from "lucide-react";
 
 import { sendChat } from "../../api/chat";
 
@@ -14,7 +14,7 @@ function Avatar({ small }) {
   );
 }
 
-export default function ChatPanel({ userName, onFocusRestaurant }) {
+export default function ChatPanel({ userName, onFocusRestaurant, onClose }) {
   const [messages, setMessages] = useState([]); // {role, content, restaurants?}
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -58,6 +58,9 @@ export default function ChatPanel({ userName, onFocusRestaurant }) {
           <div className="cp-title">또리<span className="dot" /></div>
           <div className="cp-status">광화문 일대 동료 리뷰로 추천해요</div>
         </div>
+        <button className="panel-close" onClick={onClose} aria-label="채팅 닫기">
+          <Minus size={15} />
+        </button>
       </div>
 
       <div className="cp-list" ref={listRef}>
