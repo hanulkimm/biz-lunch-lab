@@ -62,10 +62,6 @@ export default function Map() {
             )}
           </div>
         </div>
-
-        <p className="gw-caption">
-          실제 카카오 지도 위에 색감 보정 · 따뜻한 워시 · 말랑 핀 · 잎새 소품을 얹어 동물의 숲 톤으로 맞췄어요.
-        </p>
       </div>
     </div>
   );
