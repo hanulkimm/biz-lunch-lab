@@ -15,7 +15,7 @@ export default function Map() {
   const location = useLocation();
   const { user } = useAuthStore();
   const [restaurants, setRestaurants] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState(location.state?.focusId || null);
   const [chatOpen, setChatOpen] = useState(!!location.state?.openChat);
 
   useEffect(() => {

@@ -11,3 +11,6 @@ export const getRestaurants = () =>
 
 export const getRestaurant = (id) =>
   client.get(`/api/restaurants/${id}`).then((r) => r.data);
+
+export const getRoulette = (category) =>
+  client.get("/api/restaurants/roulette", { params: { category } }).then((r) => r.data);
