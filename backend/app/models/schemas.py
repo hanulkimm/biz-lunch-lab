@@ -83,6 +83,28 @@ class ReviewUpdate(BaseModel):
     tag_ids: list[str] = []
 
 
+# ─── 랜덤 런치 ───
+class LunchRoundCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=100)
+    deadline: str | None = None  # ISO datetime, 선택
+
+
+class LunchRoundStatus(BaseModel):
+    status: str = Field(pattern=r"^(open|closed|matched)$")
+
+
+class LunchApply(BaseModel):
+    round_id: str
+    food_preferences: list[str] = []          # 예: ["한식", "고기"]
+    food_exclusions: str | None = None         # 못 먹는/기피 음식 자유 입력
+    atmosphere_pref: str = "상관없음"          # 조용한 / 활기찬 / 상관없음
+
+
+# ─── 관리자 ───
+class PinReset(BaseModel):
+    pin: str = Field(pattern=r"^\d{4}$", description="새 4자리 PIN")
+
+
 # ─── 챗봇 ───
 class ChatMessage(BaseModel):
     role: str  # "user" | "assistant"

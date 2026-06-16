@@ -1,0 +1,159 @@
+.adm {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.adm-head h1 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--ink-green);
+  margin: 0;
+}
+.adm-head p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 8px 0 24px;
+}
+
+.adm-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 60px 0;
+  color: var(--muted);
+}
+.spin { animation: adm-spin 0.9s linear infinite; }
+@keyframes adm-spin { to { transform: rotate(360deg); } }
+
+/* ─── 카드 ─── */
+.adm-card {
+  background: var(--cream);
+  border: 3px solid #fff;
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: inset 0 0 0 2px #f0e7d0, 0 12px 28px rgba(46, 110, 98, 0.12);
+}
+.adm-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  color: var(--ink-green);
+  font-size: 17px;
+  margin-bottom: 16px;
+}
+
+/* ─── 인풋 / 버튼 ─── */
+.adm-input {
+  height: 44px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 14px;
+  background: #fff;
+  color: var(--ink);
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.adm-input:focus { outline: none; border-color: var(--leaf); }
+.adm-input.pin { width: 96px; text-align: center; letter-spacing: 3px; }
+
+.adm-new {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.adm-new .adm-input { flex: 1; }
+.adm-new .btn-leaf { white-space: nowrap; height: 44px; }
+
+.adm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 2px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 11px;
+  padding: 8px 13px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.adm-btn.primary { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+.adm-btn:disabled { opacity: 0.5; cursor: default; }
+
+.adm-empty { color: var(--muted); font-size: 14px; text-align: center; padding: 12px 0; }
+
+/* ─── 회차 리스트 ─── */
+.adm-rounds,
+.adm-users {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.adm-round,
+.adm-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.adm-round-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.adm-round-title {
+  font-family: var(--font-display);
+  color: var(--ink-green);
+  font-size: 15px;
+}
+.adm-round-count { color: var(--muted); font-size: 13px; }
+.adm-round-actions { display: flex; gap: 7px; }
+
+.adm-badge {
+  font-family: var(--font-display);
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.adm-badge.st-open { background: var(--leaf-soft); color: var(--ink-green-2); }
+.adm-badge.st-closed { background: #f6ead0; color: #b06a2c; }
+.adm-badge.st-matched { background: #fbe0da; color: #c2533f; }
+
+/* ─── 사용자 리스트 ─── */
+.adm-user-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.adm-user-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-size: 15px;
+}
+.adm-admin-tag {
+  font-size: 11px;
+  background: var(--leaf);
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+.adm-user-org { color: var(--muted); font-size: 12px; }
+.adm-user-actions { display: flex; align-items: center; gap: 10px; }
+.adm-reset { display: flex; align-items: center; gap: 7px; }
+.adm-reset .adm-input { height: 38px; }
+.adm-reset-ok { color: var(--ink-green-2); font-size: 13px; font-weight: 700; }
