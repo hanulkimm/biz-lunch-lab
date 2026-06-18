@@ -56,7 +56,14 @@ export default function Login() {
         <div className="login-frame">
           <div className="login-sea" />
           <div className="login-screen">
-            <img className="login-bg" src="/login_bg.png" alt="" />
+            <video
+              className="login-bg"
+              src="/login-bg.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
             <div className="login-scrim" />
 
             <form className="login-card" onSubmit={onSubmit}>
