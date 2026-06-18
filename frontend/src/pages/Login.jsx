@@ -52,10 +52,14 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <img className="login-bg" src="/login_bg.png" alt="" />
-      <div className="login-scrim" />
+      <div className="login-wrap">
+        <div className="login-frame">
+          <div className="login-sea" />
+          <div className="login-screen">
+            <img className="login-bg" src="/login_bg.png" alt="" />
+            <div className="login-scrim" />
 
-      <form className="login-card" onSubmit={onSubmit}>
+            <form className="login-card" onSubmit={onSubmit}>
         <div className="login-brand">
           <img className="brand-logo" src="/kt_logo.png" alt="KT" />
           <span>BizLunchLab</span>
@@ -104,7 +108,10 @@ export default function Login() {
         <p className="login-foot">
           아직 주민이 아니신가요? <Link to="/signup">주민 등록</Link>
         </p>
-      </form>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
