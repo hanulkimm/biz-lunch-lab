@@ -21,15 +21,25 @@ export default function Signup() {
   const [pinConfirm, setPinConfirm] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [loadingDepts, setLoadingDepts] = useState(true);
+  const [loadingTeams, setLoadingTeams] = useState(false);
 
   useEffect(() => {
-    getDepartments().then(setDepartments).catch(() => setError("담당 목록을 불러오지 못했습니다."));
+    getDepartments()
+      .then(setDepartments)
+      .catch(() => setError("담당 목록을 불러오지 못했습니다. 새로고침 해주세요."))
+      .finally(() => setLoadingDepts(false));
   }, []);
 
   useEffect(() => {
     setTeamId("");
     setTeams([]);
-    if (deptId) getTeams(deptId).then(setTeams).catch(() => {});
+    if (!deptId) return;
+    setLoadingTeams(true);
+    getTeams(deptId)
+      .then(setTeams)
+      .catch(() => {})
+      .finally(() => setLoadingTeams(false));
   }, [deptId]);
 
   const onSubmit = async (e) => {
@@ -84,7 +94,8 @@ export default function Signup() {
               <SelectField
                 value={deptId}
                 onChange={setDeptId}
-                placeholder="담당 선택"
+                placeholder={loadingDepts ? "서버 깨우는 중…" : "담당 선택"}
+                disabled={loadingDepts}
                 options={departments.map((d) => ({ value: d.id, label: d.name }))}
               />
 
@@ -92,8 +103,8 @@ export default function Signup() {
               <SelectField
                 value={teamId}
                 onChange={setTeamId}
-                placeholder="팀 선택"
-                disabled={!deptId}
+                placeholder={loadingTeams ? "팀 불러오는 중…" : "팀 선택"}
+                disabled={!deptId || loadingTeams}
                 options={teams.map((t) => ({ value: t.id, label: t.name }))}
               />
 
