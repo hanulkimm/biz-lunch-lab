@@ -155,15 +155,15 @@
 
 /* 다크 모드 — 노란 버튼/뱃지를 코랄/테라코타로, 흰 버튼은 어두운 톤으로 */
 :root[data-theme="dark"] .ah-review {
-  background: #df7a64;
-  color: #2a1410;
-  box-shadow: 0 4px 0 #a8513f;
+  background: #6fae43;
+  color: #fff;
+  box-shadow: 0 4px 0 #45762a;
 }
-:root[data-theme="dark"] .ah-review:hover { box-shadow: 0 2px 0 #a8513f; }
+:root[data-theme="dark"] .ah-review:hover { box-shadow: 0 2px 0 #45762a; }
 :root[data-theme="dark"] .ah-admin,
 :root[data-theme="dark"] .gc-admin {
-  background: #c25f4d;
-  color: #fdeae4;
+  background: #4f8526;
+  color: #eaf6dd;
 }
 :root[data-theme="dark"] .ah-tab:hover { background: #2a332f; }
 :root[data-theme="dark"] .ah-avatar {

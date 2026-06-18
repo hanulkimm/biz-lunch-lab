@@ -38,9 +38,9 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
 
         <nav className="ah-nav">
           {tab("map", "지도", MapPin, handleMap, active === "map" && !aiOpen)}
-          {tab("ai", "AI", Sparkles, handleAi, aiOpen)}
+          {tab("ai", "AI챗봇", Sparkles, handleAi, aiOpen)}
           {tab("roulette", "룰렛", Dices, () => navigate("/roulette"), active === "roulette")}
-          {tab("lunch", "런치", UsersRound, () => navigate("/lunch"), active === "lunch")}
+          {tab("lunch", "랜덤런치", UsersRound, () => navigate("/lunch"), active === "lunch")}
           {tab("mypage", "마이페이지", UserRound, () => navigate("/mypage"), active === "mypage")}
           {user?.is_admin &&
             tab("admin", "관리자", Settings, () => navigate("/admin"), active === "admin")}
