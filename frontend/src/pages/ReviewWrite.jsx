@@ -1,19 +1,22 @@
 // 리뷰 작성 — 동물의 숲 단계 카드: 가게 선택 → 별점 → 태그 → 한마디.
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Star, Utensils } from "lucide-react";
 
 import { searchKakao } from "../api/restaurants";
 import { createReview, getTags } from "../api/reviews";
+import Spinner from "../components/common/Spinner";
 import "./review.css";
 
 export default function ReviewWrite() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
-  const [place, setPlace] = useState(null);
+  // 지도에서 "이 가게 리뷰 남기기"로 넘어온 경우 가게가 미리 선택됨
+  const [place, setPlace] = useState(location.state?.place || null);
 
   const [rating, setRating] = useState(0);
   const [tags, setTags] = useState([]);
@@ -101,7 +104,7 @@ export default function ReviewWrite() {
                   placeholder="가게 이름 검색 (광화문 권역)"
                 />
                 <button type="submit" disabled={searching}>
-                  {searching ? "찾는 중…" : "검색"}
+                  {searching ? <><Spinner size={15} /> 찾는 중…</> : "검색"}
                 </button>
               </form>
               <div className="rw-results">
@@ -147,7 +150,7 @@ export default function ReviewWrite() {
             <span className="step-opt">선택</span>
           </div>
           {Object.entries(tagsByCategory).map(([cat, list]) => (
-            <div key={cat}>
+            <div key={cat} className="tag-group">
               <div className="tag-cat">{cat}</div>
               <div className="tag-list">
                 {list.map((t) => {
@@ -184,7 +187,7 @@ export default function ReviewWrite() {
         {error && <p className="rw-error">{error}</p>}
 
         <button className="btn-leaf rw-submit" onClick={onSubmit} disabled={submitting}>
-          {submitting ? "기록하는 중…" : "섬에 기록하기"}
+          {submitting ? <><Spinner size={20} /> 기록하는 중…</> : "섬에 기록하기"}
         </button>
       </div>
     </div>

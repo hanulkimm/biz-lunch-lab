@@ -30,6 +30,25 @@ def kakao_search(query: str, _: dict = Depends(get_current_user)):
     return kakao.search_keyword(query)
 
 
+@router.get("/by-kakao/{kakao_place_id}")
+def get_restaurant_by_kakao(kakao_place_id: str, _: dict = Depends(get_current_user)):
+    """카카오 place_id로 DB 식당 + 리뷰 조회. 아직 리뷰가 없어 등록 전이면 null.
+
+    지도에서 카카오 검색으로 고른 식당의 상세(리뷰 유무 무관)를 보여주기 위함.
+    """
+    res = (
+        supabase.table("restaurants")
+        .select(
+            "*, reviews(id, rating, comment, created_at, user_id, "
+            "users(name), review_tags(tags(category, name)))"
+        )
+        .eq("kakao_place_id", kakao_place_id)
+        .limit(1)
+        .execute()
+    )
+    return res.data[0] if res.data else None
+
+
 @router.get("", response_model=list[RestaurantOut])
 def list_restaurants(_: dict = Depends(get_current_user)):
     """리뷰가 1개 이상 있는 식당만 — 지도 마커용 (리뷰 수/평균 별점 포함)."""

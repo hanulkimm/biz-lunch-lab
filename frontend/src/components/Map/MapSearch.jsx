@@ -1,25 +1,39 @@
-// 지도 위 식당 검색 — 등록된(리뷰 있는) 식당을 이름/카테고리로 찾아 마커로 포커스.
-import { useMemo, useState } from "react";
-import { Search, Star, X } from "lucide-react";
+// 지도 위 식당 검색 — 카카오 로컬 API로 광화문 권역 음식점을 실검색해 선택.
+import { useEffect, useState } from "react";
+import { Search, X } from "lucide-react";
 
-export default function MapSearch({ restaurants = [], onSelect }) {
+import { searchKakao } from "../../api/restaurants";
+
+export default function MapSearch({ onSelect }) {
   const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
-    return restaurants
-      .filter(
-        (r) =>
-          r.name?.toLowerCase().includes(q) ||
-          r.category?.toLowerCase().includes(q)
-      )
-      .slice(0, 8);
-  }, [query, restaurants]);
+  // 입력 디바운스 후 카카오 검색 호출
+  useEffect(() => {
+    const q = query.trim();
+    if (!q) {
+      setResults([]);
+      setOpen(false);
+      return;
+    }
+    setOpen(true);
+    setLoading(true);
+    const t = setTimeout(() => {
+      searchKakao(q)
+        .then((data) => setResults(data))
+        .catch(() => setResults([]))
+        .finally(() => setLoading(false));
+    }, 350);
+    return () => clearTimeout(t);
+  }, [query]);
 
-  const pick = (r) => {
-    onSelect?.(r.id);
+  const pick = (place) => {
+    onSelect?.(place);
     setQuery("");
+    setResults([]);
+    setOpen(false);
   };
 
   return (
@@ -29,7 +43,7 @@ export default function MapSearch({ restaurants = [], onSelect }) {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="맛집 이름·종류로 검색"
+          placeholder="맛집 이름·종류로 검색 (광화문)"
           aria-label="식당 검색"
         />
         {query && (
@@ -39,27 +53,27 @@ export default function MapSearch({ restaurants = [], onSelect }) {
         )}
       </div>
 
-      {query.trim() && (
+      {open && (
         <ul className="ms-results">
-          {results.length === 0 ? (
+          {loading ? (
+            <li className="ms-empty">찾는 중… 🔎</li>
+          ) : results.length === 0 ? (
             <li className="ms-empty">검색 결과가 없어요 🌱</li>
           ) : (
             results.map((r) => (
-              <li key={r.id}>
+              <li key={r.kakao_place_id}>
                 <button className="ms-item" onClick={() => pick(r)}>
-                  <span className="ms-item-name">{r.name}</span>
-                  <span className="ms-item-meta">
-                    {r.category && (
-                      <span className="ms-item-cat">
-                        {r.category.split(">").pop().trim()}
-                      </span>
-                    )}
-                    {r.avg_rating != null && (
-                      <span className="ms-item-star">
-                        <Star size={11} fill="currentColor" /> {r.avg_rating}
-                      </span>
+                  <span className="ms-item-main">
+                    <span className="ms-item-name">{r.name}</span>
+                    {(r.road_address || r.address) && (
+                      <span className="ms-item-addr">{r.road_address || r.address}</span>
                     )}
                   </span>
+                  {r.category && (
+                    <span className="ms-item-meta">
+                      <span className="ms-item-cat">{r.category.split(">").pop().trim()}</span>
+                    </span>
+                  )}
                 </button>
               </li>
             ))

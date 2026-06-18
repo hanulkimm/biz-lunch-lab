@@ -9,7 +9,7 @@ const GWANGHWAMUN = { lat: 37.5759, lng: 126.9769 };
 const PIN_SVG =
   '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>';
 
-export default function KakaoMap({ restaurants = [], selectedId, onPinClick }) {
+export default function KakaoMap({ restaurants = [], selected, onPinClick }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const overlaysRef = useRef([]);
@@ -41,14 +41,21 @@ export default function KakaoMap({ restaurants = [], selectedId, onPinClick }) {
     overlaysRef.current.forEach((o) => o.setMap(null));
     overlaysRef.current = [];
 
-    restaurants.forEach((r) => {
+    const selKey = selected?.kakao_place_id;
+    // 등록 마커 + (검색 등으로 고른) 선택 식당이 목록에 없으면 추가로 표시
+    const list = [...restaurants];
+    if (selected && !restaurants.some((r) => r.kakao_place_id === selKey)) {
+      list.push(selected);
+    }
+
+    list.forEach((r) => {
       if (r.latitude == null || r.longitude == null) return;
-      const selected = r.id === selectedId;
+      const isSel = r.kakao_place_id === selKey;
 
       const el = document.createElement("div");
-      el.className = "pin" + (selected ? " sel" : "");
+      el.className = "pin" + (isSel ? " sel" : "");
       el.innerHTML =
-        (selected
+        (isSel
           ? `<div class="pin-label">${r.name}${r.avg_rating ? " ★" + r.avg_rating : ""}</div>`
           : "") + `<div class="pin-drop">${PIN_SVG}</div>`;
       el.addEventListener("click", () => onPinClick?.(r));
@@ -57,22 +64,19 @@ export default function KakaoMap({ restaurants = [], selectedId, onPinClick }) {
         position: new kakao.maps.LatLng(r.latitude, r.longitude),
         content: el,
         yAnchor: 1,
-        zIndex: selected ? 5 : 3,
+        zIndex: isSel ? 5 : 3,
       });
       overlay.setMap(map);
       overlaysRef.current.push(overlay);
     });
-  }, [restaurants, selectedId, onPinClick, ready]);
+  }, [restaurants, selected, onPinClick, ready]);
 
   // 선택 식당으로 부드럽게 이동
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !selectedId) return;
-    const r = restaurants.find((x) => x.id === selectedId);
-    if (r?.latitude != null) {
-      map.panTo(new window.kakao.maps.LatLng(r.latitude, r.longitude));
-    }
-  }, [selectedId, restaurants]);
+    if (!map || selected?.latitude == null) return;
+    map.panTo(new window.kakao.maps.LatLng(selected.latitude, selected.longitude));
+  }, [selected]);
 
   const zoom = (delta) => {
     const map = mapRef.current;

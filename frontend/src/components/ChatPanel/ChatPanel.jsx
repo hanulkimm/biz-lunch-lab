@@ -1,10 +1,25 @@
 // AI 맛집 추천 챗봇 "또리" — 지도 옆 상시 패널. 대화는 세션 동안만 유지.
 import { useRef, useState } from "react";
-import { ArrowUp, MapPin, Minus } from "lucide-react";
+import { ArrowUp, MapPin, Minus, Star } from "lucide-react";
 
 import { sendChat } from "../../api/chat";
+import Spinner from "../common/Spinner";
 
 const SUGGESTIONS = ["가성비 점심", "조용한 룸", "빨리 나오는 곳"];
+
+// 혹시 모델이 마크다운을 섞어 보내도 평문으로 깔끔하게 정리한다.
+function toPlainText(text = "") {
+  return text
+    .replace(/^#{1,6}\s+/gm, "")               // 제목(#)
+    .replace(/\*\*([^*]+)\*\*/g, "$1")          // 볼드(**)
+    .replace(/__([^_]+)__/g, "$1")              // 볼드(__)
+    .replace(/^[ \t]*[-*+]\s+/gm, "• ")        // 목록 기호 → •
+    .replace(/\*([^*\n]+)\*/g, "$1")            // 이탤릭(*)
+    .replace(/`([^`]+)`/g, "$1")                // 인라인 코드(`)
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")    // 링크 [텍스트](url)
+    .replace(/\n{3,}/g, "\n\n")                 // 과도한 빈 줄 정리
+    .trim();
+}
 
 function Avatar({ small }) {
   return (
@@ -88,14 +103,32 @@ export default function ChatPanel({ userName, onFocusRestaurant, onClose }) {
             <div key={i} className="cp-row">
               <Avatar small />
               <div style={{ maxWidth: "86%" }}>
-                <div className="cp-bubble">{m.content}</div>
+                <div className="cp-bubble">{toPlainText(m.content)}</div>
                 {(m.restaurants || []).map((r) => (
-                  <div key={r.id} className="cp-rest">
-                    <div className="cp-rest-name">{r.name}</div>
-                    <button className="cp-rest-go" onClick={() => onFocusRestaurant?.(r.id)}>
-                      <MapPin size={15} /> 지도에서 보기
-                    </button>
-                  </div>
+                  <button key={r.id} className="cp-rest" onClick={() => onFocusRestaurant?.(r.id)}>
+                    <div className="cp-rest-head">
+                      <div className="cp-rest-info">
+                        {r.category && (
+                          <span className="cp-rest-cat">{r.category.split(">").pop().trim()}</span>
+                        )}
+                        <span className="cp-rest-name">{r.name}</span>
+                      </div>
+                      {r.rating != null && (
+                        <span className="cp-rest-rate">
+                          <Star size={12} fill="currentColor" /> {r.rating}
+                        </span>
+                      )}
+                    </div>
+                    {r.reason && <p className="cp-rest-reason">“{r.reason}”</p>}
+                    {(r.tags || []).length > 0 && (
+                      <div className="cp-rest-tags">
+                        {r.tags.map((t) => (
+                          <span key={t} className="cp-rest-tag">{t}</span>
+                        ))}
+                      </div>
+                    )}
+                    <span className="cp-rest-go"><MapPin size={14} /> 지도에서 보기</span>
+                  </button>
                 ))}
               </div>
             </div>
@@ -105,7 +138,9 @@ export default function ChatPanel({ userName, onFocusRestaurant, onClose }) {
         {loading && (
           <div className="cp-row">
             <Avatar small />
-            <div className="cp-bubble">또리가 메뉴판을 넘기는 중… 🍃</div>
+            <div className="cp-bubble cp-loading">
+              <Spinner size={15} /> 또리가 메뉴판을 넘기는 중…
+            </div>
           </div>
         )}
       </div>

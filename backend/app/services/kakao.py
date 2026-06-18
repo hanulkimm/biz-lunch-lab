@@ -6,7 +6,9 @@ from app.config import settings
 # 광화문 권역 중심 좌표 (경복궁~시청 일대)
 GWANGHWAMUN = {"x": "126.9769", "y": "37.5759"}
 SEARCH_RADIUS = 2000  # m
-FOOD_CATEGORY = "FD6"  # 카카오 음식점 카테고리 코드
+# 카카오 카테고리 코드 — 음식점(FD6) + 카페(CE7). 키워드 API는 코드를 1개만
+# 받으므로 카테고리별로 각각 호출한 뒤 거리순으로 병합한다.
+FOOD_CATEGORIES = ("FD6", "CE7")
 
 _BASE = "https://dapi.kakao.com/v2/local/search/keyword.json"
 
@@ -16,20 +18,30 @@ def _headers() -> dict:
 
 
 def search_keyword(query: str, size: int = 15) -> list[dict]:
-    """광화문 권역 음식점 키워드 검색. 카카오 place 문서를 정규화해 반환."""
-    params = {
-        "query": query,
-        "category_group_code": FOOD_CATEGORY,
-        "x": GWANGHWAMUN["x"],
-        "y": GWANGHWAMUN["y"],
-        "radius": SEARCH_RADIUS,
-        "size": size,
-        "sort": "distance",
-    }
+    """광화문 권역 음식점·카페 키워드 검색. 카카오 place 문서를 정규화해 반환."""
+    docs: list[dict] = []
+    seen: set[str] = set()
     with httpx.Client(timeout=10) as client:
-        res = client.get(_BASE, params=params, headers=_headers())
-        res.raise_for_status()
-        docs = res.json().get("documents", [])
+        for code in FOOD_CATEGORIES:
+            params = {
+                "query": query,
+                "category_group_code": code,
+                "x": GWANGHWAMUN["x"],
+                "y": GWANGHWAMUN["y"],
+                "radius": SEARCH_RADIUS,
+                "size": size,
+                "sort": "distance",
+            }
+            res = client.get(_BASE, params=params, headers=_headers())
+            res.raise_for_status()
+            for d in res.json().get("documents", []):
+                if d["id"] not in seen:
+                    seen.add(d["id"])
+                    docs.append(d)
+
+    # 카테고리별 결과를 합쳐 다시 거리순(가까운 순)으로 정렬 후 size개만
+    docs.sort(key=lambda d: int(d.get("distance") or 10**9))
+    docs = docs[:size]
 
     return [
         {

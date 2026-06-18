@@ -4,6 +4,8 @@ import { Pencil, Star, Trash2 } from "lucide-react";
 
 import { deleteReview, getMyReviews, getTags, updateReview } from "../api/reviews";
 import AppHeader from "../components/common/AppHeader";
+import ConfirmDialog from "../components/common/ConfirmDialog";
+import Spinner from "../components/common/Spinner";
 import "./mypage.css";
 
 function Stars({ value = 0, size = 16 }) {
@@ -84,7 +86,7 @@ function EditModal({ review, tags, onClose, onSaved }) {
         <div className="mp-modal-actions">
           <button className="mp-cancel" onClick={onClose}>취소</button>
           <button className="btn-leaf" onClick={save} disabled={saving}>
-            {saving ? "저장 중…" : "저장하기"}
+            {saving ? <><Spinner size={18} /> 저장 중…</> : "저장하기"}
           </button>
         </div>
       </div>
@@ -96,6 +98,8 @@ export default function MyPage() {
   const [reviews, setReviews] = useState(null);
   const [tags, setTags] = useState([]);
   const [editing, setEditing] = useState(null);
+  const [confirmDel, setConfirmDel] = useState(null); // 삭제 확인 대상 리뷰
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => getMyReviews().then(setReviews).catch(() => setReviews([]));
 
@@ -104,10 +108,15 @@ export default function MyPage() {
     getTags().then(setTags).catch(() => {});
   }, []);
 
-  const remove = async (r) => {
-    if (!window.confirm(`'${r.restaurants?.name}' 기록을 삭제할까요?`)) return;
-    await deleteReview(r.id);
-    setReviews((prev) => prev.filter((x) => x.id !== r.id));
+  const doDelete = async () => {
+    setDeleting(true);
+    try {
+      await deleteReview(confirmDel.id);
+      setReviews((prev) => prev.filter((x) => x.id !== confirmDel.id));
+      setConfirmDel(null);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -148,7 +157,7 @@ export default function MyPage() {
             {r.comment && <p className="mp-comment">{r.comment}</p>}
             <div className="mp-actions">
               <button className="mp-btn" onClick={() => setEditing(r)}><Pencil size={14} /> 수정</button>
-              <button className="mp-btn danger" onClick={() => remove(r)}><Trash2 size={14} /> 삭제</button>
+              <button className="mp-btn danger" onClick={() => setConfirmDel(r)}><Trash2 size={14} /> 삭제</button>
             </div>
           </div>
         ))}
@@ -160,6 +169,19 @@ export default function MyPage() {
           tags={tags}
           onClose={() => setEditing(null)}
           onSaved={() => { setEditing(null); load(); }}
+        />
+      )}
+
+      {confirmDel && (
+        <ConfirmDialog
+          title="기록을 삭제할까요?"
+          message={`'${confirmDel.restaurants?.name}'에 남긴 기록이 사라져요. 되돌릴 수 없어요.`}
+          confirmText="삭제하기"
+          cancelText="취소"
+          danger
+          loading={deleting}
+          onConfirm={doDelete}
+          onCancel={() => !deleting && setConfirmDel(null)}
         />
       )}
     </div>

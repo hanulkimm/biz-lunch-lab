@@ -1,6 +1,6 @@
 // 메인 — 상단 헤더 + 동물의 숲 게임 카드(리본 + 지도, AI 탭으로 또리 챗봇 토글).
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MapPin, Moon, Sun } from "lucide-react";
 
 import { getRestaurants } from "../api/restaurants";
@@ -15,21 +15,49 @@ import "./map.css";
 
 export default function Map() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
   const [restaurants, setRestaurants] = useState([]);
-  const [selectedId, setSelectedId] = useState(location.state?.focusId || null);
+  const [selected, setSelected] = useState(null); // 선택한 식당(검색 결과/마커) place 객체
   const [chatOpen, setChatOpen] = useState(!!location.state?.openChat);
   const [searchKey, setSearchKey] = useState(0); // 검색창 초기화용 remount 키
 
+  const focusId = location.state?.focusId; // 룰렛/런치/챗봇에서 넘어온 DB 식당 id
+
+  // 지도 페이지에서는 페이지 스크롤바를 감춘다(스크롤 기능은 유지).
+  // 스크롤 컨테이너가 html(documentElement)이므로 양쪽 모두에 적용.
   useEffect(() => {
-    getRestaurants().then(setRestaurants).catch(() => {});
+    document.documentElement.classList.add("map-noscroll");
+    document.body.classList.add("map-noscroll");
+    return () => {
+      document.documentElement.classList.remove("map-noscroll");
+      document.body.classList.remove("map-noscroll");
+    };
   }, []);
+
+  useEffect(() => {
+    getRestaurants()
+      .then((list) => {
+        setRestaurants(list);
+        if (focusId) {
+          const found = list.find((r) => r.id === focusId);
+          if (found) setSelected(found);
+        }
+      })
+      .catch(() => {});
+  }, [focusId]);
+
+  // 마커/검색에서 식당 선택 (DB id 또는 place 객체 모두 지원)
+  const selectById = (id) => {
+    const r = restaurants.find((x) => x.id === id);
+    if (r) setSelected(r);
+  };
 
   // 상단 "지도" 탭 클릭 — 열린 패널(챗봇/상세) + 검색을 모두 닫고 지도만 보이게.
   const resetToMap = () => {
     setChatOpen(false);
-    setSelectedId(null);
+    setSelected(null);
     setSearchKey((k) => k + 1);
   };
 
@@ -66,15 +94,18 @@ export default function Map() {
               <div className="map-card">
                 <KakaoMap
                   restaurants={restaurants}
-                  selectedId={selectedId}
-                  onPinClick={(r) => setSelectedId(r.id)}
+                  selected={selected}
+                  onPinClick={(r) => setSelected(r)}
                 />
                 <MapSearch
                   key={searchKey}
-                  restaurants={restaurants}
-                  onSelect={(id) => setSelectedId(id)}
+                  onSelect={(place) => setSelected(place)}
                 />
-                <RestaurantPanel restaurantId={selectedId} onClose={() => setSelectedId(null)} />
+                <RestaurantPanel
+                  place={selected}
+                  onClose={() => setSelected(null)}
+                  onWriteReview={(place) => navigate("/review/write", { state: { place } })}
+                />
               </div>
             </div>
 
@@ -82,7 +113,7 @@ export default function Map() {
               <ChatPanel
                 userName={user?.name}
                 onClose={() => setChatOpen(false)}
-                onFocusRestaurant={(id) => setSelectedId(id)}
+                onFocusRestaurant={selectById}
               />
             )}
           </div>

@@ -140,3 +140,27 @@ body {
   transform: translateY(4px);
   box-shadow: 0 1px 0 var(--leaf-dark);
 }
+
+/* 지도 페이지: 페이지 스크롤바 숨김 (스크롤 기능은 유지) */
+.map-noscroll {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* 구형 Edge/IE */
+}
+.map-noscroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;                /* Chrome/Safari */
+}
+
+/* ─── 전역 컴포넌트: 로딩 스피너 ─── */
+.spinner {
+  display: inline-block;
+  border: 2px solid color-mix(in srgb, currentColor 28%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
