@@ -92,6 +92,15 @@
   border-bottom-color: var(--line);
 }
 
+/* 보호 라우트 로딩 표시 (ProtectedRoute) */
+.auth-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
 * {
   box-sizing: border-box;
 }
