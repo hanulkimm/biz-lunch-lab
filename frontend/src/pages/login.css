@@ -9,7 +9,7 @@
   padding: 32px 7% 32px 32px;
 }
 
-.login-video {
+.login-bg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -50,31 +50,10 @@
   gap: 10px;
   margin-bottom: 16px;
 }
-.login-brand .leaf-logo {
-  position: relative;
-  width: 38px;
-  height: 38px;
-}
-.login-brand .leaf-logo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--leaf);
-  border-radius: 50% 8% 50% 50%;
-  transform: rotate(45deg);
-  box-shadow: 0 3px 0 var(--leaf-dark);
-}
-.login-brand .leaf-logo::after {
-  content: "";
-  position: absolute;
-  top: 9px;
-  left: 17px;
-  width: 2.5px;
-  height: 18px;
-  background: var(--cream);
-  border-radius: 2px;
-  transform: rotate(45deg);
-  transform-origin: top;
+.login-brand .brand-logo {
+  height: 36px;
+  width: auto;
+  border-radius: 8px;
 }
 .login-brand span {
   font-family: var(--font-display);
@@ -105,21 +84,34 @@
   height: 48px;
   padding: 0 15px;
   border: 2px solid var(--line);
-  border-radius: 15px;
+  border-radius: 18px;
   font-size: 15px;
-  background: #fff;
+  background: var(--field);
   color: var(--ink);
   outline: none;
   font-family: var(--font-sans);
   transition: border-color 0.12s ease;
+}
+/* 드롭다운 — 네이티브 화살표/각진 우측 제거 후 커스텀 화살표를 안쪽으로 */
+.login-card select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 46px;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235E4B2E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  cursor: pointer;
 }
 .login-card select:focus,
 .login-card input:focus {
   border-color: var(--leaf);
 }
 .login-card select:disabled {
-  background: #f3ecd7;
+  background-color: #f3ecd7;
   color: #c0b291;
+  cursor: not-allowed;
 }
 .login-card input.pin {
   letter-spacing: 0.4em;

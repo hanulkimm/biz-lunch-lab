@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getDepartments, getTeams, login } from "../api/auth";
+import SelectField from "../components/common/SelectField";
 import { useAuthStore } from "../store/authStore";
+import "../components/common/selectfield.css";
 import "./login.css";
 
 export default function Login() {
@@ -50,33 +52,34 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <video className="login-video" src="/login-bg.mp4" autoPlay muted loop playsInline />
+      <img className="login-bg" src="/login_bg.png" alt="" />
       <div className="login-scrim" />
 
       <form className="login-card" onSubmit={onSubmit}>
         <div className="login-brand">
-          <span className="leaf-logo" aria-hidden="true" />
-          <span>비즈런치랩</span>
+          <img className="brand-logo" src="/kt_logo.png" alt="KT" />
+          <span>BizLunchLab</span>
         </div>
 
         <h1 className="login-title">주민 입도 수속</h1>
         <p className="login-sub">담당·팀·이름과 PIN 4자리로 마을에 들어와요.</p>
 
         <label>담당</label>
-        <select value={deptId} onChange={(e) => setDeptId(e.target.value)}>
-          <option value="">담당 선택</option>
-          {departments.map((d) => (
-            <option key={d.id} value={d.id}>{d.name}</option>
-          ))}
-        </select>
+        <SelectField
+          value={deptId}
+          onChange={setDeptId}
+          placeholder="담당 선택"
+          options={departments.map((d) => ({ value: d.id, label: d.name }))}
+        />
 
         <label>팀</label>
-        <select value={teamId} onChange={(e) => setTeamId(e.target.value)} disabled={!deptId}>
-          <option value="">팀 선택</option>
-          {teams.map((t) => (
-            <option key={t.id} value={t.id}>{t.name}</option>
-          ))}
-        </select>
+        <SelectField
+          value={teamId}
+          onChange={setTeamId}
+          placeholder="팀 선택"
+          disabled={!deptId}
+          options={teams.map((t) => ({ value: t.id, label: t.name }))}
+        />
 
         <label>이름</label>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="이름" />

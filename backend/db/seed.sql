@@ -2,13 +2,26 @@
 -- schema.sql 실행 후 실행.
 -- 식당/리뷰 시드(콜드스타트 대응)는 정식 오픈 전 별도 입력.
 
--- 담당
+-- 담당 (기업사업본부는 본부장 수용용 — 직책자는 팀 레벨이 아니라 그 위에 있으므로
+--       "기업사업본부" 담당 + "본부장" 팀, 각 담당엔 "담당 직속" 팀을 둬서 상무를 수용)
 INSERT INTO departments (name, sort_order) VALUES
+('기업사업본부', 0),
 ('기업사업1담당', 1),
 ('기업사업2담당', 2),
 ('기업사업3담당', 3),
 ('기업사업개발1담당', 4),
 ('기업사업개발2담당', 5);
+
+-- 기업사업본부 — 본부장
+INSERT INTO teams (department_id, name, sort_order)
+SELECT d.id, '본부장', 1 FROM departments d WHERE d.name = '기업사업본부';
+
+-- 각 담당 직속(상무) 팀 — sort_order 0으로 팀 목록 맨 위 노출
+INSERT INTO teams (department_id, name, sort_order)
+SELECT d.id, '담당 직속', 0
+FROM departments d
+WHERE d.name IN ('기업사업1담당','기업사업2담당','기업사업3담당',
+                 '기업사업개발1담당','기업사업개발2담당');
 
 -- 기업사업1담당 팀
 INSERT INTO teams (department_id, name, sort_order)

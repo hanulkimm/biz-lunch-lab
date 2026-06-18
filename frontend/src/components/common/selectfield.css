@@ -1,0 +1,88 @@
+/* 커스텀 드롭다운 (둥근 모서리) — 동물의 숲 톤 */
+.sf {
+  position: relative;
+}
+
+.sf-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  padding: 0 16px 0 16px;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  background: var(--field);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+.sf-btn:focus-visible { border-color: var(--leaf); }
+.sf-value { color: var(--ink); }
+.sf-placeholder { color: var(--muted); }
+.sf-arrow {
+  color: var(--ink-green);
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+.sf-arrow.open { transform: rotate(180deg); }
+
+.sf.disabled .sf-btn {
+  background: #f3ecd7;
+  color: #c0b291;
+  cursor: not-allowed;
+}
+.sf.disabled .sf-arrow { color: #c0b291; }
+
+/* 옵션 패널 — 둥근 크림 카드 */
+.sf-menu {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  list-style: none;
+  margin: 0;
+  padding: 7px;
+  background: var(--cream);
+  border: 2px solid var(--line-2);
+  border-radius: 18px;
+  box-shadow: 0 14px 32px rgba(40, 70, 20, 0.24);
+  max-height: 248px;
+  overflow-y: auto;
+  animation: sf-pop 0.14s ease;
+}
+@keyframes sf-pop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sf-opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  cursor: pointer;
+}
+.sf-opt:hover { background: var(--leaf-soft); }
+.sf-opt.sel {
+  background: var(--leaf);
+  color: #fff;
+  font-family: var(--font-display);
+}
+.sf-empty {
+  padding: 12px 14px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}

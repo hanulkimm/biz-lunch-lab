@@ -46,13 +46,26 @@
   position: absolute;
   top: 20px;
   right: 30px;
+  z-index: 4;
   width: 44px;
   height: 44px;
+  border: none;
   border-radius: 50%;
   background: #fbe57a;
+  color: #b8860b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 0 0 9px rgba(251, 229, 122, 0.32);
   animation: floaty 6s ease-in-out infinite;
-  pointer-events: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.gc-sun:hover { filter: brightness(1.06); }
+.gc-sun.moon {
+  background: #e8eefc;
+  color: #5a6b9c;
+  box-shadow: 0 0 0 9px rgba(200, 215, 250, 0.3);
 }
 .gc-leaf {
   position: absolute;
@@ -112,7 +125,7 @@
 /* 지도 카드 */
 .map-card {
   position: relative;
-  height: 566px;
+  height: 680px;
   border-radius: 24px;
   overflow: hidden;
   border: 5px solid var(--cream);
@@ -124,6 +137,13 @@
   height: 100%;
   filter: saturate(1.22) brightness(1.07) contrast(0.88) sepia(0.12) hue-rotate(-4deg) blur(0.3px);
 }
+/* 다크 모드 — 지도 타일을 반전해 야간 지도 톤으로. 핀은 .pin에서 다시 반전해 원색 복원 */
+:root[data-theme="dark"] .map-container {
+  filter: invert(1) hue-rotate(180deg) saturate(0.85) brightness(0.92);
+}
+:root[data-theme="dark"] .pin {
+  filter: invert(1) hue-rotate(180deg);
+}
 .map-wash {
   position: absolute;
   inset: 0;
@@ -131,6 +151,36 @@
   mix-blend-mode: soft-light;
   background: radial-gradient(120% 80% at 50% 8%, rgba(174, 230, 242, 0.85), rgba(255, 247, 224, 0.5) 46%, rgba(244, 201, 150, 0.62) 100%);
   z-index: 2;
+}
+/* 다크 모드 — 따뜻한 워시 대신 차가운 야간 톤 */
+:root[data-theme="dark"] .map-wash {
+  mix-blend-mode: multiply;
+  background: radial-gradient(120% 80% at 50% 8%, rgba(60, 92, 120, 0.5), rgba(28, 44, 66, 0.55) 50%, rgba(10, 18, 32, 0.65) 100%);
+}
+:root[data-theme="dark"] .map-vignette {
+  box-shadow: inset 0 0 70px 26px rgba(0, 0, 0, 0.55), inset 0 6px 16px rgba(120, 150, 180, 0.12);
+}
+
+/* 다크 모드 — 민트 게임 카드 + 패턴 + 민트 보더 + 노란 리본을 차분한 야간 톤으로 */
+:root[data-theme="dark"] .game-card {
+  background: #1e3a37;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.45);
+}
+:root[data-theme="dark"] .gc-sea { opacity: 0.12; }
+:root[data-theme="dark"] .gc-zigzag { opacity: 0.14; }
+:root[data-theme="dark"] .map-card {
+  border-color: var(--cream);
+  box-shadow: inset 0 0 0 2px #2c4f4a, 0 12px 26px rgba(0, 0, 0, 0.4);
+}
+:root[data-theme="dark"] .ribbon-inner {
+  background: linear-gradient(#8a5446, #6e4034);
+  border-color: var(--edge);
+  box-shadow: 0 6px 0 #4a2c23, 0 12px 22px rgba(0, 0, 0, 0.4);
+  color: #f3ddd4;
+}
+:root[data-theme="dark"] .ribbon-inner span {
+  color: #f3ddd4;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 .map-vignette {
   position: absolute;
@@ -157,6 +207,82 @@
   font-size: 13px;
   color: var(--ink-green);
 }
+/* 지도 위 식당 검색 */
+.map-search {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  width: min(320px, calc(100% - 130px));
+}
+.ms-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 8px 0 14px;
+  background: var(--cream);
+  border: 2.5px solid var(--leaf);
+  border-radius: 999px;
+  box-shadow: 0 4px 0 rgba(46, 80, 72, 0.14), 0 8px 20px rgba(46, 80, 72, 0.16);
+}
+.ms-bar .ms-icon { color: var(--ink-green); flex-shrink: 0; }
+.ms-bar input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+}
+.ms-bar input::placeholder { color: var(--muted); }
+.ms-clear {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--field);
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ms-results {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 6px;
+  background: var(--cream);
+  border: 2px solid var(--line-2);
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(46, 80, 72, 0.22);
+  max-height: 280px;
+  overflow-y: auto;
+}
+.ms-empty { padding: 14px; text-align: center; color: var(--muted); font-size: 13px; }
+.ms-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+.ms-item:hover { background: var(--leaf-soft); }
+.ms-item-name { font-family: var(--font-display); font-size: 14px; color: var(--ink-green); }
+.ms-item-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.ms-item-cat { font-size: 12px; color: var(--muted); }
+.ms-item-star { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; font-weight: 700; color: var(--star); }
+
 .map-zoom {
   position: absolute;
   top: 14px;
@@ -171,7 +297,7 @@
   height: 40px;
   border: 2.5px solid var(--cream);
   border-radius: 13px;
-  background: #fff;
+  background: var(--field);
   color: var(--ink);
   cursor: pointer;
   box-shadow: 0 3px 0 rgba(46, 80, 72, 0.18);
@@ -268,7 +394,7 @@
 .chat-col {
   width: 372px;
   flex-shrink: 0;
-  height: 566px;
+  height: 680px;
   background: var(--cream-2);
   border: 4px solid var(--cream);
   border-radius: 24px;
@@ -283,7 +409,7 @@
   gap: 12px;
   padding: 16px 18px;
   background: var(--cream);
-  border-bottom: 2px solid #f0e7d0;
+  border-bottom: 2px solid var(--edge-soft);
 }
 .ddori-ava {
   border-radius: 50%;
@@ -338,7 +464,7 @@
   max-width: 80%;
   padding: 12px 15px;
   border-radius: 6px 18px 18px 18px;
-  background: #fff;
+  background: var(--field);
   border: 2px solid var(--line-2);
   color: var(--ink);
   font-size: 14px;
@@ -360,7 +486,7 @@
 .cp-chips button {
   padding: 8px 14px;
   border-radius: 999px;
-  background: #fff;
+  background: var(--field);
   border: 2px solid var(--line);
   color: var(--ink);
   font-size: 13px;
@@ -373,7 +499,7 @@
   border: 2px solid var(--line-2);
   border-radius: 16px;
   overflow: hidden;
-  background: #fff;
+  background: var(--field);
   padding: 13px 15px;
 }
 .cp-rest-name { font-family: var(--font-display); font-size: 15px; color: var(--ink-green); }
@@ -397,7 +523,7 @@
 .cp-input {
   padding: 14px 18px;
   background: var(--cream);
-  border-top: 2px solid #f0e7d0;
+  border-top: 2px solid var(--edge-soft);
 }
 .cp-input-row {
   display: flex;
@@ -406,7 +532,7 @@
   padding: 6px 6px 6px 16px;
   border: 2px solid var(--line);
   border-radius: 16px;
-  background: #fff;
+  background: var(--field);
 }
 .cp-input-row input {
   flex: 1;
@@ -505,7 +631,7 @@
   height: 30px;
   border: 2px solid var(--line-2);
   border-radius: 11px;
-  background: #fff;
+  background: var(--field);
   color: var(--muted);
   cursor: pointer;
   display: flex;
@@ -523,10 +649,10 @@
 .stars { display: flex; gap: 1px; color: var(--star); }
 .rp-tags { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
 .rp-tags .tag { padding: 4px 11px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--leaf-soft); color: var(--ink-green-2); }
-.rp-divider { border: none; border-top: 2px solid #f0e7d0; margin: 14px 0; }
+.rp-divider { border: none; border-top: 2px solid var(--edge-soft); margin: 14px 0; }
 .rp-sub { margin: 0 0 10px; font-family: var(--font-display); font-size: 14px; color: var(--ink-green); }
 .rp-empty { color: var(--muted); font-size: 13px; }
-.review-card { border: 2px solid #f0e7d0; border-radius: 14px; padding: 11px; margin-bottom: 9px; }
+.review-card { border: 2px solid var(--edge-soft); border-radius: 14px; padding: 11px; margin-bottom: 9px; }
 .review-card-head { display: flex; align-items: center; gap: 9px; }
 .review-ava { width: 30px; height: 30px; border-radius: 50%; background: var(--leaf-soft); color: var(--ink-green-2); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 13px; flex-shrink: 0; }
 .review-card-name { font-size: 13px; font-weight: 700; color: var(--ink); }

@@ -18,8 +18,8 @@ export default function Landing() {
 
       <div className="home-content reveal">
         <div className="home-brand">
-          <span className="leaf-logo" aria-hidden="true" />
-          <span>비즈런치랩</span>
+          <img className="brand-logo" src="/kt_logo.png" alt="KT" />
+          <span>BizLunchLab</span>
         </div>
 
         <span className="home-badge">광화문 점심 무인도에 어서 오세요</span>
@@ -45,7 +45,7 @@ export default function Landing() {
         </div>
       </div>
 
-      <div className="home-foot reveal">🍱 비즈런치랩 · 광화문 점심 무인도</div>
+      <div className="home-foot reveal">🍱 BizLunchLab · 광화문 점심 무인도</div>
     </div>
   );
 }

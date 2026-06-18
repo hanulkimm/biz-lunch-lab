@@ -64,32 +64,11 @@
   gap: 12px;
   margin-bottom: 26px;
 }
-.leaf-logo {
-  position: relative;
-  width: 46px;
-  height: 46px;
+.home-brand .brand-logo {
+  height: 44px;
+  width: auto;
+  border-radius: 9px;
   flex-shrink: 0;
-}
-.leaf-logo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--leaf);
-  border-radius: 50% 8% 50% 50%;
-  transform: rotate(45deg);
-  box-shadow: 0 4px 0 var(--leaf-dark);
-}
-.leaf-logo::after {
-  content: "";
-  position: absolute;
-  top: 11px;
-  left: 21px;
-  width: 3px;
-  height: 22px;
-  background: var(--cream);
-  border-radius: 2px;
-  transform: rotate(45deg);
-  transform-origin: top;
 }
 .home-brand span {
   font-family: var(--font-display);

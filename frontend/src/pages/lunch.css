@@ -35,10 +35,10 @@
 .ln-empty {
   text-align: center;
   background: var(--cream);
-  border: 3px solid #fff;
+  border: 3px solid var(--edge);
   border-radius: 24px;
   padding: 40px 24px;
-  box-shadow: inset 0 0 0 2px #f0e7d0, 0 14px 34px rgba(46, 110, 98, 0.14);
+  box-shadow: inset 0 0 0 2px var(--edge-soft), 0 14px 34px rgba(46, 110, 98, 0.14);
 }
 .ln-empty-emoji { font-size: 44px; }
 .ln-empty h2 {
@@ -84,11 +84,11 @@
 .ln-applied,
 .ln-closed-note {
   background: var(--cream);
-  border: 3px solid #fff;
+  border: 3px solid var(--edge);
   border-radius: 22px;
   padding: 22px;
   margin-top: 16px;
-  box-shadow: inset 0 0 0 2px #f0e7d0, 0 12px 28px rgba(46, 110, 98, 0.12);
+  box-shadow: inset 0 0 0 2px var(--edge-soft), 0 12px 28px rgba(46, 110, 98, 0.12);
 }
 .ln-label {
   display: block;
@@ -108,7 +108,7 @@
 .ln-food,
 .ln-mood {
   border: 2px solid var(--line);
-  background: #fff;
+  background: var(--field);
   border-radius: 999px;
   padding: 9px 16px;
   font-family: var(--font-display);
@@ -131,7 +131,7 @@
   border-radius: 13px;
   padding: 0 14px;
   font-size: 14px;
-  background: #fff;
+  background: var(--field);
   color: var(--ink);
   font-family: inherit;
 }
@@ -188,7 +188,7 @@
   gap: 6px;
   margin-top: 16px;
   border: 2px solid var(--line);
-  background: #fff;
+  background: var(--field);
   color: var(--coral, #f4796a);
   border-radius: 13px;
   padding: 9px 16px;
@@ -213,10 +213,10 @@
 }
 .ln-group {
   background: var(--cream);
-  border: 3px solid #fff;
+  border: 3px solid var(--edge);
   border-radius: 20px;
   padding: 18px;
-  box-shadow: inset 0 0 0 2px #f0e7d0, 0 10px 24px rgba(46, 110, 98, 0.1);
+  box-shadow: inset 0 0 0 2px var(--edge-soft), 0 10px 24px rgba(46, 110, 98, 0.1);
 }
 .ln-group.mine {
   border-color: var(--leaf);
@@ -250,7 +250,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #fff;
+  background: var(--field);
   border: 2px solid var(--line);
   border-radius: 999px;
   padding: 6px 13px;
@@ -276,7 +276,7 @@
   display: block;
   width: 100%;
   text-align: left;
-  background: #fff;
+  background: var(--field);
   border: 2px solid var(--line);
   border-radius: 14px;
   padding: 12px 14px;
@@ -294,7 +294,7 @@
 /* ─── 관리자 ─── */
 .ln-admin {
   margin-top: 22px;
-  background: #fffaf0;
+  background: var(--field);
   border: 2px dashed var(--sand, #ebd9a8);
   border-radius: 18px;
   padding: 16px 18px;
@@ -311,7 +311,7 @@
   align-items: center;
   gap: 6px;
   border: 2px solid var(--line);
-  background: #fff;
+  background: var(--field);
   color: var(--ink);
   border-radius: 12px;
   padding: 9px 15px;

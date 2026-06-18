@@ -4,7 +4,7 @@
   top: 0;
   z-index: 50;
   background: var(--cream);
-  border-bottom: 2px solid #f0e7d0;
+  border-bottom: 2px solid var(--edge-soft);
   box-shadow: 0 2px 0 rgba(94, 75, 46, 0.06);
 }
 .ah-inner {
@@ -27,20 +27,11 @@
 .ah-brand span:last-child {
   white-space: nowrap;
 }
-.ah-brand .leaf-logo {
-  position: relative;
-  width: 32px;
-  height: 32px;
+.ah-brand .brand-logo {
+  height: 30px;
+  width: auto;
+  border-radius: 7px;
   flex-shrink: 0;
-}
-.ah-brand .leaf-logo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--leaf);
-  border-radius: 50% 8% 50% 50%;
-  transform: rotate(45deg);
-  box-shadow: 0 3px 0 var(--leaf-dark);
 }
 .ah-brand span:last-child {
   font-family: var(--font-display);
@@ -125,13 +116,31 @@
   font-size: 12px;
   font-family: var(--font-display);
 }
+.ah-theme {
+  width: 38px;
+  height: 38px;
+  margin-left: 8px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--cream);
+  color: var(--ink-green);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ah-theme:hover {
+  border-color: var(--leaf);
+  color: var(--ink-green-2);
+}
 .ah-logout {
   width: 38px;
   height: 38px;
   margin-left: 4px;
   border: 2px solid var(--line);
   border-radius: 12px;
-  background: #fff;
+  background: var(--field);
   color: var(--muted);
   cursor: pointer;
   display: flex;
@@ -142,6 +151,29 @@
 .ah-logout:hover {
   color: var(--coral-dark);
   border-color: #f1aeae;
+}
+
+/* 다크 모드 — 노란 버튼/뱃지를 코랄/테라코타로, 흰 버튼은 어두운 톤으로 */
+:root[data-theme="dark"] .ah-review {
+  background: #df7a64;
+  color: #2a1410;
+  box-shadow: 0 4px 0 #a8513f;
+}
+:root[data-theme="dark"] .ah-review:hover { box-shadow: 0 2px 0 #a8513f; }
+:root[data-theme="dark"] .ah-admin,
+:root[data-theme="dark"] .gc-admin {
+  background: #c25f4d;
+  color: #fdeae4;
+}
+:root[data-theme="dark"] .ah-tab:hover { background: #2a332f; }
+:root[data-theme="dark"] .ah-avatar {
+  background: #2f5a66;
+  color: #cfeaf2;
+  box-shadow: 0 3px 0 #224651;
+}
+:root[data-theme="dark"] .ah-logout {
+  background: var(--cream);
+  color: var(--muted);
 }
 
 @media (max-width: 720px) {

@@ -34,12 +34,62 @@
   --line-2: #ede0c4;
   --star: #f7b500;
 
+  /* 표면용 흰색 토큰 (라이트=기존 값 그대로 → 라이트 모드 변화 없음, 다크에서만 재정의) */
+  --edge: #ffffff;        /* 카드 바깥 테두리 */
+  --edge-soft: #f0e7d0;   /* 카드 안쪽 헤어라인 */
+  --field: #ffffff;       /* 입력창·칩·말풍선 배경 */
+
   /* 폰트 */
   --font-display: "Jua", system-ui, sans-serif;
   --font-sans: Pretendard, system-ui, "Apple SD Gothic Neo", sans-serif;
 
   font-family: var(--font-sans);
   color: var(--ink);
+}
+
+/* ─── 다크 모드 (표면/텍스트/라인 토큰만 뒤집고 브랜드 액센트는 유지) ─── */
+:root[data-theme="dark"] {
+  /* 표면 — 차분한 '숲의 밤' 톤, 단계 간 명도차를 작게 해 대비 완화 */
+  --page: #1a201e;
+  --cream: #232b28;
+  --cream-2: #1e2522;
+
+  /* 텍스트 — 순백 대신 부드러운 오프화이트(글레어 완화) */
+  --ink: #d7ded8;
+  --ink-green: #8fc96f;
+  --ink-green-2: #a5d68a;
+  --muted: #8c9a90;
+
+  /* 라인/엣지/입력 — 은은하게 */
+  --line: #34403b;
+  --line-2: #2c3733;
+  --edge: #2f3a36;
+  --edge-soft: #2a3531;
+  --field: #1f2724;
+
+  /* 액센트 — 채도를 낮춰 어두운 배경과 조화 */
+  --leaf: #79b94c;
+  --leaf-dark: #4c7a2e;
+  --leaf-soft: #29362a;
+  --sea: #356b66;
+  --sea-dark: #294f4b;
+  --sea-soft: #20302e;
+  --sun: #c9a44e;
+  --sun-dark: #a07e36;
+  --sun-soft: #2e2a1d;
+  --coral: #e07866;
+  --coral-dark: #c15c4c;
+  --star: #e9c44e;
+
+  color-scheme: dark;
+}
+
+/* 다크 모드 — 변수로 안 잡히는 페이지 크롬 보정 */
+:root[data-theme="dark"] .gw-page {
+  background: radial-gradient(#252e2a 1.5px, transparent 1.6px) 0 0 / 22px 22px, var(--page);
+}
+:root[data-theme="dark"] .ah {
+  border-bottom-color: var(--line);
 }
 
 * {

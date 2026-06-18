@@ -1,0 +1,35 @@
+# Render 배포 블루프린트 — FastAPI 백엔드 (Web Service)
+# Render 대시보드 > New > Blueprint 에서 이 저장소를 선택하면 자동 인식.
+# sync:false 항목은 대시보드에서 직접 값을 입력(시크릿). FRONTEND_URL은 Vercel 도메인으로.
+services:
+  - type: web
+    name: biz-lunch-lab-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PINECONE_API_KEY
+        sync: false
+      - key: PINECONE_INDEX_NAME
+        value: biz-lunch-reviews
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: KAKAO_API_KEY
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_EXPIRE_DAYS
+        value: "7"
+      - key: FRONTEND_URL
+        sync: false
