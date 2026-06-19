@@ -15,6 +15,7 @@ export default function ReviewWrite() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [searched, setSearched] = useState(false); // 검색을 한 번이라도 했는지(빈 결과 안내용)
   // 지도에서 "이 가게 리뷰 남기기"로 넘어온 경우 가게가 미리 선택됨
   const [place, setPlace] = useState(location.state?.place || null);
 
@@ -39,8 +40,11 @@ export default function ReviewWrite() {
     e.preventDefault();
     if (!query.trim()) return;
     setSearching(true);
+    setSearched(true);
     try {
       setResults(await searchKakao(query));
+    } catch {
+      setResults([]);
     } finally {
       setSearching(false);
     }
@@ -108,13 +112,21 @@ export default function ReviewWrite() {
                 </button>
               </form>
               <div className="rw-results">
-                {results.map((r) => (
-                  <button key={r.kakao_place_id} className="result" onClick={() => setPlace(r)}>
-                    <b>{r.name}</b>
-                    <span>{r.category}</span>
-                    <span>{r.road_address || r.address}</span>
-                  </button>
-                ))}
+                {searching ? (
+                  <div className="rw-results-state"><Spinner size={18} /> 가게를 찾는 중…</div>
+                ) : searched && results.length === 0 ? (
+                  <div className="rw-results-state">
+                    검색 결과가 없어요 🌱<br />다른 이름으로 검색해보세요.
+                  </div>
+                ) : (
+                  results.map((r) => (
+                    <button key={r.kakao_place_id} className="result" onClick={() => setPlace(r)}>
+                      <b>{r.name}</b>
+                      <span>{r.category}</span>
+                      <span>{r.road_address || r.address}</span>
+                    </button>
+                  ))
+                )}
               </div>
             </>
           )}

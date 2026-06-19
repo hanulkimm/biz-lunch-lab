@@ -138,6 +138,17 @@
   border-color: var(--leaf);
   background: var(--leaf-soft);
 }
+.rw-results-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 22px 12px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
 .result b {
   font-size: 14px;
   color: var(--ink);
