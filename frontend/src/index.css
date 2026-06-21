@@ -164,3 +164,19 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ─── 모바일 전역 보정 ─── */
+@media (max-width: 768px) {
+  /* 가로 오버플로로 인한 의도치 않은 좌우 스크롤 방지 */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+  /* iOS: 16px 미만 입력창 포커스 시 화면이 자동 확대되는 것 방지.
+     컴포넌트별 입력 규칙(.ms-bar input 등)을 이기기 위해 !important 사용. */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

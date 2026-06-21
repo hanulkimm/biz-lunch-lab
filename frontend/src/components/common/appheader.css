@@ -178,20 +178,27 @@
 
 /* ─── 모바일: 아이콘 중심 압축 헤더 ─── */
 @media (max-width: 768px) {
-  .ah-inner { height: 54px; padding: 0 10px; gap: 4px; }
+  /* 노치/홈바 safe-area 보정 (standalone·viewport-fit=cover 대비) */
+  .ah { padding-top: env(safe-area-inset-top); }
+  .ah-inner {
+    height: 56px;
+    gap: 4px;
+    padding-left: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
+  }
   .ah-brand { margin-right: 2px; }
   .ah-brand-text { display: none; }          /* 로고만 표시 */
 
-  .ah-nav { flex: 1; min-width: 0; gap: 0; overflow-x: auto; }
+  .ah-nav { flex: 1; min-width: 0; gap: 0; overflow-x: auto; scrollbar-width: none; }
   .ah-nav::-webkit-scrollbar { display: none; }
-  .ah-nav { scrollbar-width: none; }
-  .ah-tab { padding: 0 9px; gap: 0; }
+  .ah-tab { height: 40px; padding: 0 10px; gap: 0; }
   .ah-tab-label { display: none; }           /* 아이콘만 표시 */
 
   .ah-spacer { display: none; }              /* 우측 묶음 공간 확보 */
-  .ah-review { padding: 0 11px; height: 36px; }
+  /* 터치 타깃 40px 확보 */
+  .ah-review { padding: 0 12px; height: 40px; }
   .ah-review span { display: none; }
   .ah-admin { display: none; }
-  .ah-avatar { width: 32px; height: 32px; margin-left: 4px; font-size: 13px; }
-  .ah-theme, .ah-logout { width: 32px; height: 32px; margin-left: 4px; }
+  .ah-avatar { width: 40px; height: 40px; margin-left: 4px; font-size: 14px; }
+  .ah-theme, .ah-logout { width: 40px; height: 40px; margin-left: 4px; }
 }
