@@ -176,7 +176,22 @@
   color: var(--muted);
 }
 
-@media (max-width: 720px) {
-  .ah-tab { padding: 0 10px; font-size: 12px; }
+/* ─── 모바일: 아이콘 중심 압축 헤더 ─── */
+@media (max-width: 768px) {
+  .ah-inner { height: 54px; padding: 0 10px; gap: 4px; }
+  .ah-brand { margin-right: 2px; }
+  .ah-brand-text { display: none; }          /* 로고만 표시 */
+
+  .ah-nav { flex: 1; min-width: 0; gap: 0; overflow-x: auto; }
+  .ah-nav::-webkit-scrollbar { display: none; }
+  .ah-nav { scrollbar-width: none; }
+  .ah-tab { padding: 0 9px; gap: 0; }
+  .ah-tab-label { display: none; }           /* 아이콘만 표시 */
+
+  .ah-spacer { display: none; }              /* 우측 묶음 공간 확보 */
+  .ah-review { padding: 0 11px; height: 36px; }
   .ah-review span { display: none; }
+  .ah-admin { display: none; }
+  .ah-avatar { width: 32px; height: 32px; margin-left: 4px; font-size: 13px; }
+  .ah-theme, .ah-logout { width: 32px; height: 32px; margin-left: 4px; }
 }

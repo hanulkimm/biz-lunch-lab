@@ -23,8 +23,8 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
   };
 
   const tab = (key, label, Icon, onClick, isActive) => (
-    <button className={isActive ? "ah-tab active" : "ah-tab"} onClick={onClick}>
-      <Icon size={15} /> {label}
+    <button className={isActive ? "ah-tab active" : "ah-tab"} onClick={onClick} aria-label={label}>
+      <Icon size={15} /> <span className="ah-tab-label">{label}</span>
     </button>
   );
 
@@ -33,7 +33,7 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
       <div className="ah-inner">
         <div className="ah-brand" onClick={() => navigate("/map")}>
           <img className="brand-logo" src="/kt_logo.png" alt="KT" />
-          <span>BizLunchLab</span>
+          <span className="ah-brand-text">BizLunchLab</span>
         </div>
 
         <nav className="ah-nav">
@@ -48,8 +48,8 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
 
         <div className="ah-spacer" />
 
-        <button className="ah-review" onClick={() => navigate("/review/write")}>
-          <Pencil size={15} /> 리뷰 쓰기
+        <button className="ah-review" onClick={() => navigate("/review/write")} aria-label="리뷰 쓰기">
+          <Pencil size={15} /> <span>리뷰 쓰기</span>
         </button>
         <div className="ah-avatar">{user?.name?.[0] || "주"}</div>
         {user?.is_admin && <span className="ah-admin">관리자</span>}

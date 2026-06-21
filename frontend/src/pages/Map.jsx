@@ -89,7 +89,7 @@ export default function Map() {
             </div>
           </div>
 
-          <div className="gc-body">
+          <div className={`gc-body${chatOpen ? " chat-open" : ""}`}>
             <div className="map-col">
               <div className="map-card">
                 <KakaoMap
