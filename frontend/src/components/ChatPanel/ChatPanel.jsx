@@ -2,7 +2,7 @@
 import { useRef, useState } from "react";
 import { ArrowUp, MapPin, Minus, Star } from "lucide-react";
 
-import { sendChat } from "../../api/chat";
+import { sendChat, streamChat } from "../../api/chat";
 import Spinner from "../common/Spinner";
 
 const SUGGESTIONS = ["가성비 점심", "조용한 룸", "빨리 나오는 곳"];
@@ -33,6 +33,7 @@ export default function ChatPanel({ userName, onFocusRestaurant, onClose }) {
   const [messages, setMessages] = useState([]); // {role, content, restaurants?}
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(""); // 에이전트 진행 상태(스트리밍)
   const listRef = useRef(null);
 
   const scrollDown = () =>
@@ -40,27 +41,56 @@ export default function ChatPanel({ userName, onFocusRestaurant, onClose }) {
       if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
     });
 
+  // 마지막 메시지(스트리밍 중인 또리 말풍선)를 갱신
+  const patchLast = (patch) =>
+    setMessages((prev) => {
+      const next = [...prev];
+      next[next.length - 1] = { ...next[next.length - 1], ...patch };
+      return next;
+    });
+
   const send = async (text) => {
     const msg = (text ?? input).trim();
     if (!msg || loading) return;
     const history = messages.map((m) => ({ role: m.role, content: m.content }));
-    setMessages((prev) => [...prev, { role: "user", content: msg }]);
+    // 사용자 메시지 + 스트리밍으로 채워질 또리 말풍선(placeholder)을 함께 추가
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: msg },
+      { role: "assistant", content: "", restaurants: [] },
+    ]);
     setInput("");
     setLoading(true);
+    setStatus("또리가 메뉴판을 넘기는 중…");
     scrollDown();
+
+    let acc = "";
     try {
-      const res = await sendChat(msg, history);
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: res.answer, restaurants: res.restaurants || [] },
-      ]);
+      await streamChat(msg, history, {
+        onStatus: (t) => setStatus(t),
+        onToken: (t) => {
+          acc += t;
+          patchLast({ content: acc });
+          scrollDown();
+        },
+        onDone: (ev) => {
+          patchLast({ content: acc || ev.answer || "", restaurants: ev.restaurants || [] });
+        },
+        onError: () => {
+          patchLast({ content: "앗, 잠깐 문제가 생겼어요. 잠시 후 다시 시도해주세요." });
+        },
+      });
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "앗, 잠깐 문제가 생겼어요. 잠시 후 다시 시도해주세요." },
-      ]);
+      // 스트리밍 실패(콜드스타트 등) → 비스트리밍으로 폴백
+      try {
+        const res = await sendChat(msg, history);
+        patchLast({ content: res.answer, restaurants: res.restaurants || [] });
+      } catch {
+        patchLast({ content: "앗, 잠깐 문제가 생겼어요. 잠시 후 다시 시도해주세요." });
+      }
     } finally {
       setLoading(false);
+      setStatus("");
       scrollDown();
     }
   };
@@ -103,9 +133,17 @@ export default function ChatPanel({ userName, onFocusRestaurant, onClose }) {
             <div key={i} className="cp-row">
               <Avatar small />
               <div style={{ maxWidth: "86%" }}>
-                <div className="cp-bubble">{toPlainText(m.content)}</div>
+                <div className="cp-bubble">
+                  {m.content ? (
+                    toPlainText(m.content)
+                  ) : loading && i === messages.length - 1 ? (
+                    <span className="cp-loading"><Spinner size={15} /> {status}</span>
+                  ) : (
+                    ""
+                  )}
+                </div>
                 {(m.restaurants || []).map((r) => (
-                  <button key={r.id} className="cp-rest" onClick={() => onFocusRestaurant?.(r.id)}>
+                  <button key={r.id} className="cp-rest" onClick={() => onFocusRestaurant?.(r)}>
                     <div className="cp-rest-head">
                       <div className="cp-rest-info">
                         {r.category && (
@@ -116,6 +154,21 @@ export default function ChatPanel({ userName, onFocusRestaurant, onClose }) {
                       {r.rating != null && (
                         <span className="cp-rest-rate">
                           <Star size={12} fill="currentColor" /> {r.rating}
+                        </span>
+                      )}
+                      {r.no_review && (
+                        <span
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: "#9a6b0e",
+                            background: "var(--sun-soft, #faf0d7)",
+                            padding: "2px 8px",
+                            borderRadius: 999,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          신규 · 리뷰 없음
                         </span>
                       )}
                     </div>
@@ -133,15 +186,6 @@ export default function ChatPanel({ userName, onFocusRestaurant, onClose }) {
               </div>
             </div>
           )
-        )}
-
-        {loading && (
-          <div className="cp-row">
-            <Avatar small />
-            <div className="cp-bubble cp-loading">
-              <Spinner size={15} /> 또리가 메뉴판을 넘기는 중…
-            </div>
-          </div>
         )}
       </div>
 

@@ -48,10 +48,27 @@ export default function Map() {
       .catch(() => {});
   }, [focusId]);
 
-  // 마커/검색에서 식당 선택 (DB id 또는 place 객체 모두 지원)
-  const selectById = (id) => {
-    const r = restaurants.find((x) => x.id === id);
-    if (r) setSelected(r);
+  // 챗봇 추천 카드 클릭 → 지도 포커스.
+  // 리뷰 있는 DB 식당이면 마커로, 신규 발견(카카오) 식당이면 좌표/카카오정보로 포커스.
+  const focusFromChat = (card) => {
+    if (!card) return;
+    const dbMatch = restaurants.find((x) => x.id === card.id);
+    if (dbMatch) {
+      setSelected(dbMatch);
+      return;
+    }
+    if (card.latitude != null && card.longitude != null) {
+      setSelected({
+        kakao_place_id: card.kakao_place_id,
+        name: card.name,
+        category: card.category,
+        address: card.address,
+        road_address: card.road_address,
+        latitude: card.latitude,
+        longitude: card.longitude,
+        kakao_url: card.kakao_url,
+      });
+    }
   };
 
   // 상단 "지도" 탭 클릭 — 열린 패널(챗봇/상세) + 검색을 모두 닫고 지도만 보이게.
@@ -113,7 +130,7 @@ export default function Map() {
               <ChatPanel
                 userName={user?.name}
                 onClose={() => setChatOpen(false)}
-                onFocusRestaurant={selectById}
+                onFocusRestaurant={focusFromChat}
               />
             )}
           </div>

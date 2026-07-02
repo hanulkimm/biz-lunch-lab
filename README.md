@@ -36,7 +36,7 @@
 |------|------|
 | 🔐 **인증** | 담당·팀·이름 + 4자리 PIN(bcrypt) 기반 회원가입/로그인, JWT 발급 |
 | 🗺️ **맛집 지도** | 카카오 로컬 API로 광화문 권역 **음식점·카페 실시간 검색** → 식당 정보 보기(리뷰 없어도) → 바로 리뷰 작성. 리뷰 있는 곳은 별점·태그·동료 리뷰까지 표시 |
-| 🤖 **AI 챗봇 (또리)** | RAG — 사내 리뷰를 임베딩·검색해 Claude가 추천. 답변은 **평문 + 추천 식당 카드**(별점·태그·근거 리뷰), 대화 히스토리 유지 |
+| 🤖 **AI 챗봇 (또리)** | **Tool Use 기반 AI 에이전트** — Claude가 스스로 사내 리뷰를 검색·확인하며 추천. 답변은 **평문 + 추천 식당 카드**(별점·태그·근거 리뷰), 후속 질문 맥락 유지 (→ [§9.3 고도화](#3-rag-챗봇--ai-에이전트tool-use)) |
 | ✍️ **리뷰 작성** | 카카오 검색(또는 지도에서 식당 선택) → 별점·태그(4분류)·코멘트 → 임베딩 후 Pinecone 색인 |
 | 🎲 **메뉴 룰렛** | 8개 카테고리 스피너 → 해당 종류 식당 랜덤 추천 |
 | 🍱 **랜덤 런치** | 취향 입력 후 신청 → 관리자 매칭 실행 → **Claude가 4~6인 그룹 + 식당 추천** |
@@ -110,6 +110,8 @@ flowchart LR
 5. **결과** — 마크다운 없는 **평문 1~2문장** + 백엔드가 묶은 **추천 식당 카드(상위 3곳: 카테고리·별점·태그·근거 리뷰)**. 카드 클릭 시 지도 포커스. 근거가 없으면 지어내지 않고 첫 리뷰 작성을 안내.
 
 > 💡 **RAG = Retrieval-Augmented Generation**: LLM이 "아는 척" 지어내지 않도록, 먼저 **검색(Retrieval)** 으로 실제 리뷰를 찾고 → 그 **근거를 더해(Augment)** → **답을 생성(Generation)** 하는 방식. 그래서 또리는 등록된 사내 리뷰 범위 안에서만 답합니다.
+
+> 🤖 **고도화 — AI 에이전트(Tool Use)**: 위 RAG는 "한 번 검색 → 한 번 생성"의 **고정 파이프라인**입니다. 현재 또리는 여기서 한 단계 올라가, Claude가 **검색 도구를 스스로 호출**하는 **에이전트**로 동작합니다(후속 질문 맥락 반영해 재검색, 특정 식당 깊게 확인 등). 자세한 구조·개선점은 [§9.3 RAG 챗봇 → AI 에이전트](#3-rag-챗봇--ai-에이전트tool-use) 참고.
 
 ### 🍱 랜덤 런치 매칭 (Claude)
 신청자 취향과 사내 식당 리뷰 요약을 함께 넣어, Claude가 그룹과 식당을 JSON으로 설계합니다.
@@ -305,7 +307,7 @@ erDiagram
 | 태그 | `GET /api/tags` | 리뷰 태그 목록 (4분류) |
 | 식당 | `GET /api/restaurants` · `GET /api/restaurants/{id}` · `GET /api/restaurants/by-kakao/{kakao_place_id}` · `GET /api/restaurants/kakao/search` · `GET /api/restaurants/roulette` | 마커 목록 / 상세 / **카카오 place_id로 상세(리뷰 없으면 null)** / 카카오 검색(음식점+카페) / 룰렛 |
 | 리뷰 | `POST /api/reviews` · `PUT /api/reviews/{id}` · `DELETE /api/reviews/{id}` · `GET /api/reviews/my` | 작성 / 수정 / 삭제 / 내 리뷰 (Pinecone 동기화) |
-| 챗봇 | `POST /api/chat` | RAG 기반 맛집 추천 |
+| 챗봇 | `POST /api/chat` · `POST /api/chat/stream` | Tool Use 에이전트 맛집 추천 (일반 / **SSE 스트리밍**) |
 | 랜덤 런치 | `GET·POST /api/lunch/rounds` · `PATCH /api/lunch/rounds/{id}/status` · `POST /api/lunch/apply` · `DELETE /api/lunch/apply/{id}` · `GET /api/lunch/apply/count` · `POST /api/lunch/match` · `GET /api/lunch/result/{id}` | 회차 / 신청 / 매칭 / 결과 |
 | 관리자 | `GET /api/admin/users` · `PATCH /api/admin/users/{id}/pin` · `GET /api/admin/rounds` | 사용자·회차 관리 (관리자 전용) |
 
@@ -386,6 +388,7 @@ Supabase SQL Editor에서 순서대로 실행:
 |---|------|-------|-------|
 | 1 | 배포·인프라 | Render 무료 플랜 — 콜드 스타트로 첫 응답 지연·간헐적 502 | AWS EC2 상시 구동으로 콜드 스타트 제거 |
 | 2 | AI · RAG | 프레임워크 없이 직접 연결한 RAG 구성 | LangChain 체인화로 구조 표준화·확장성 확보 |
+| 3 | AI · 챗봇 | 한 번 검색 → 한 번 생성하는 고정 파이프라인 RAG | **Tool Use 기반 AI 에이전트화 (✅ 적용 완료)** — Claude가 스스로 검색·확인 |
 
 ### 1. Render 콜드 스타트 → AWS EC2 이전
 
@@ -410,6 +413,51 @@ Supabase SQL Editor에서 순서대로 실행:
 - `OpenAIEmbeddings` + Pinecone `VectorStore`(retriever) + `ChatAnthropic`을 표준 체인으로 묶음음
 - 프롬프트·메모리·평가 관리와 기능 확장이 용이해지고 RAG 구조가 명확해짐, 관련 라이브러리는 이미 의존성에 포함되어 있어 코드 전환만 남아 있는 상태
 
+### 3. RAG 챗봇 → AI 에이전트(Tool Use)
+
+> ✅ **적용 완료** — 또리 챗봇을 **고정 파이프라인 RAG**에서 **스스로 도구를 호출하는 AI 에이전트**로 격상했습니다.
+
+**As-Is (기존)**
+- `질문 임베딩 → Pinecone 단발 검색(top-k) → Claude가 후보 중 선택`의 **한 방향 고정 파이프라인**
+- 검색이 항상 "현재 질문" 1회뿐이라, "거기 근처 다른 데는?" 같은 **후속 질문에서 대화 맥락이 끊김**
+- Claude 응답을 **정규식으로 JSON 파싱** → 형식이 어긋나면 폴백으로 떨어지는 취약점
+- 추천 식당을 **이름 문자열 매칭**으로 카드화
+
+**To-Be (개선 후)**
+- Claude가 다음 도구를 **스스로 판단해 호출**하는 **Tool Use 에이전트 루프**로 전환
+
+  ```mermaid
+  flowchart LR
+      Q["💬 질문 + 대화맥락"] --> CL["🤖 Claude (에이전트)"]
+      CL -->|"검색 필요"| T1["🔎 search_reviews<br/>리뷰 의미검색"]
+      CL -->|"리뷰 없으면 발견"| T3["🗺️ search_nearby_places<br/>카카오 실시간 검색"]
+      CL -->|"한 곳 깊게"| T2["📋 get_restaurant_detail<br/>식당 상세"]
+      T1 --> CL
+      T3 --> CL
+      T2 --> CL
+      CL -->|"마무리"| F["✅ recommend_restaurants<br/>최종 추천 확정"]
+      F --> R["평문 안내 + 추천 식당 카드"]
+  ```
+
+  | 도구 | 역할 |
+  |------|------|
+  | `search_reviews` | 사내 리뷰 의미검색. **후속 질문이면 맥락을 반영해 query를 새로 구성**해 재검색 |
+  | `search_nearby_places` | 사내 리뷰에 마땅한 곳이 없을 때 **카카오로 광화문 권역 실시간 검색** → 리뷰 없는 신규 식당까지 발견(콜드스타트 보강) |
+  | `get_restaurant_detail` | 특정 식당의 전체 리뷰·태그를 깊게 조회 |
+  | `recommend_restaurants` | 최종 답변·추천 식당을 **구조화 출력으로 확정**(finish) |
+
+- **개선 효과**
+  - **후속 질문 맥락 유지** — 에이전트가 대화 맥락을 반영해 직접 재검색
+  - **정규식 파싱 제거** — 최종 추천을 도구 입력(검증된 JSON)으로 받아 취약점 해소
+  - **id 기반 추천** — 식당을 `restaurant_id`로 지정해 이름 매칭 오류 제거
+  - **복합 조건 자율 처리** — "조용한 / 룸 / 2만원 이하" 같은 조건을 스스로 분해·검색
+  - **콜드스타트 보강** — 사내 리뷰가 없는 메뉴도 카카오 실시간 검색으로 발견해 추천(카드에 "신규·리뷰 없음" 표시, 클릭 시 지도 포커스 + 첫 리뷰 작성 유도)
+- **함께 적용한 최신 기법**
+  - **프롬프트 캐싱** — 시스템 프롬프트·도구 정의(고정 프리픽스)에 `cache_control`을 걸어, 멀티라운드에서 반복되는 프리픽스를 캐시 읽기(약 0.1배 단가)로 처리해 에이전트화에 따른 추가 비용을 상쇄
+  - **Adaptive thinking** — 도구를 고르기 전에 Claude가 스스로 추론 깊이를 조절(`claude-sonnet-4-6`)
+  - **스트리밍(SSE)** — 에이전트는 단발보다 느리므로, `POST /api/chat/stream`(Server-Sent Events)으로 **진행 상태**(🔎 검색 중 → 📋 확인 중 → ✨ 정리 중)와 **최종 안내문을 토큰 단위**로 실시간 전송. 프론트는 `fetch`+`ReadableStream`으로 소비하고, 실패 시 비스트리밍(`POST /api/chat`)으로 폴백
+- **구현**: [`backend/app/services/agent_tools.py`](backend/app/services/agent_tools.py)(도구 정의·핸들러) · [`backend/app/services/rag_service.py`](backend/app/services/rag_service.py)(에이전트 루프 + `answer_stream` SSE) · [`backend/app/routers/chat.py`](backend/app/routers/chat.py)(`/api/chat`, `/api/chat/stream`). 응답 형식(`answer` + 추천 카드)은 그대로 유지
+
 ---
 
 ## 10. 폴더 구조
@@ -420,7 +468,8 @@ biz-lunch-lab/
 │   ├── app/
 │   │   ├── routers/         # auth, departments, restaurants, reviews,
 │   │   │                    #   tags, chat, lunch, admin
-│   │   ├── services/        # embedding, pinecone, rag, kakao, lunch_match
+│   │   ├── services/        # embedding, pinecone, rag(에이전트 루프),
+│   │   │                    #   agent_tools(Tool Use 도구), kakao, lunch_match
 │   │   ├── models/          # Pydantic 스키마
 │   │   ├── auth.py          # JWT · bcrypt · 권한
 │   │   └── main.py          # 앱 엔트리 + CORS
