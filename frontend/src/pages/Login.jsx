@@ -1,6 +1,6 @@
 // 로그인 — 영상 배경 위 동물의 숲 톤 카드(우측). 주민 입도 수속.
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { getDepartments, getTeams, login } from "../api/auth";
 import SelectField from "../components/common/SelectField";
@@ -10,6 +10,8 @@ import "./login.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/map";
   const loginSuccess = useAuthStore((s) => s.loginSuccess);
 
   const [departments, setDepartments] = useState([]);
@@ -52,7 +54,7 @@ export default function Login() {
     try {
       const { token, user } = await login({ name, team_id: teamId, pin });
       loginSuccess(token, user);
-      navigate("/map");
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.detail || "로그인에 실패했습니다.");
     } finally {

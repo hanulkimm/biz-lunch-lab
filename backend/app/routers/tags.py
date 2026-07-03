@@ -1,7 +1,6 @@
 """tags 라우터 — 미리 정의된 태그 목록 (리뷰 작성 폼용)."""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from app.auth import get_current_user
 from app.database import supabase
 
 router = APIRouter()
@@ -11,7 +10,7 @@ CATEGORY_ORDER = {"목적": 0, "분위기·시설": 1, "메뉴": 2, "가격": 3}
 
 
 @router.get("")
-def list_tags(_: dict = Depends(get_current_user)):
+def list_tags():
     rows = (
         supabase.table("tags")
         .select("id, category, name, sort_order")

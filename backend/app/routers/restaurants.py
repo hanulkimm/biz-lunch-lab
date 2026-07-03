@@ -1,9 +1,8 @@
 """restaurants 라우터 — 카카오 검색 / 식당 목록(마커) / 룰렛 / 식당 상세."""
 import random
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 
-from app.auth import get_current_user
 from app.database import supabase
 from app.models.schemas import KakaoPlace, RestaurantOut
 from app.services import kakao
@@ -23,7 +22,7 @@ ROULETTE_PATTERNS = {
 
 
 @router.get("/kakao/search", response_model=list[KakaoPlace])
-def kakao_search(query: str, _: dict = Depends(get_current_user)):
+def kakao_search(query: str):
     """리뷰 작성 시 식당 선택용 — 광화문 권역 음식점 검색."""
     if not query.strip():
         return []
@@ -31,7 +30,7 @@ def kakao_search(query: str, _: dict = Depends(get_current_user)):
 
 
 @router.get("/by-kakao/{kakao_place_id}")
-def get_restaurant_by_kakao(kakao_place_id: str, _: dict = Depends(get_current_user)):
+def get_restaurant_by_kakao(kakao_place_id: str):
     """카카오 place_id로 DB 식당 + 리뷰 조회. 아직 리뷰가 없어 등록 전이면 null.
 
     지도에서 카카오 검색으로 고른 식당의 상세(리뷰 유무 무관)를 보여주기 위함.
@@ -50,7 +49,7 @@ def get_restaurant_by_kakao(kakao_place_id: str, _: dict = Depends(get_current_u
 
 
 @router.get("", response_model=list[RestaurantOut])
-def list_restaurants(_: dict = Depends(get_current_user)):
+def list_restaurants():
     """리뷰가 1개 이상 있는 식당만 — 지도 마커용 (리뷰 수/평균 별점 포함)."""
     reviews = supabase.table("reviews").select("restaurant_id, rating").execute().data
     if not reviews:
@@ -82,7 +81,7 @@ def list_restaurants(_: dict = Depends(get_current_user)):
 
 
 @router.get("/roulette", response_model=RestaurantOut | None)
-def roulette(category: str, _: dict = Depends(get_current_user)):
+def roulette(category: str):
     """카테고리별 랜덤 식당 1곳 (랜덤 = 전체). 없으면 null."""
     q = supabase.table("restaurants").select("*")
     if category != "랜덤":
@@ -105,7 +104,7 @@ def roulette(category: str, _: dict = Depends(get_current_user)):
 
 
 @router.get("/{restaurant_id}")
-def get_restaurant(restaurant_id: str, _: dict = Depends(get_current_user)):
+def get_restaurant(restaurant_id: str):
     """식당 상세 + 리뷰 목록(작성자명, 태그 포함) — 마커 클릭 패널용."""
     res = (
         supabase.table("restaurants")

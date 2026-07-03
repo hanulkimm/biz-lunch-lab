@@ -18,14 +18,9 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/map"
-          element={
-            <ProtectedRoute>
-              <Map />
-            </ProtectedRoute>
-          }
-        />
+        {/* 지도·룰렛은 비회원도 둘러볼 수 있게 공개 (유입 장벽 완화) */}
+        <Route path="/map" element={<Map />} />
+        <Route path="/roulette" element={<Roulette />} />
         <Route
           path="/review/write"
           element={
@@ -34,7 +29,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/roulette" element={<ProtectedRoute><Roulette /></ProtectedRoute>} />
         <Route path="/lunch" element={<ProtectedRoute><Lunch /></ProtectedRoute>} />
         <Route path="/mypage" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />

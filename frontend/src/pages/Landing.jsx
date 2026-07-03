@@ -38,14 +38,16 @@ export default function Landing() {
               <p className="home-desc">
                 동료들이 발견한 맛집을 지도에 모으고, 별점과 태그로 기록하고,
                 랜덤 런치로 같이 떠나는 우리 본부의 점심 섬.
+                <br />
+                로그인 없이 지도와 AI 추천을 둘러볼 수 있어요.
               </p>
 
               <div className="home-cta">
-                <Link to="/login" className="btn-leaf">
-                  🗺️ 마을 입장하기
+                <Link to="/map" className="btn-leaf">
+                  🗺️ 둘러보기
                 </Link>
-                <Link to="/signup" className="btn-ghost">
-                  주민 등록
+                <Link to="/login" className="btn-ghost">
+                  로그인 / 주민 등록
                 </Link>
               </div>
             </div>

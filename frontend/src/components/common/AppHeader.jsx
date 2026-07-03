@@ -1,6 +1,6 @@
 // 공용 상단 헤더 (동물의 숲 톤) — 로고 + 섹션 탭 + 리뷰쓰기 + 아바타 + 로그아웃.
-import { useNavigate } from "react-router-dom";
-import { Dices, LogOut, MapPin, Moon, Pencil, Settings, Sparkles, Sun, UserRound, UsersRound } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Dices, LogIn, LogOut, MapPin, Moon, Pencil, Settings, Sparkles, Sun, UserRound, UsersRound } from "lucide-react";
 
 import { useAuthStore } from "../../store/authStore";
 import { useThemeStore } from "../../store/themeStore";
@@ -8,6 +8,7 @@ import "./appheader.css";
 
 export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
 
@@ -51,7 +52,7 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
         <button className="ah-review" onClick={() => navigate("/review/write")} aria-label="리뷰 쓰기">
           <Pencil size={15} /> <span>리뷰 쓰기</span>
         </button>
-        <div className="ah-avatar">{user?.name?.[0] || "주"}</div>
+        {user && <div className="ah-avatar">{user.name?.[0] || "주"}</div>}
         {user?.is_admin && <span className="ah-admin">관리자</span>}
         <button
           className="ah-theme"
@@ -60,9 +61,19 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
         >
           {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
         </button>
-        <button className="ah-logout" onClick={logout} aria-label="로그아웃">
-          <LogOut size={16} />
-        </button>
+        {user ? (
+          <button className="ah-logout" onClick={logout} aria-label="로그아웃">
+            <LogOut size={16} />
+          </button>
+        ) : (
+          <button
+            className="ah-review"
+            onClick={() => navigate("/login", { state: { from: location } })}
+            aria-label="로그인"
+          >
+            <LogIn size={15} /> <span>로그인</span>
+          </button>
+        )}
       </div>
     </header>
   );
