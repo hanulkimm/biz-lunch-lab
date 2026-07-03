@@ -46,6 +46,10 @@ export default function RestaurantPanel({ place, onClose, onWriteReview }) {
 
   const reviews = detail?.reviews || [];
   const rating = avg(reviews);
+  // 리뷰 전반의 대표 태그(중복 제거) — 너무 많이 보이지 않게 최대 4개 + "+N"
+  const tagNames = [
+    ...new Set(reviews.flatMap((rv) => (rv.review_tags || []).map((rt) => rt.tags?.name))),
+  ].filter(Boolean);
   const category = place.category || detail?.category;
   const address =
     place.road_address || place.address || detail?.road_address || detail?.address;
@@ -71,16 +75,19 @@ export default function RestaurantPanel({ place, onClose, onWriteReview }) {
         </div>
       )}
 
-      {reviews.length > 0 && (
+      {tagNames.length > 0 && (
         <div className="rp-tags">
-          {[...new Set(reviews.flatMap((rv) => (rv.review_tags || []).map((rt) => rt.tags?.name)))]
-            .filter(Boolean).slice(0, 6)
-            .map((name, i) => (
-              <span key={name} className="tag"
-                style={{ background: TAG_COLORS[i % 3].bg, color: TAG_COLORS[i % 3].fg }}>
-                {name}
-              </span>
-            ))}
+          {tagNames.slice(0, 4).map((name, i) => (
+            <span key={name} className="tag"
+              style={{ background: TAG_COLORS[i % 3].bg, color: TAG_COLORS[i % 3].fg }}>
+              {name}
+            </span>
+          ))}
+          {tagNames.length > 4 && (
+            <span className="tag" style={{ background: "var(--field)", color: "var(--muted)" }}>
+              +{tagNames.length - 4}
+            </span>
+          )}
         </div>
       )}
 

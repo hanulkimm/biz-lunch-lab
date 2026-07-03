@@ -149,9 +149,12 @@ export default function MyPage() {
             <div className="mp-rate"><Stars value={r.rating} /></div>
             {(r.review_tags || []).length > 0 && (
               <div className="mp-tags">
-                {r.review_tags.map((rt) => (
+                {r.review_tags.slice(0, 4).map((rt) => (
                   <span key={rt.tags?.id} className="tag">{rt.tags?.name}</span>
                 ))}
+                {r.review_tags.length > 4 && (
+                  <span className="tag more">+{r.review_tags.length - 4}</span>
+                )}
               </div>
             )}
             {r.comment && <p className="mp-comment">{r.comment}</p>}

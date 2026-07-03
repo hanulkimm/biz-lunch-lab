@@ -176,25 +176,35 @@
   color: var(--muted);
 }
 
-/* ─── 모바일: 아이콘 중심 압축 헤더 ─── */
+/* ─── 모바일: 윗줄(브랜드+액션) + 아랫줄(내비 풀폭) — 탭 잘림 방지 ─── */
 @media (max-width: 768px) {
   /* 노치/홈바 safe-area 보정 (standalone·viewport-fit=cover 대비) */
   .ah { padding-top: env(safe-area-inset-top); }
   .ah-inner {
-    height: 56px;
+    height: auto;
+    flex-wrap: wrap;
     gap: 4px;
-    padding-left: max(10px, env(safe-area-inset-left));
-    padding-right: max(10px, env(safe-area-inset-right));
+    row-gap: 6px;
+    padding: 8px max(10px, env(safe-area-inset-right)) 8px max(10px, env(safe-area-inset-left));
   }
   .ah-brand { margin-right: 2px; }
   .ah-brand-text { display: none; }          /* 로고만 표시 */
 
-  .ah-nav { flex: 1; min-width: 0; gap: 0; overflow-x: auto; scrollbar-width: none; }
-  .ah-nav::-webkit-scrollbar { display: none; }
-  .ah-tab { height: 40px; padding: 0 10px; gap: 0; }
+  /* 우측 액션 묶음(리뷰/아바타/테마/로그아웃/로그인)을 오른쪽으로 */
+  .ah-nav + * { margin-left: auto; }
+
+  /* 내비게이션: 두 번째 줄 전체 폭 — 6개 탭이 모두 보이도록 균등 분배 */
+  .ah-nav {
+    order: 5;
+    flex: 0 0 100%;
+    gap: 2px;
+    justify-content: space-between;
+    overflow-x: visible;
+  }
+  .ah-tab { flex: 1 1 0; height: 40px; padding: 0; gap: 0; justify-content: center; }
   .ah-tab-label { display: none; }           /* 아이콘만 표시 */
 
-  .ah-spacer { display: none; }              /* 우측 묶음 공간 확보 */
+  .ah-spacer { display: none; }
   /* 터치 타깃 40px 확보 */
   .ah-review { padding: 0 12px; height: 40px; }
   .ah-review span { display: none; }
