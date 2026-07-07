@@ -6,11 +6,11 @@
 <p>
   <img src="https://img.shields.io/badge/status-deployed-2ea44f" />
   <img src="https://img.shields.io/badge/frontend-Vercel-000?logo=vercel&logoColor=white" />
-  <img src="https://img.shields.io/badge/backend-Render-46E3B7?logo=render&logoColor=white" />
+  <img src="https://img.shields.io/badge/backend-AWS_EC2-FF9900?logo=amazonaws&logoColor=white" />
 </p>
 
 - 🌐 **Live**: https://biz-lunch-lab.vercel.app
-- 🔗 **API**: https://biz-lunch-lab-api.onrender.com
+- 🔗 **API**: https://biz-lunch-lab.duckdns.org
 
 ---
 
@@ -137,7 +137,7 @@ flowchart LR
 flowchart TD
     Dev["👩‍💻 Developers"] -->|git push| GH["GitHub"]
     GH -. auto deploy .-> FE
-    GH -. auto deploy .-> API
+    GH -. "git pull → docker build/run (SSH, 수동)" .-> API
 
     Client["👤 Client (브라우저)"] -->|HTTPS| FE
     Client -. 카카오맵 JS SDK .-> KAKAO["Kakao<br/>Map SDK · Local REST"]
@@ -145,11 +145,11 @@ flowchart TD
     subgraph Vercel["☁️ Vercel"]
         FE["Web Frontend<br/>React + Vite SPA"]
     end
-    subgraph Render["☁️ Render"]
-        API["API Server<br/>FastAPI · JWT"]
+    subgraph EC2["☁️ AWS EC2 (Ubuntu, t2.micro)"]
+        NGINX["Nginx<br/>리버스 프록시 + HTTPS(Let's Encrypt)"] --> API["API Server<br/>FastAPI (Docker 컨테이너) · JWT"]
     end
 
-    FE -->|"REST API + JWT"| API
+    FE -->|"REST API + JWT<br/>(DuckDNS 도메인)"| NGINX
 
     API --> DB[("Supabase<br/>PostgreSQL")]
     API --> VEC[("Pinecone<br/>512d · top-k=5")]
@@ -184,7 +184,10 @@ flowchart TD
 **Deploy & Dev**
 
 ![Vercel](https://img.shields.io/badge/Vercel-000?logo=vercel&logoColor=white)
-![Render](https://img.shields.io/badge/Render-46E3B7?logo=render&logoColor=white)
+![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?logo=amazonaws&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white)
+![Let's Encrypt](https://img.shields.io/badge/Let's_Encrypt-HTTPS-003A70?logo=letsencrypt&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
 
 ### 기술 정리
@@ -197,7 +200,9 @@ flowchart TD
 | **Supabase** (PostgreSQL) | 사용자·리뷰·식당 등 *원본 데이터* 보관 | 백엔드에서 직접 읽고 씀. 접근 권한은 API 코드(로그인 토큰)로 통제 |
 | **bcrypt + JWT** | 로그인 보안 | PIN은 bcrypt로 암호화해 저장, 로그인하면 JWT 토큰 발급(기본 7일 유효) |
 | **Kakao** | 지도 표시 + 식당 검색 | 화면 지도는 JS SDK, 식당 검색은 로컬 REST API(음식점 + 카페) |
-| **React · Vite · Zustand** | 웹 화면(SPA)과 화면 상태 관리 | 페이지·로그인 상태 관리. 서버 호출은 axios(잠든 서버 자동 재시도 포함) |
+| **React · Vite · Zustand** | 웹 화면(SPA)과 화면 상태 관리 | 페이지·로그인 상태 관리. 서버 호출은 axios |
+| **Docker** | 배포 환경 일관성 | `backend/Dockerfile`로 이미지 빌드 → EC2에서 컨테이너로 상시 실행(`--restart unless-stopped`) |
+| **Nginx + Let's Encrypt** | HTTPS 리버스 프록시 | EC2 안에서 80/443 요청을 받아 내부 8000번(컨테이너)으로 전달, `certbot`으로 인증서 자동 발급·갱신 |
 
 > 🛠️ 지금 RAG/매칭은 각 서비스 SDK(`anthropic`·`openai`·`pinecone`)를 **직접 연결**해 구성했습니다. *다음 단계로 **LangChain** 프레임워크 기반 RAG로 전환할 예정입니다.*
 
@@ -353,31 +358,24 @@ Supabase SQL Editor에서 순서대로 실행:
 | 영역 | 플랫폼 | 방식 |
 |------|--------|------|
 | **Frontend** | Vercel | `main` 푸시 시 자동 빌드·배포. SPA — 모든 경로를 `index.html`로 rewrite |
-| **Backend** | Render (Web Service · Free) | `main` 푸시 시 자동 배포. `uvicorn app.main:app`, 헬스체크 `GET /health` ([`render.yaml`](render.yaml) 블루프린트) |
+| **Backend** | AWS EC2 (`t2.micro`, Ubuntu 24.04, 서울 리전) | Docker 컨테이너로 **상시 구동**. Nginx가 80/443 → 내부 8000 리버스 프록시, `certbot`으로 HTTPS(Let's Encrypt) 자동 발급. 도메인은 [DuckDNS](https://www.duckdns.org)(`biz-lunch-lab.duckdns.org`) 무료 서브도메인을 Elastic IP에 연결. 배포는 SSH 접속 후 `git pull` → `docker build` → `docker run` (수동, [`backend/Dockerfile`](backend/Dockerfile)) |
 
 ### 환경변수 (프로덕션)
 | 설정 위치 | 키 | 용도 |
 |-----------|----|----|
-| **Vercel** | `VITE_API_URL` | 백엔드 API 주소 (예: `https://biz-lunch-lab-api.onrender.com`) |
+| **Vercel** | `VITE_API_URL` | 백엔드 API 주소 (`https://biz-lunch-lab.duckdns.org`) |
 | **Vercel** | `VITE_KAKAO_MAP_KEY` | 카카오맵 **JS SDK** 키 (지도 렌더) |
-| **Render** | `SUPABASE_URL`, `SUPABASE_KEY` | Supabase 접속(서비스 키) |
-| **Render** | `ANTHROPIC_API_KEY` | Claude (추천·매칭) |
-| **Render** | `OPENAI_API_KEY` | 임베딩 |
-| **Render** | `PINECONE_API_KEY`, `PINECONE_INDEX_NAME` | 벡터 DB |
-| **Render** | `KAKAO_API_KEY` | 카카오 **로컬 REST**(식당 검색) |
-| **Render** | `JWT_SECRET_KEY`, `JWT_EXPIRE_DAYS` | JWT 서명·만료 |
-| **Render** | `FRONTEND_URL` | CORS 허용 도메인 (Vercel 프리뷰는 정규식으로 추가 허용) |
+| **EC2 서버** `.env` | `SUPABASE_URL`, `SUPABASE_KEY` | Supabase 접속(서비스 키) |
+| **EC2 서버** `.env` | `ANTHROPIC_API_KEY` | Claude (추천·매칭) |
+| **EC2 서버** `.env` | `OPENAI_API_KEY` | 임베딩 |
+| **EC2 서버** `.env` | `PINECONE_API_KEY`, `PINECONE_INDEX_NAME` | 벡터 DB |
+| **EC2 서버** `.env` | `KAKAO_API_KEY` | 카카오 **로컬 REST**(식당 검색) |
+| **EC2 서버** `.env` | `JWT_SECRET_KEY`, `JWT_EXPIRE_DAYS` | JWT 서명·만료 |
+| **EC2 서버** `.env` | `FRONTEND_URL` | CORS 허용 도메인 (Vercel 프리뷰는 정규식으로 추가 허용) |
+
+> `.env`는 `.gitignore` 대상이라 저장소에 없습니다. `scp`로 로컬 → EC2 서버에 직접 전송하며, `docker run --env-file .env`로 컨테이너에 주입합니다.
 
 > 🗺️ **카카오 키 주의**: JS SDK 키는 **등록된 도메인에서만** 동작합니다. 로컬(`http://localhost:5173`)과 배포(Vercel) 도메인을 카카오 콘솔에 등록해야 지도가 뜹니다.
-
-### ⚠️ Render 무료 플랜 콜드스타트
-무료 Web Service는 **15분간 트래픽이 없으면 슬립**합니다. 슬립 직후 첫 요청은 서버를 깨우는 데 **30~60초**가 걸리거나 일시적으로 **502**가 납니다. 그래서 한동안 아무도 안 쓰다가 처음 접속하면 **로그인 화면에서 담당·팀 목록이 잠깐 비어 보일 수 있습니다.**
-
-- **완화책 (적용됨)**: 프론트 `axios` 인터셉터가 콜드스타트성 오류(네트워크/타임아웃/502·503·504)를 **자동 재시도**해 깨우는 구간을 통과합니다.
-- **권장 (상시 웜)**: [cron-job.org](https://cron-job.org) 또는 GitHub Actions로 **10~14분마다 `GET /health`** 핑 → 업무시간 동안 슬립 방지.
-- **근본 해결 (계획)**: 백엔드를 상시 구동 환경인 **AWS EC2**로 이전해 콜드 스타트 자체를 제거할 예정입니다 (아래 [§9 보완사항 & 향후 개선](#9-보완사항--향후-개선) 참고).
-
-> 증상이 "또" 보인다면, 대개 변경이 아직 배포되지 않았거나 서버가 막 슬립에서 깨는 중입니다. 데이터·코드 문제가 아니라 **무료 플랜 특성**입니다.
 
 ---
 
@@ -386,21 +384,25 @@ Supabase SQL Editor에서 순서대로 실행:
 
 | # | 영역 | As-Is | To-Be |
 |---|------|-------|-------|
-| 1 | 배포·인프라 | Render 무료 플랜 — 콜드 스타트로 첫 응답 지연·간헐적 502 | AWS EC2 상시 구동으로 콜드 스타트 제거 |
+| 1 | 배포·인프라 | Render 무료 플랜 — 콜드 스타트로 첫 응답 지연·간헐적 502 | **AWS EC2 상시 구동으로 콜드 스타트 제거 (✅ 적용 완료)** |
 | 2 | AI · RAG | 프레임워크 없이 직접 연결한 RAG 구성 | LangChain 체인화로 구조 표준화·확장성 확보 |
 | 3 | AI · 챗봇 | 한 번 검색 → 한 번 생성하는 고정 파이프라인 RAG | **Tool Use 기반 AI 에이전트화 (✅ 적용 완료)** — Claude가 스스로 검색·확인 |
 
 ### 1. Render 콜드 스타트 → AWS EC2 이전
 
-**As-Is (현재)**
+> ✅ **적용 완료** — 백엔드를 Render 무료 플랜에서 **AWS EC2 상시 구동 환경**으로 이전했습니다.
+
+**As-Is (기존)**
 - 백엔드가 Render 무료 플랜에서 구동되어, 15분간 트래픽이 없으면 인스턴스가 자동으로 슬립 상태로 전환
 - 슬립 이후 첫 요청은 인스턴스를 깨우는 데 30~60초가 소요되거나 일시적으로 502가 발생하며, 이로 인해 로그인 화면에서 담당·팀 목록이 즉시 표시되지 않는 경우 발생
-- 현재는 프론트엔드 `axios` 인터셉터의 자동 재시도로 완화하고 있으나, 무료 플랜의 구조적 제약상 콜드 스타트 자체를 제거 불가가
+- 프론트엔드 `axios` 인터셉터의 자동 재시도로 완화했으나, 무료 플랜의 구조적 제약상 콜드 스타트 자체는 제거 불가능
 
-**To-Be (개선 후)**
-- 백엔드를 AWS EC2 인스턴스로 이전하여 상시 구동(슬립 없음) 환경을 구성
-- Docker/systemd 기반 상시 실행, Nginx 리버스 프록시, 도메인·HTTPS로 운영
-- 콜드 스타트가 제거되어 첫 응답 지연과 간헐적 502가 해소되고, 일관된 응답 속도를 확보보
+**To-Be (개선 후, 현재 상태)**
+- **AWS EC2**(`t2.micro`, 서울 리전) 인스턴스에 **Docker 컨테이너**로 FastAPI 앱을 상시 구동(`--restart unless-stopped`)
+- **Nginx**가 리버스 프록시 역할로 80/443 요청을 내부 8000번 포트로 전달, **certbot(Let's Encrypt)** 으로 HTTPS 인증서 자동 발급
+- 도메인은 무료 서비스 **DuckDNS**(`biz-lunch-lab.duckdns.org`)로 Elastic IP에 연결해 고정 주소 확보
+- 결과: 콜드 스타트가 완전히 제거되어 첫 응답 지연·간헐적 502가 해소되고, 24시간 일관된 응답 속도 확보
+- 남은 과제: 지금은 배포 시 SSH 접속 후 수동으로 `git pull` → `docker build` → `docker run`을 실행 — 추후 GitHub Actions로 push 시 자동 배포화 예정
 
 ### 2. RAG LangChain 미적용 → LangChain 도입
 
@@ -473,7 +475,9 @@ biz-lunch-lab/
 │   │   ├── models/          # Pydantic 스키마
 │   │   ├── auth.py          # JWT · bcrypt · 권한
 │   │   └── main.py          # 앱 엔트리 + CORS
-│   └── db/                  # schema.sql, seed.sql, 마이그레이션 스크립트
+│   ├── db/                  # schema.sql, seed.sql, 마이그레이션 스크립트
+│   ├── Dockerfile           # EC2 배포용 이미지 빌드 설정
+│   └── .dockerignore
 ├── frontend/                # React + Vite
 │   └── src/
 │       ├── pages/           # Landing, Login, Signup, Map, ReviewWrite,
@@ -481,6 +485,6 @@ biz-lunch-lab/
 │       ├── components/      # Map, ChatPanel, RestaurantPanel, common
 │       ├── api/             # axios 클라이언트별 API
 │       └── store/           # zustand (auth, theme)
-├── render.yaml              # Render 배포 블루프린트
+├── render.yaml              # (레거시) Render 배포 블루프린트 — 더 이상 사용 안 함
 └── README.md
 ```
