@@ -50,7 +50,7 @@ def get_current_user(
 
     res = (
         supabase.table("users")
-        .select("id, name, team_id, is_admin")
+        .select("id, name, team_id, is_admin, villager")
         .eq("id", user_id)
         .limit(1)
         .execute()

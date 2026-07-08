@@ -14,6 +14,56 @@
   font-size: 14px;
   margin: 8px 0 24px;
 }
+
+/* 닮은꼴 주민 */
+.mp-villager-banner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  border: 2px dashed var(--leaf);
+  border-radius: 20px;
+  background: var(--leaf-soft);
+  color: var(--ink-green-2);
+  cursor: pointer;
+  text-align: left;
+}
+.mp-villager-banner .e { font-size: 30px; }
+.mp-villager-banner .txt { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.mp-villager-banner b { font-family: var(--font-display); font-size: 16px; }
+.mp-villager-banner small { font-size: 12.5px; color: var(--muted); }
+
+.mp-villager {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border: 2px solid var(--line-2);
+  border-radius: 20px;
+  background: var(--cream);
+}
+.mp-villager .ic {
+  width: 62px; height: 62px;
+  border-radius: 18px;
+  border: 3px solid var(--edge);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.mp-villager .ic img { width: 84%; height: 84%; object-fit: contain; }
+.mp-villager .info { flex: 1; min-width: 0; }
+.mp-villager .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mp-villager .row b { font-family: var(--font-display); font-size: 17px; color: var(--ink-green); }
+.mp-villager .pct {
+  padding: 3px 10px; border-radius: 999px;
+  background: var(--sun); color: #6b5416;
+  font-size: 11.5px; font-weight: 700;
+}
+.mp-villager small { display: block; margin-top: 4px; font-size: 12.5px; color: var(--muted); }
+
 .mp-empty {
   text-align: center;
   background: var(--cream);

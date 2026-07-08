@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     # Kakao
     kakao_api_key: str = ""
 
+    # Nookipedia (동물의 숲 데이터 — 확장 기능용)
+    nookipedia_api_key: str = ""
+
     # JWT
     jwt_secret_key: str = "change-me"
     jwt_expire_days: int = 7

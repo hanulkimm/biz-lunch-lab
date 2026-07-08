@@ -24,6 +24,7 @@ CREATE TABLE users (
   team_id       UUID NOT NULL REFERENCES teams(id),
   password_hash TEXT NOT NULL,
   is_admin      BOOLEAN NOT NULL DEFAULT FALSE,
+  villager      JSONB,  -- 닮은꼴 주민 프로필 (add_villager_column.sql)
   created_at    TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE (name, team_id)
 );

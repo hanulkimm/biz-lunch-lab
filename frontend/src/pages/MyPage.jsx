@@ -1,11 +1,13 @@
-// 마이페이지 — 내가 남긴 리뷰 목록 + 수정/삭제.
+// 마이페이지 — 내 닮은꼴 주민 + 내가 남긴 리뷰 목록 + 수정/삭제.
 import { useEffect, useMemo, useState } from "react";
-import { Pencil, Star, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Pencil, Sparkles, Star, Trash2 } from "lucide-react";
 
 import { deleteReview, getMyReviews, getTags, updateReview } from "../api/reviews";
 import AppHeader from "../components/common/AppHeader";
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import Spinner from "../components/common/Spinner";
+import { useAuthStore } from "../store/authStore";
 import "./mypage.css";
 
 function Stars({ value = 0, size = 16 }) {
@@ -94,6 +96,45 @@ function EditModal({ review, tags, onClose, onSaved }) {
   );
 }
 
+function VillagerBuddy() {
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const v = user?.villager;
+
+  if (!v) {
+    return (
+      <button className="mp-villager-banner" onClick={() => navigate("/villager-match")}>
+        <span className="e">🏝️</span>
+        <span className="txt">
+          <b>나랑 닮은 동물의 숲 주민은?</b>
+          <small>퀴즈 1분이면 내 닮은꼴 주민을 찾아줘요</small>
+        </span>
+        <Sparkles size={18} />
+      </button>
+    );
+  }
+  return (
+    <div className="mp-villager">
+      <div className="ic" style={{ background: v.bubble_color || "var(--leaf-soft)" }}>
+        <img src={v.photo || v.icon} alt={v.name_ko} />
+      </div>
+      <div className="info">
+        <div className="row">
+          <b>{v.name_ko}</b>
+          {v.match_percent && <span className="pct">싱크로율 {v.match_percent}%</span>}
+        </div>
+        <small>
+          {v.species_ko} · {v.personality_ko}
+          {v.catchphrase_ko ? ` · “${v.catchphrase_ko}”` : ""}
+        </small>
+      </div>
+      <button className="mp-btn" onClick={() => navigate("/villager-match")}>
+        다시 찾기
+      </button>
+    </div>
+  );
+}
+
 export default function MyPage() {
   const [reviews, setReviews] = useState(null);
   const [tags, setTags] = useState([]);
@@ -127,6 +168,8 @@ export default function MyPage() {
         <p className="mp-sub">
           {reviews == null ? "불러오는 중…" : `내가 남긴 기록 ${reviews.length}개`}
         </p>
+
+        <VillagerBuddy />
 
         {reviews?.length === 0 && (
           <div className="mp-empty">

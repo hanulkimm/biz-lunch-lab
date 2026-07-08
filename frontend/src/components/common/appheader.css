@@ -108,6 +108,19 @@
   box-shadow: 0 3px 0 #7fc0d2;
   flex-shrink: 0;
 }
+.ah-avatar.clickable { cursor: pointer; }
+.ah-avatar-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  margin-left: 8px;
+  border: 2px solid var(--edge);
+  box-shadow: 0 3px 0 rgba(94, 75, 46, 0.22);
+  background: var(--leaf-soft);
+  object-fit: cover;
+  cursor: pointer;
+  flex-shrink: 0;
+}
 .ah-admin {
   background: var(--sun);
   color: #7a5a00;
@@ -210,5 +223,6 @@
   .ah-review span { display: none; }
   .ah-admin { display: none; }
   .ah-avatar { width: 40px; height: 40px; margin-left: 4px; font-size: 14px; }
+  .ah-avatar-img { width: 40px; height: 40px; margin-left: 4px; }
   .ah-theme, .ah-logout { width: 40px; height: 40px; margin-left: 4px; }
 }

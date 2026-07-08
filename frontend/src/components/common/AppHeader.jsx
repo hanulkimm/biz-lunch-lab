@@ -52,7 +52,24 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
         <button className="ah-review" onClick={() => navigate("/review/write")} aria-label="리뷰 쓰기">
           <Pencil size={15} /> <span>리뷰 쓰기</span>
         </button>
-        {user && <div className="ah-avatar">{user.name?.[0] || "주"}</div>}
+        {user &&
+          (user.villager?.icon ? (
+            <img
+              className="ah-avatar-img"
+              src={user.villager.icon}
+              alt={user.villager.name_ko}
+              title={`${user.villager.name_ko} — 닮은꼴 다시 찾기`}
+              onClick={() => navigate("/villager-match")}
+            />
+          ) : (
+            <div
+              className="ah-avatar clickable"
+              title="나랑 닮은 주민 찾기"
+              onClick={() => navigate("/villager-match")}
+            >
+              {user.name?.[0] || "주"}
+            </div>
+          ))}
         {user?.is_admin && <span className="ah-admin">관리자</span>}
         <button
           className="ah-theme"

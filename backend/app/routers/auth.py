@@ -57,7 +57,7 @@ def signup(body: SignupRequest):
 def login(body: LoginRequest):
     res = (
         supabase.table("users")
-        .select("id, name, team_id, is_admin, password_hash")
+        .select("id, name, team_id, is_admin, villager, password_hash")
         .eq("name", body.name)
         .eq("team_id", body.team_id)
         .limit(1)

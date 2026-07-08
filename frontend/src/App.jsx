@@ -12,6 +12,7 @@ import MyPage from "./pages/MyPage";
 import ReviewWrite from "./pages/ReviewWrite";
 import Roulette from "./pages/Roulette";
 import Signup from "./pages/Signup";
+import VillagerMatch from "./pages/VillagerMatch";
 import { useAuthStore } from "./store/authStore";
 
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
         />
         <Route path="/lunch" element={<ProtectedRoute><Lunch /></ProtectedRoute>} />
         <Route path="/mypage" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
+        <Route path="/villager-match" element={<ProtectedRoute><VillagerMatch /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

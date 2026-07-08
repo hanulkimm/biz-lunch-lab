@@ -34,6 +34,7 @@ class UserOut(BaseModel):
     name: str
     team_id: str
     is_admin: bool = False
+    villager: dict | None = None  # 닮은꼴 주민 프로필 {id, name_ko, icon, ...}
 
 
 class AuthResponse(BaseModel):
@@ -103,6 +104,11 @@ class LunchApply(BaseModel):
 # ─── 관리자 ───
 class PinReset(BaseModel):
     pin: str = Field(pattern=r"^\d{4}$", description="새 4자리 PIN")
+
+
+# ─── 닮은꼴 주민 ───
+class VillagerProfileSave(BaseModel):
+    villager: dict  # match 결과의 villager 카드 (+ match_percent, reason)
 
 
 # ─── 챗봇 ───

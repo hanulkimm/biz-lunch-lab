@@ -24,3 +24,6 @@ langchain-openai
 
 # ─── HTTP (Kakao API) ───
 httpx
+
+# ─── 파일 업로드 (닮은꼴 주민 사진 분석) ───
+python-multipart
