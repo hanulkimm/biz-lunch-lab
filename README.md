@@ -145,7 +145,7 @@ flowchart TD
     subgraph Vercel["☁️ Vercel"]
         FE["Web Frontend<br/>React + Vite SPA"]
     end
-    subgraph EC2["☁️ AWS EC2 (Ubuntu, t2.micro)"]
+    subgraph EC2["☁️ AWS EC2 (Ubuntu, t3.micro)"]
         NGINX["Nginx<br/>리버스 프록시 + HTTPS(Let's Encrypt)"] --> API["API Server<br/>FastAPI (Docker 컨테이너) · JWT"]
     end
 
@@ -358,7 +358,7 @@ Supabase SQL Editor에서 순서대로 실행:
 | 영역 | 플랫폼 | 방식 |
 |------|--------|------|
 | **Frontend** | Vercel | `main` 푸시 시 자동 빌드·배포. SPA — 모든 경로를 `index.html`로 rewrite |
-| **Backend** | AWS EC2 (`t2.micro`, Ubuntu 24.04, 서울 리전) | Docker 컨테이너로 **상시 구동**. Nginx가 80/443 → 내부 8000 리버스 프록시, `certbot`으로 HTTPS(Let's Encrypt) 자동 발급. 도메인은 [DuckDNS](https://www.duckdns.org)(`biz-lunch-lab.duckdns.org`) 무료 서브도메인을 Elastic IP에 연결. 배포는 SSH 접속 후 `git pull` → `docker build` → `docker run` (수동, [`backend/Dockerfile`](backend/Dockerfile)) |
+| **Backend** | AWS EC2 (`t3.micro`, Ubuntu 24.04, 서울 리전) | Docker 컨테이너로 **상시 구동**. Nginx가 80/443 → 내부 8000 리버스 프록시, `certbot`으로 HTTPS(Let's Encrypt) 자동 발급. 도메인은 [DuckDNS](https://www.duckdns.org)(`biz-lunch-lab.duckdns.org`) 무료 서브도메인을 Elastic IP에 연결. 배포는 SSH 접속 후 `git pull` → `docker build` → `docker run` (수동, [`backend/Dockerfile`](backend/Dockerfile)) |
 
 ### 환경변수 (프로덕션)
 | 설정 위치 | 키 | 용도 |
@@ -398,7 +398,7 @@ Supabase SQL Editor에서 순서대로 실행:
 - 프론트엔드 `axios` 인터셉터의 자동 재시도로 완화했으나, 무료 플랜의 구조적 제약상 콜드 스타트 자체는 제거 불가능
 
 **To-Be (개선 후, 현재 상태)**
-- **AWS EC2**(`t2.micro`, 서울 리전) 인스턴스에 **Docker 컨테이너**로 FastAPI 앱을 상시 구동(`--restart unless-stopped`)
+- **AWS EC2**(`t3.micro`, 서울 리전) 인스턴스에 **Docker 컨테이너**로 FastAPI 앱을 상시 구동(`--restart unless-stopped`)
 - **Nginx**가 리버스 프록시 역할로 80/443 요청을 내부 8000번 포트로 전달, **certbot(Let's Encrypt)** 으로 HTTPS 인증서 자동 발급
 - 도메인은 무료 서비스 **DuckDNS**(`biz-lunch-lab.duckdns.org`)로 Elastic IP에 연결해 고정 주소 확보
 - 결과: 콜드 스타트가 완전히 제거되어 첫 응답 지연·간헐적 502가 해소되고, 24시간 일관된 응답 속도 확보
