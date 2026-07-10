@@ -174,33 +174,33 @@ flowchart TD
 
 **Frontend**
 
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
-![React Router](https://img.shields.io/badge/React_Router-7-CA4245?logo=reactrouter&logoColor=white)
-![Zustand](https://img.shields.io/badge/Zustand-state-443E38)
+![React](https://img.shields.io/badge/React_19-087EA4?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite_8-646CFF?logo=vite&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router_7-CA4245?logo=reactrouter&logoColor=white)
+![Zustand](https://img.shields.io/badge/Zustand-443E38)
 
 **Backend**
 
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python_3.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
-![JWT](https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT_Auth-000000?logo=jsonwebtokens&logoColor=white)
 
 **Data & AI**
 
-![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3FCF8E?logo=supabase&logoColor=white)
-![Pinecone](https://img.shields.io/badge/Pinecone-Vector_DB-000000?logo=pinecone&logoColor=white)
-![Claude](https://img.shields.io/badge/Anthropic-claude--sonnet--4--6-D97757?logo=anthropic&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-text--embedding--3--small-412991?logo=openai&logoColor=white)
-![Kakao](https://img.shields.io/badge/Kakao_Map-SDK_+_Local_REST-FFCD00?logo=kakao&logoColor=black)
+![Supabase](https://img.shields.io/badge/Supabase_PostgreSQL-3ECF8E?logo=supabase&logoColor=white)
+![Pinecone](https://img.shields.io/badge/Pinecone_VectorDB-000000?logo=pinecone&logoColor=white)
+![Claude](https://img.shields.io/badge/Claude_Sonnet_4.6-D97757?logo=anthropic&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI_Embeddings-412991?logo=openai&logoColor=white)
+![Kakao](https://img.shields.io/badge/Kakao_Map-FFCD00?logo=kakao&logoColor=black)
 
 **Deploy & Dev**
 
 ![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?logo=amazonaws&logoColor=white)
 ![Amazon S3](https://img.shields.io/badge/Amazon_S3-569A31?logo=amazons3&logoColor=white)
-![CloudFront](https://img.shields.io/badge/CloudFront-CDN-8C4FFF?logo=amazonaws&logoColor=white)
+![CloudFront](https://img.shields.io/badge/CloudFront-8C4FFF?logo=amazonaws&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
 ![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white)
-![Let's Encrypt](https://img.shields.io/badge/Let's_Encrypt-HTTPS-003A70?logo=letsencrypt&logoColor=white)
+![Let's Encrypt](https://img.shields.io/badge/Let's_Encrypt-003A70?logo=letsencrypt&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
 
 ### 기술 정리
