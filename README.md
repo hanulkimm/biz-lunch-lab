@@ -136,8 +136,8 @@ flowchart LR
 ```mermaid
 flowchart TD
     Dev["👩‍💻 Developers"] -->|git push| GH["GitHub"]
-    GH -. "빌드 → S3 업로드 (수동)" .-> S3
-    GH -. "docker 재배포 (SSH)" .-> API
+    GH -. 빌드 업로드 .-> S3
+    GH -. SSH 배포 .-> EC2
 
     Client["👤 Client (브라우저)"] -->|화면 요청| CF
     Client -->|"API 호출 (HTTPS)"| NGINX
