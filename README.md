@@ -5,12 +5,11 @@
 
 <p>
   <img src="https://img.shields.io/badge/status-deployed-2ea44f" />
-  <img src="https://img.shields.io/badge/frontend-Vercel_+_S3·CloudFront-000?logo=vercel&logoColor=white" />
+  <img src="https://img.shields.io/badge/frontend-S3_+_CloudFront-569A31?logo=amazons3&logoColor=white" />
   <img src="https://img.shields.io/badge/backend-AWS_EC2-FF9900?logo=amazonaws&logoColor=white" />
 </p>
 
-- 🌐 **Live**: https://biz-lunch-lab.vercel.app
-- 🌐 **Live (AWS)**: https://d1nn2omasifg5e.cloudfront.net — S3 + CloudFront 병행 배포
+- 🌐 **Live**: https://d1nn2omasifg5e.cloudfront.net
 - 🔗 **API**: https://biz-lunch-lab.duckdns.org
 
 ---
@@ -137,33 +136,26 @@ flowchart LR
 ```mermaid
 flowchart TD
     Dev["👩‍💻 Developers"] -->|git push| GH["GitHub"]
-    GH -. auto deploy .-> FE
-    GH -. "npm run build → S3 업로드<br/>+ CloudFront 캐시 무효화 (수동)" .-> S3
-    GH -. "git pull → docker build/run (SSH, 수동)" .-> API
+    GH -. "빌드 → S3 업로드 (수동)" .-> S3
+    GH -. "docker 재배포 (SSH)" .-> API
 
-    Client["👤 Client (브라우저)"] -->|HTTPS 화면| FE
-    Client -->|HTTPS 화면| CF
-    Client -->|"REST API + JWT<br/>(DuckDNS 도메인)"| NGINX
-    Client -. 카카오맵 JS SDK .-> KAKAO["Kakao<br/>Map SDK · Local REST"]
+    Client["👤 Client (브라우저)"] -->|화면 요청| CF
+    Client -->|"API 호출 (HTTPS)"| NGINX
+    Client -. 지도 그리기 .-> KAKAO
 
-    subgraph Vercel["☁️ Vercel"]
-        FE["Web Frontend<br/>React + Vite SPA"]
-    end
     subgraph AWS["☁️ AWS"]
-        CF["CloudFront (Global)<br/>HTTPS · 엣지 캐시 · SPA 라우팅"] -->|원본 조회 OAC| S3["S3 (ap-northeast-2)<br/>정적 파일 dist/"]
-        subgraph EC2["EC2 (Ubuntu, t3.micro)"]
-            NGINX["Nginx<br/>리버스 프록시 + HTTPS(Let's Encrypt)"] --> API["API Server<br/>FastAPI (Docker 컨테이너) · JWT"]
+        CF["CloudFront (Global)<br/>정적 배포 · 캐시"] -->|원본 조회| S3["S3<br/>프론트 정적 파일"]
+        subgraph EC2["EC2 · t3.micro (Ubuntu)"]
+            NGINX["Nginx<br/>리버스 프록시 · HTTPS"] --> API["FastAPI<br/>API 서버 (Docker)"]
         end
     end
 
-    API --> DB[("Supabase<br/>PostgreSQL")]
-    API --> VEC[("Pinecone<br/>512d · top-k=5")]
-    API --> LLM["Anthropic Claude<br/>claude-sonnet-4-6<br/>(Messages API)"]
-    API --> EMB["OpenAI<br/>text-embedding-3-small · 512d"]
-    API --> KAKAO
+    API --> DB[("Supabase<br/>메인 DB")]
+    API --> VEC[("Pinecone<br/>Vector DB")]
+    API --> LLM["Claude<br/>AI 추천 · 챗봇"]
+    API --> EMB["OpenAI<br/>텍스트 임베딩"]
+    API -->|식당 검색| KAKAO["Kakao<br/>지도 · 식당 검색"]
 ```
-
-> 프론트엔드는 **Vercel과 AWS(S3+CloudFront)에 동일 빌드를 병행 배포** 중 — 두 주소 모두 같은 EC2 백엔드를 바라본다.
 
 ### 기술 스택
 
@@ -190,7 +182,6 @@ flowchart TD
 
 **Deploy & Dev**
 
-![Vercel](https://img.shields.io/badge/Vercel-000?logo=vercel&logoColor=white)
 ![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?logo=amazonaws&logoColor=white)
 ![Amazon S3](https://img.shields.io/badge/Amazon_S3-569A31?logo=amazons3&logoColor=white)
 ![CloudFront](https://img.shields.io/badge/CloudFront-CDN-8C4FFF?logo=amazonaws&logoColor=white)
@@ -366,27 +357,24 @@ Supabase SQL Editor에서 순서대로 실행:
 ### 배포 구성
 | 영역 | 플랫폼 | 방식 |
 |------|--------|------|
-| **Frontend** | Vercel | `main` 푸시 시 자동 빌드·배포. SPA — 모든 경로를 `index.html`로 rewrite |
-| **Frontend (AWS)** | S3 + CloudFront | 동일 빌드를 병행 배포. `npm run build`(`.env.production` 적용) → S3 버킷(`biz-lunch-lab-frontend`) 업로드 → CloudFront invalidation(`/*`). 버킷은 비공개(Block public access)로 두고 **OAC**로 CloudFront만 접근 허용, SPA 라우팅은 커스텀 에러 응답(403/404 → `/index.html`, 200)으로 처리 |
+| **Frontend** | S3 + CloudFront | `npm run build`(`.env.production` 적용) → S3 버킷(`biz-lunch-lab-frontend`) 업로드 → CloudFront invalidation(`/*`). 버킷은 비공개(Block public access)로 두고 **OAC**로 CloudFront만 접근 허용, SPA 라우팅은 커스텀 에러 응답(403/404 → `/index.html`, 200)으로 처리 |
 | **Backend** | AWS EC2 (`t3.micro`, Ubuntu 24.04, 서울 리전) | Docker 컨테이너로 **상시 구동**. Nginx가 80/443 → 내부 8000 리버스 프록시, `certbot`으로 HTTPS(Let's Encrypt) 자동 발급. 도메인은 [DuckDNS](https://www.duckdns.org)(`biz-lunch-lab.duckdns.org`) 무료 서브도메인을 Elastic IP에 연결. 배포는 SSH 접속 후 `git pull` → `docker build` → `docker run` (수동, [`backend/Dockerfile`](backend/Dockerfile)) |
 
 ### 환경변수 (프로덕션)
 | 설정 위치 | 키 | 용도 |
 |-----------|----|----|
-| **Vercel** | `VITE_API_URL` | 백엔드 API 주소 (`https://biz-lunch-lab.duckdns.org`) |
-| **Vercel** | `VITE_KAKAO_MAP_KEY` | 카카오맵 **JS SDK** 키 (지도 렌더) |
-| **저장소** [`frontend/.env.production`](frontend/.env.production) | `VITE_API_URL`, `VITE_KAKAO_MAP_KEY` | AWS(S3+CloudFront) 빌드용. `VITE_` 값은 빌드 결과물에 노출되는 공개 값(도메인 제한 키)이라 커밋 포함 |
+| **저장소** [`frontend/.env.production`](frontend/.env.production) | `VITE_API_URL`, `VITE_KAKAO_MAP_KEY` | 프로덕션 빌드용 — 백엔드 API 주소 + 카카오맵 JS SDK 키. `VITE_` 값은 빌드 결과물에 노출되는 공개 값(도메인 제한 키)이라 커밋 포함 |
 | **EC2 서버** `.env` | `SUPABASE_URL`, `SUPABASE_KEY` | Supabase 접속(서비스 키) |
 | **EC2 서버** `.env` | `ANTHROPIC_API_KEY` | Claude (추천·매칭) |
 | **EC2 서버** `.env` | `OPENAI_API_KEY` | 임베딩 |
 | **EC2 서버** `.env` | `PINECONE_API_KEY`, `PINECONE_INDEX_NAME` | 벡터 DB |
 | **EC2 서버** `.env` | `KAKAO_API_KEY` | 카카오 **로컬 REST**(식당 검색) |
 | **EC2 서버** `.env` | `JWT_SECRET_KEY`, `JWT_EXPIRE_DAYS` | JWT 서명·만료 |
-| **EC2 서버** `.env` | `FRONTEND_URL` | CORS 허용 도메인 (Vercel 프리뷰는 정규식으로 추가 허용) |
+| **EC2 서버** `.env` | `FRONTEND_URL` | CORS 허용 도메인 (CloudFront 주소) |
 
 > `.env`는 `.gitignore` 대상이라 저장소에 없습니다. `scp`로 로컬 → EC2 서버에 직접 전송하며, `docker run --env-file .env`로 컨테이너에 주입합니다.
 
-> 🗺️ **카카오 키 주의**: JS SDK 키는 **등록된 도메인에서만** 동작합니다. 로컬(`http://localhost:5173`)과 배포(Vercel) 도메인을 카카오 콘솔에 등록해야 지도가 뜹니다.
+> 🗺️ **카카오 키 주의**: JS SDK 키는 **등록된 도메인에서만** 동작합니다. 로컬(`http://localhost:5173`)과 배포(CloudFront) 도메인을 카카오 콘솔에 등록해야 지도가 뜹니다.
 
 ---
 
