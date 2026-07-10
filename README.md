@@ -144,10 +144,14 @@ flowchart TD
     Client -. 지도 그리기 .-> KAKAO
 
     subgraph AWS["☁️ AWS"]
-        CF["CloudFront (Global)<br/>정적 배포 · 캐시"] -->|원본 조회| S3["S3<br/>프론트 정적 파일"]
-        subgraph EC2["EC2 · t3.micro (Ubuntu)"]
-            NGINX["Nginx<br/>리버스 프록시 · HTTPS"] --> API["FastAPI<br/>API 서버 (Docker)"]
+        CF["CloudFront<br/>정적 배포 · 캐시 (Global)"]
+        subgraph REGION["📍 ap-northeast-2 (서울)"]
+            S3["S3<br/>프론트 정적 파일"]
+            subgraph EC2["EC2 · t3.micro (Ubuntu)"]
+                NGINX["Nginx<br/>리버스 프록시 · HTTPS"] --> API["FastAPI<br/>API 서버 (Docker)"]
+            end
         end
+        CF -->|원본 조회| S3
     end
 
     API --> DB[("Supabase<br/>메인 DB")]
