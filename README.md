@@ -133,6 +133,13 @@ flowchart LR
 
 ## 5. 아키텍처 & 기술 스택
 
+![Biz Lunch Lab Architecture](docs/architecture.png)
+
+> 실선 = 런타임 흐름 (사용자 요청·API 호출) · 점선 = 배포 흐름 (코드 반영, 수동)
+
+<details>
+<summary>논리 흐름도 (mermaid)</summary>
+
 ```mermaid
 flowchart TD
     Dev["👩‍💻 Developers"] -->|git push| GH["GitHub"]
@@ -160,6 +167,8 @@ flowchart TD
     API --> EMB["OpenAI<br/>텍스트 임베딩"]
     API -->|식당 검색| KAKAO["Kakao<br/>지도 · 식당 검색"]
 ```
+
+</details>
 
 ### 기술 스택
 
