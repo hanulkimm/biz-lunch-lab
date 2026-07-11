@@ -5,11 +5,13 @@ import { Minus, Navigation, Plus } from "lucide-react";
 import { loadKakao } from "./loadKakao";
 
 const GWANGHWAMUN = { lat: 37.5759, lng: 126.9769 };
+// 청계광장(청계천 시작점) — 낚시터 입구
+const CHEONGGYECHEON = { lat: 37.5687, lng: 126.9782 };
 
 const PIN_SVG =
   '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>';
 
-export default function KakaoMap({ restaurants = [], selected, onPinClick }) {
+export default function KakaoMap({ restaurants = [], selected, onPinClick, onFishingClick }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const overlaysRef = useRef([]);
@@ -31,6 +33,28 @@ export default function KakaoMap({ restaurants = [], selected, onPinClick }) {
       .catch((e) => setError(e.message));
     return () => { cancelled = true; };
   }, []);
+
+  // 청계천 낚시터 오버레이 (1회)
+  useEffect(() => {
+    const kakao = window.kakao;
+    const map = mapRef.current;
+    if (!kakao || !map || !ready) return;
+
+    const el = document.createElement("div");
+    el.className = "fishing-spot";
+    el.innerHTML =
+      '<div class="fs-pin">🎣</div><div class="fs-label">청계천 낚시터</div>';
+    el.addEventListener("click", () => onFishingClick?.());
+
+    const overlay = new kakao.maps.CustomOverlay({
+      position: new kakao.maps.LatLng(CHEONGGYECHEON.lat, CHEONGGYECHEON.lng),
+      content: el,
+      yAnchor: 1,
+      zIndex: 4,
+    });
+    overlay.setMap(map);
+    return () => overlay.setMap(null);
+  }, [ready, onFishingClick]);
 
   // 핀(물방울) 갱신
   useEffect(() => {

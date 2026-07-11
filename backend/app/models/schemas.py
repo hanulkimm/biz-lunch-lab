@@ -111,6 +111,25 @@ class VillagerProfileSave(BaseModel):
     villager: dict  # match 결과의 villager 카드 (+ match_percent, reason)
 
 
+# ─── 방 꾸미기 ───
+class RoomBuy(BaseModel):
+    item_id: str
+
+
+class RoomLayoutSave(BaseModel):
+    layout: dict  # {floor_items, wall_items, wallpaper, floor, rug}
+
+
+# ─── 낚시 ───
+class FishingLand(BaseModel):
+    token: str  # cast가 발급한 서명 토큰
+
+
+class FishingSell(BaseModel):
+    fish_id: str
+    count: int = Field(default=1, ge=1)
+
+
 # ─── 챗봇 ───
 class ChatMessage(BaseModel):
     role: str  # "user" | "assistant"

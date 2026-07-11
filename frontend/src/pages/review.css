@@ -305,3 +305,36 @@
   border-radius: 12px;
   padding: 10px;
 }
+
+/* 나뭇잎 보상 연출 */
+.rw-award-bg {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(46, 80, 72, 0.4);
+  display: flex; align-items: center; justify-content: center;
+}
+.rw-award {
+  text-align: center;
+  background: var(--cream-2, #FBF5E4);
+  border: 3px solid var(--edge, #fff);
+  border-radius: 26px;
+  padding: 32px 40px;
+  box-shadow: 0 20px 50px rgba(46, 80, 72, 0.35);
+  animation: rw-award-in 0.45s cubic-bezier(0.25, 1.5, 0.45, 1);
+}
+.rw-award .leaf-burst { font-size: 52px; animation: rw-leaf-spin 0.8s ease; }
+.rw-award h3 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--ink-green, #3F6B22);
+  margin: 8px 0 4px;
+}
+.rw-award p { font-size: 13.5px; color: var(--muted, #9A8763); margin: 0; }
+@keyframes rw-award-in {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes rw-leaf-spin {
+  0% { transform: rotate(-120deg) scale(0.3); }
+  60% { transform: rotate(15deg) scale(1.2); }
+  100% { transform: rotate(0) scale(1); }
+}

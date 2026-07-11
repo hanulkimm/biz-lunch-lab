@@ -27,3 +27,6 @@ httpx
 
 # ─── 파일 업로드 (닮은꼴 주민 사진 분석) ───
 python-multipart
+
+# ─── 시간대 데이터 (낚시터 KST 판정 — Windows/slim 이미지엔 내장 tz DB 없음) ───
+tzdata

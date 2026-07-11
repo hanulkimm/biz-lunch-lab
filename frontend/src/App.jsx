@@ -4,12 +4,14 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { getMe } from "./api/auth";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Admin from "./pages/Admin";
+import Fishing from "./pages/Fishing";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Lunch from "./pages/Lunch";
 import Map from "./pages/Map";
 import MyPage from "./pages/MyPage";
 import ReviewWrite from "./pages/ReviewWrite";
+import Room from "./pages/Room";
 import Roulette from "./pages/Roulette";
 import Signup from "./pages/Signup";
 import VillagerMatch from "./pages/VillagerMatch";
@@ -46,6 +48,8 @@ export default function App() {
         <Route path="/lunch" element={<ProtectedRoute><Lunch /></ProtectedRoute>} />
         <Route path="/mypage" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
         <Route path="/villager-match" element={<ProtectedRoute><VillagerMatch /></ProtectedRoute>} />
+        <Route path="/room" element={<ProtectedRoute><Room /></ProtectedRoute>} />
+        <Route path="/fishing" element={<ProtectedRoute><Fishing /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

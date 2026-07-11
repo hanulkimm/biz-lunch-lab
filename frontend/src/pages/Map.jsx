@@ -113,6 +113,7 @@ export default function Map() {
                   restaurants={restaurants}
                   selected={selected}
                   onPinClick={(r) => setSelected(r)}
+                  onFishingClick={() => navigate("/fishing")}
                 />
                 <MapSearch
                   key={searchKey}

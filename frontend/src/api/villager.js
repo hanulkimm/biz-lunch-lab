@@ -16,3 +16,7 @@ export const saveVillagerProfile = (villager) =>
 
 export const clearVillagerProfile = () =>
   client.delete("/api/villager/profile").then((r) => r.data);
+
+// 내 주민의 배경 없는 전신 이미지 URL (낚시터 연출용)
+export const getVillagerRender = () =>
+  client.get("/api/villager/render").then((r) => r.data);

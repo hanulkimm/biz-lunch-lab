@@ -1,6 +1,6 @@
 // 공용 상단 헤더 (동물의 숲 톤) — 로고 + 섹션 탭 + 리뷰쓰기 + 아바타 + 로그아웃.
 import { useLocation, useNavigate } from "react-router-dom";
-import { Dices, LogIn, LogOut, MapPin, Moon, Pencil, Settings, Sparkles, Sun, UserRound, UsersRound } from "lucide-react";
+import { Dices, Home, LogIn, LogOut, MapPin, Moon, Pencil, Settings, Sparkles, Sun, UserRound, UsersRound } from "lucide-react";
 
 import { useAuthStore } from "../../store/authStore";
 import { useThemeStore } from "../../store/themeStore";
@@ -42,6 +42,7 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
           {tab("ai", "AI챗봇", Sparkles, handleAi, aiOpen)}
           {tab("roulette", "룰렛", Dices, () => navigate("/roulette"), active === "roulette")}
           {tab("lunch", "랜덤런치", UsersRound, () => navigate("/lunch"), active === "lunch")}
+          {tab("room", "내 방", Home, () => navigate("/room"), active === "room")}
           {tab("mypage", "마이페이지", UserRound, () => navigate("/mypage"), active === "mypage")}
           {user?.is_admin &&
             tab("admin", "관리자", Settings, () => navigate("/admin"), active === "admin")}

@@ -1,0 +1,343 @@
+/* 내 방 꾸미기 — CSS 3D 아이소메트릭 룸 */
+.rm-page { overflow-x: hidden; }
+
+.rm-loading {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 120px 0; color: var(--ink-green-2);
+}
+.rm-loading p { font-family: var(--font-display); margin-top: 16px; }
+
+/* ─── HUD ─── */
+.rm-hud {
+  max-width: 720px; margin: 18px auto 0; padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.rm-leaves {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border-radius: 999px;
+  background: var(--cream); border: 3px solid var(--edge);
+  box-shadow: inset 0 0 0 2px var(--edge-soft), 0 3px 0 rgba(94,75,46,.14);
+  font-family: var(--font-display); font-size: 17px; color: var(--ink-green);
+  animation: rm-bump .35s ease;
+}
+.rm-leaves svg { color: var(--leaf); }
+@keyframes rm-bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+.rm-saved {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12.5px; color: var(--muted); opacity: .75;
+}
+.rm-saved.on svg { color: var(--leaf); }
+
+/* ─── 3D 씬 ─── */
+.rm-scene {
+  perspective: 1500px;
+  display: flex; justify-content: center;
+  padding: 30px 0 10px;
+  min-height: 520px;
+}
+.rm-world {
+  position: relative;
+  width: 432px; height: 432px;   /* 8 x 54px */
+  transform-style: preserve-3d;
+  transform: rotateX(56deg) rotateZ(-45deg);
+  animation: rm-enter 1s cubic-bezier(.22,1.2,.36,1);
+  margin-top: 110px;
+}
+@keyframes rm-enter {
+  from { transform: rotateX(72deg) rotateZ(-45deg) scale(.82); opacity: 0; }
+  to   { transform: rotateX(56deg) rotateZ(-45deg) scale(1);  opacity: 1; }
+}
+
+/* 바닥 (world 평면 그 자체) */
+.rm-floor {
+  position: absolute; inset: 0;
+  background-color: #dcc9a2;
+  background-size: 108px 108px;
+  background-repeat: repeat;
+  border-radius: 2px;
+  box-shadow: 0 0 0 5px rgba(94,75,46,.28), 0 40px 70px rgba(46,60,40,.35);
+  transform-style: preserve-3d;
+}
+
+/* 벽 2면 — 바닥 뒤쪽 두 모서리에서 수직으로 세움.
+   실제 도배면(.rm-wall-in)은 안쪽 래퍼로 두어 텍스처가 항상 바로 서게 함. */
+.rm-wall {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+.rm-wall-l {            /* 화면상 왼쪽 뒷벽: 바닥 div의 top 모서리(y=0) */
+  left: 0; top: -190px;
+  width: 432px; height: 190px;
+  transform-origin: 50% 100%;
+  transform: rotateX(-90deg);
+}
+.rm-wall-r {            /* 화면상 오른쪽 뒷벽: 바닥 div의 right 모서리(x=432) */
+  left: 432px; top: 0;
+  width: 190px; height: 432px;
+  transform-origin: 0% 50%;
+  transform: rotateY(-90deg);
+}
+.rm-wall-in {
+  position: absolute;
+  width: 432px; height: 190px;
+  background-color: #c8e0b4;
+  background-size: 128px 128px;
+  background-repeat: repeat;
+  box-shadow: inset 0 -16px 26px rgba(60,80,50,.18);
+}
+.rm-wall-l .rm-wall-in {
+  inset: 0;
+  filter: brightness(.94);   /* 측면 벽은 살짝 어둡게 (입체 조명감) */
+}
+.rm-wall-r .rm-wall-in {
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* 벽 슬롯 + 벽걸이 */
+.rm-wslot {
+  position: absolute; bottom: 68px;
+  width: 64px; height: 64px;
+  transform: translateX(-50%);
+  border: 2px dashed transparent; border-radius: 12px;
+  background: transparent; cursor: default; padding: 0;
+}
+.rm-wslot.open {
+  border-color: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.25);
+  cursor: pointer;
+  animation: rm-pulse 1.2s ease infinite;
+}
+@keyframes rm-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.5); }
+  50% { box-shadow: 0 0 0 7px rgba(255,255,255,0); }
+}
+.rm-witem {
+  position: absolute; bottom: 62px;
+  width: 76px;
+  transform: translateX(-50%);
+  cursor: pointer;
+  filter: drop-shadow(0 4px 4px rgba(40,50,35,.3));
+  animation: rm-pop .38s cubic-bezier(.3,1.6,.5,1);
+}
+.rm-witem:hover { filter: drop-shadow(0 4px 4px rgba(40,50,35,.3)) brightness(1.1); }
+
+/* 러그: 바닥 평면에 평평하게 */
+.rm-rug {
+  position: absolute;
+  object-fit: fill;
+  opacity: .96;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+/* 배치 하이라이트 칸 */
+.rm-cell {
+  position: absolute;
+  width: 54px; height: 54px;
+  border: 1px solid rgba(94,75,46,.16);
+  background: rgba(214,72,56,.12);
+  padding: 0; cursor: not-allowed;
+  z-index: 200;
+}
+.rm-cell.ok {
+  background: rgba(130,194,74,.3);
+  border-color: rgba(79,133,38,.55);
+  cursor: pointer;
+}
+.rm-cell.ok:hover { background: rgba(130,194,74,.55); }
+
+/* 가구 스프라이트 — 방 회전을 역회전해 카메라를 향하게 (billboard) */
+.rm-spot {
+  position: absolute;
+  pointer-events: none;
+  transform-style: preserve-3d;  /* 없으면 자식 역회전이 바닥면에 눌려 납작해짐 */
+}
+.rm-sprite {
+  position: absolute;
+  left: 50%; bottom: 6px;
+  transform-origin: bottom center;
+  transform: translateX(-50%) rotateZ(45deg) rotateX(-56deg);
+  pointer-events: auto;
+  cursor: pointer;
+  filter: drop-shadow(6px 10px 6px rgba(40,50,35,.35));
+  animation: rm-pop .4s cubic-bezier(.3,1.6,.5,1);
+  transition: translate .12s ease;
+}
+.rm-sprite:hover { filter: drop-shadow(6px 14px 8px rgba(40,50,35,.4)) brightness(1.08); }
+@keyframes rm-pop {
+  0% { scale: .5; opacity: 0; }
+  70% { scale: 1.1; }
+  100% { scale: 1; opacity: 1; }
+}
+.rm-scene.placing .rm-sprite { pointer-events: none; }
+
+/* ─── 배치 안내 바 ─── */
+.rm-placing-bar {
+  position: fixed; left: 50%; bottom: 92px; z-index: 60;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  max-width: min(92vw, 460px);
+  padding: 10px 14px;
+  background: var(--cream-2); border: 3px solid var(--edge); border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(46,80,72,.28);
+  font-size: 13.5px; color: var(--ink);
+}
+.rm-placing-bar img { width: 40px; height: 40px; object-fit: contain; }
+.rm-placing-bar b { font-family: var(--font-display); color: var(--ink-green); }
+.rm-placing-bar button {
+  border: 2px solid var(--line); background: var(--field); color: var(--ink);
+  width: 30px; height: 30px; border-radius: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ─── 하단 도크 ─── */
+.rm-dock {
+  position: fixed; left: 50%; bottom: 22px; z-index: 50;
+  transform: translateX(-50%);
+  display: flex; gap: 10px;
+  padding: 8px;
+  background: var(--cream); border: 3px solid var(--edge); border-radius: 22px;
+  box-shadow: inset 0 0 0 2px var(--edge-soft), 0 8px 22px rgba(46,80,72,.25);
+}
+.rm-dock-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 46px; padding: 0 20px;
+  border: none; border-radius: 15px;
+  background: var(--field); color: var(--ink);
+  font-family: var(--font-display); font-size: 15px; cursor: pointer;
+}
+.rm-dock-btn.on { background: var(--leaf); color: #fff; box-shadow: 0 3px 0 var(--leaf-dark); }
+
+/* ─── 패널 (인벤토리/상점) ─── */
+.rm-panel {
+  position: fixed; left: 50%; bottom: 86px; z-index: 55;
+  transform: translateX(-50%);
+  width: min(94vw, 560px);
+  max-height: 46vh;
+  display: flex; flex-direction: column;
+  background: var(--cream-2); border: 3px solid var(--edge); border-radius: 24px;
+  box-shadow: 0 18px 44px rgba(46,80,72,.32);
+  padding: 16px;
+  animation: rm-panel-up .28s cubic-bezier(.25,1.3,.45,1);
+}
+@keyframes rm-panel-up {
+  from { transform: translate(-50%, 24px); opacity: 0; }
+  to   { transform: translate(-50%, 0); opacity: 1; }
+}
+.rm-panel-head { display: flex; align-items: center; gap: 10px; }
+.rm-panel-head h2 { font-family: var(--font-display); font-size: 18px; color: var(--ink-green); margin: 0; flex: 1; }
+.rm-panel-leaves {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-display); font-size: 14px; color: var(--ink-green);
+}
+.rm-panel-leaves svg { color: var(--leaf); }
+.rm-panel-x {
+  border: 2px solid var(--line); background: var(--field); color: var(--ink);
+  width: 32px; height: 32px; border-radius: 11px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.rm-tabs { display: flex; gap: 6px; margin: 12px 0; flex-wrap: wrap; }
+.rm-tab {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 12px; border-radius: 999px;
+  border: 2px solid var(--line); background: var(--field); color: var(--muted);
+  font-size: 12.5px; font-weight: 700; cursor: pointer;
+}
+.rm-tab.on { border-color: var(--leaf); background: var(--leaf-soft); color: var(--ink-green-2); }
+
+.rm-grid {
+  overflow-y: auto;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 9px; padding: 2px;
+}
+.rm-slot {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 10px 6px 8px;
+  border: 2px solid var(--line); border-radius: 16px;
+  background: var(--field); cursor: pointer;
+}
+.rm-slot:hover { border-color: var(--leaf); transform: translateY(-2px); }
+.rm-slot img { width: 52px; height: 52px; object-fit: contain; }
+.rm-slot em {
+  font-style: normal; font-size: 11px; color: var(--ink);
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.rm-slot .price {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 11px; font-weight: 800; color: var(--ink-green-2);
+}
+.rm-slot .price svg { color: var(--leaf); }
+.rm-slot .badge {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  background: var(--leaf-soft); border-radius: 999px; padding: 2px 8px;
+}
+.rm-slot.used { opacity: .62; cursor: default; }
+.rm-slot.used:hover { transform: none; border-color: var(--line); }
+.rm-slot.poor { opacity: .45; cursor: not-allowed; }
+.rm-slot.poor:hover { transform: none; border-color: var(--line); }
+
+.rm-empty { text-align: center; color: var(--muted); padding: 18px 0 8px; font-size: 13.5px; }
+.rm-empty .btn-leaf { margin-top: 12px; }
+
+/* ─── 구매 모달 ─── */
+.rm-modal-bg {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(46,80,72,.4);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.rm-modal {
+  width: 300px; text-align: center;
+  background: var(--cream-2); border: 3px solid var(--edge); border-radius: 24px;
+  padding: 26px 22px;
+  box-shadow: 0 20px 50px rgba(46,80,72,.35);
+}
+.rm-modal img { width: 96px; height: 96px; object-fit: contain; }
+.rm-modal h3 { font-family: var(--font-display); font-size: 19px; color: var(--ink-green); margin: 10px 0 2px; }
+.rm-modal .artist { font-size: 12px; color: var(--muted); margin: 2px 0; }
+.rm-modal .cost {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-display); font-size: 16px; color: var(--ink-green-2);
+  margin: 8px 0 0;
+}
+.rm-modal .cost svg { color: var(--leaf); }
+.rm-modal .acts { display: flex; gap: 10px; margin-top: 18px; }
+.rm-modal .acts .btn-leaf { flex: 1; justify-content: center; }
+.rm-modal .cancel {
+  flex: 1; height: 48px;
+  border: 2px solid var(--line); border-radius: 15px;
+  background: var(--field); color: var(--ink);
+  font-family: var(--font-display); font-size: 14px; cursor: pointer;
+}
+
+/* ─── 토스트 ─── */
+.rm-toasts {
+  position: fixed; top: 86px; left: 50%; z-index: 120;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; align-items: center;
+  pointer-events: none;
+}
+.rm-toast {
+  padding: 11px 20px;
+  background: var(--cream); border: 3px solid var(--edge); border-radius: 999px;
+  box-shadow: 0 8px 22px rgba(46,80,72,.25);
+  font-family: var(--font-display); font-size: 14px; color: var(--ink-green);
+  animation: rm-toast-in .3s cubic-bezier(.25,1.4,.45,1);
+}
+@keyframes rm-toast-in {
+  from { transform: translateY(-14px) scale(.9); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ─── 모바일 ─── */
+@media (max-width: 560px) {
+  .rm-scene { transform: scale(.72); transform-origin: top center; min-height: 400px; margin-bottom: -80px; }
+  .rm-panel { max-height: 52vh; bottom: 80px; }
+  .rm-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+}

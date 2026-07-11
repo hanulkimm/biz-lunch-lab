@@ -4,9 +4,11 @@
 """
 import json
 
+import httpx
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
 from app.auth import get_current_user
+from app.config import settings
 from app.database import supabase
 from app.models.schemas import UserOut, VillagerProfileSave
 from app.services import villager_match
@@ -15,6 +17,37 @@ router = APIRouter()
 
 MAX_PHOTO_BYTES = 6 * 1024 * 1024
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+
+# 주민 영어 이름 → 배경 없는 전신 이미지 URL (Nookipedia). 게임 데이터라 메모리 캐시.
+_render_cache: dict[str, str | None] = {}
+
+
+@router.get("/render")
+def villager_render(user: dict = Depends(get_current_user)):
+    """내 닮은꼴 주민의 전신 투명 PNG URL (낚시터 등 연출용).
+
+    Nookipedia API가 죽어 있거나 키가 없으면 image_url=None — 프론트가 폴백 처리.
+    """
+    name = (user.get("villager") or {}).get("name")
+    if not name:
+        return {"image_url": None}
+    if name in _render_cache:
+        return {"image_url": _render_cache[name]}
+    url = None
+    try:
+        r = httpx.get(
+            "https://api.nookipedia.com/villagers",
+            params={"name": name},
+            headers={"X-API-KEY": settings.nookipedia_api_key, "Accept-Version": "2.0.0"},
+            timeout=8,
+        )
+        data = r.json()
+        if isinstance(data, list) and data:
+            url = data[0].get("image_url")
+    except Exception:
+        url = None
+    _render_cache[name] = url
+    return {"image_url": url}
 
 
 @router.post("/match")

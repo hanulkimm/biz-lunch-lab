@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.auth import get_current_user
 from app.database import supabase
 from app.models.schemas import ReviewCreate, ReviewUpdate
-from app.services import embedding, pinecone_client
+from app.services import embedding, leaf_economy, pinecone_client
 
 router = APIRouter()
 
@@ -85,7 +85,23 @@ def create_review(body: ReviewCreate, user: dict = Depends(get_current_user)):
         review["id"], restaurant, body.rating, body.comment,
         _tag_names(body.tag_ids), user["id"],
     )
-    return {"review": review, "restaurant_id": restaurant["id"], "indexed": synced}
+
+    # 5. 나뭇잎 적립 (실패해도 리뷰는 유지)
+    awarded, balance = 0, None
+    try:
+        awarded = leaf_economy.review_reward(body.comment, len(body.tag_ids))
+        balance = leaf_economy.adjust(user["id"], awarded, f"review:{review['id']}")
+    except Exception as e:
+        print(f"[leaf award failed] review={review['id']}: {e}")
+        awarded = 0
+
+    return {
+        "review": review,
+        "restaurant_id": restaurant["id"],
+        "indexed": synced,
+        "leaves_awarded": awarded,
+        "leaves_balance": balance,
+    }
 
 
 @router.put("/{review_id}")

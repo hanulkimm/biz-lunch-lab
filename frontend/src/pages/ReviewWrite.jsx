@@ -25,6 +25,7 @@ export default function ReviewWrite() {
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [awarded, setAwarded] = useState(null); // 리뷰 보상 나뭇잎 (연출용)
 
   useEffect(() => {
     getTags().then(setTags).catch(() => {});
@@ -61,8 +62,14 @@ export default function ReviewWrite() {
     if (!rating) return setError("별점을 콕 찍어주세요.");
     setSubmitting(true);
     try {
-      await createReview({ place, rating, comment, tag_ids: selectedTags });
-      navigate("/map");
+      const res = await createReview({ place, rating, comment, tag_ids: selectedTags });
+      if (res.leaves_awarded > 0) {
+        // 나뭇잎 보상 연출을 잠깐 보여주고 이동
+        setAwarded(res.leaves_awarded);
+        setTimeout(() => navigate("/map"), 1600);
+      } else {
+        navigate("/map");
+      }
     } catch (err) {
       setError(err.response?.data?.detail || "기록에 실패했어요.");
     } finally {
@@ -202,6 +209,17 @@ export default function ReviewWrite() {
           {submitting ? <><Spinner size={20} /> 기록하는 중…</> : "섬에 기록하기"}
         </button>
       </div>
+
+      {/* 나뭇잎 보상 연출 */}
+      {awarded && (
+        <div className="rw-award-bg">
+          <div className="rw-award">
+            <div className="leaf-burst">🍃</div>
+            <h3>+{awarded}잎 획득!</h3>
+            <p>기록 고마워요! 나뭇잎으로 내 방을 꾸며보세요.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
