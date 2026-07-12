@@ -70,6 +70,23 @@ class RestaurantOut(BaseModel):
     avg_rating: float | None = None
 
 
+class RouletteOut(BaseModel):
+    """룰렛 추천 — DB 등록 식당(id 있음) 또는 카카오 실시간 발굴(is_discovery)."""
+    id: str | None = None  # 리뷰가 있어 DB에 등록된 식당만 보유
+    kakao_place_id: str
+    name: str
+    category: str | None = None
+    address: str | None = None
+    road_address: str | None = None
+    phone: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    kakao_url: str | None = None
+    review_count: int = 0
+    avg_rating: float | None = None
+    is_discovery: bool = False  # 아직 리뷰 없는 새로운 발견
+
+
 # ─── 리뷰 ───
 class ReviewCreate(BaseModel):
     place: KakaoPlace                       # 카카오 검색으로 고른 식당

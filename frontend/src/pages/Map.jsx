@@ -26,6 +26,7 @@ export default function Map() {
   const [searchKey, setSearchKey] = useState(0); // 검색창 초기화용 remount 키
 
   const focusId = location.state?.focusId; // 룰렛/런치/챗봇에서 넘어온 DB 식당 id
+  const focusPlace = location.state?.focusPlace; // 룰렛 "새로운 발견" — DB에 없는 카카오 place
 
   // 지도 페이지에서는 페이지 스크롤바를 감춘다(스크롤 기능은 유지).
   // 스크롤 컨테이너가 html(documentElement)이므로 양쪽 모두에 적용.
@@ -49,6 +50,11 @@ export default function Map() {
       })
       .catch(() => {});
   }, [focusId]);
+
+  // 룰렛 발굴 식당 — DB 목록과 무관하게 좌표/카카오 정보로 바로 포커스
+  useEffect(() => {
+    if (focusPlace?.latitude != null) setSelected(focusPlace);
+  }, [focusPlace]);
 
   // 챗봇 추천 카드 클릭 → 지도 포커스.
   // 리뷰 있는 DB 식당이면 마커로, 신규 발견(카카오) 식당이면 좌표/카카오정보로 포커스.

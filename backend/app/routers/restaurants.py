@@ -4,7 +4,7 @@ import random
 from fastapi import APIRouter, HTTPException
 
 from app.database import supabase
-from app.models.schemas import KakaoPlace, RestaurantOut
+from app.models.schemas import KakaoPlace, RestaurantOut, RouletteOut
 from app.services import kakao
 
 router = APIRouter()
@@ -80,14 +80,45 @@ def list_restaurants():
     return out
 
 
-@router.get("/roulette", response_model=RestaurantOut | None)
+# 룰렛에서 카카오 실시간 발굴이 뽑힐 확률 (DB에 후보가 있을 때)
+DISCOVERY_RATE = 0.5
+
+
+def _discover_from_kakao(category: str, known_ids: set[str]) -> dict | None:
+    """카카오 실시간 검색으로 아직 DB에 없는(리뷰 없는) 식당 1곳을 발굴."""
+    patterns = ROULETTE_PATTERNS.get(category)
+    if patterns:
+        keyword = random.choice(patterns)
+    else:  # 랜덤 — 전체 카테고리 키워드 중 하나로 검색
+        keyword = random.choice([p for ps in ROULETTE_PATTERNS.values() for p in ps])
+    try:
+        # 거리순 1~3페이지를 랜덤으로 받아 매번 같은 가까운 곳만 나오지 않게 한다
+        places = kakao.search_keyword(keyword, page=random.randint(1, 3))
+        if not places:
+            places = kakao.search_keyword(keyword)
+    except Exception:
+        return None  # 카카오 장애 시 DB 추천으로 폴백
+    fresh = [p for p in places if p["kakao_place_id"] not in known_ids]
+    return random.choice(fresh) if fresh else None
+
+
+@router.get("/roulette", response_model=RouletteOut | None)
 def roulette(category: str):
-    """카테고리별 랜덤 식당 1곳 (랜덤 = 전체). 없으면 null."""
+    """카테고리별 랜덤 추천 1곳 (랜덤 = 전체).
+
+    리뷰 있는 DB 식당과 카카오 실시간 발굴(아직 리뷰 없는 곳)을 반반 섞는다.
+    DB에 후보가 없으면 항상 발굴을 시도하고, 그래도 없으면 null.
+    """
     q = supabase.table("restaurants").select("*")
     if category != "랜덤":
         patterns = ROULETTE_PATTERNS.get(category, [category])
         q = q.or_(",".join(f"category.ilike.%{p}%" for p in patterns))
     rows = q.execute().data
+
+    if not rows or random.random() < DISCOVERY_RATE:
+        place = _discover_from_kakao(category, {r["kakao_place_id"] for r in rows})
+        if place:
+            return RouletteOut(**place, is_discovery=True)
     if not rows:
         return None
 
@@ -96,7 +127,7 @@ def roulette(category: str):
         r["rating"]
         for r in supabase.table("reviews").select("rating").eq("restaurant_id", row["id"]).execute().data
     ]
-    return RestaurantOut(
+    return RouletteOut(
         **row,
         review_count=len(ratings),
         avg_rating=round(sum(ratings) / len(ratings), 1) if ratings else None,

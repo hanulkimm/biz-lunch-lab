@@ -85,6 +85,9 @@ export default function Roulette() {
             <span className="rl-result-cat">{result.cat}</span>
             {result.restaurant ? (
               <>
+                {result.restaurant.is_discovery && (
+                  <span className="rl-badge">🌱 새로운 발견</span>
+                )}
                 <div className="rl-result-name">{result.restaurant.name}</div>
                 <div className="rl-result-meta">
                   <span>{result.restaurant.category?.split(">").pop().trim()}</span>
@@ -92,10 +95,21 @@ export default function Roulette() {
                     <span className="star"><Star size={14} fill="currentColor" /> {result.restaurant.avg_rating}</span>
                   )}
                 </div>
+                {result.restaurant.is_discovery && (
+                  <p className="rl-discovery-hint">
+                    아직 아무도 기록하지 않은 곳이에요 — 첫 리뷰의 주인공이 되어보세요!
+                  </p>
+                )}
                 <div className="rl-actions">
                   <button
                     className="btn-leaf"
-                    onClick={() => navigate("/map", { state: { focusId: result.restaurant.id } })}
+                    onClick={() =>
+                      navigate("/map", {
+                        state: result.restaurant.id
+                          ? { focusId: result.restaurant.id }
+                          : { focusPlace: result.restaurant },
+                      })
+                    }
                   >
                     <MapPin size={16} /> 지도에서 보기
                   </button>

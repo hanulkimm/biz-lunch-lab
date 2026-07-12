@@ -17,8 +17,11 @@ def _headers() -> dict:
     return {"Authorization": f"KakaoAK {settings.kakao_api_key}"}
 
 
-def search_keyword(query: str, size: int = 15) -> list[dict]:
-    """광화문 권역 음식점·카페 키워드 검색. 카카오 place 문서를 정규화해 반환."""
+def search_keyword(query: str, size: int = 15, page: int = 1) -> list[dict]:
+    """광화문 권역 음식점·카페 키워드 검색. 카카오 place 문서를 정규화해 반환.
+
+    page(1~3)로 거리순 결과의 다음 페이지를 받을 수 있다(룰렛 다양성용).
+    """
     docs: list[dict] = []
     seen: set[str] = set()
     with httpx.Client(timeout=10) as client:
@@ -30,6 +33,7 @@ def search_keyword(query: str, size: int = 15) -> list[dict]:
                 "y": GWANGHWAMUN["y"],
                 "radius": SEARCH_RADIUS,
                 "size": size,
+                "page": page,
                 "sort": "distance",
             }
             res = client.get(_BASE, params=params, headers=_headers())
