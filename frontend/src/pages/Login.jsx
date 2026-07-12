@@ -78,6 +78,8 @@ export default function Login() {
             />
             <div className="login-scrim" />
 
+            <Link to="/map" className="login-back">🗺️ 지도로 돌아가기</Link>
+
             <form className="login-card" onSubmit={onSubmit}>
         <div className="login-brand">
           <img className="brand-logo" src="/kt_logo.png" alt="KT" />

@@ -1,16 +1,19 @@
-// 공용 상단 헤더 (동물의 숲 톤) — 로고 + 섹션 탭 + 리뷰쓰기 + 아바타 + 로그아웃.
+// 공용 상단 헤더 (동물의 숲 톤) — 로고 + 섹션 탭 + 리뷰쓰기 + 로그아웃.
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Dices, Home, LogIn, LogOut, MapPin, Moon, Pencil, Settings, Sparkles, Sun, UserRound, UsersRound } from "lucide-react";
+import { Dices, LogIn, LogOut, MapPin, Moon, Pencil, Settings, Sparkles, Sun, UserRound, UsersRound } from "lucide-react";
 
 import { useAuthStore } from "../../store/authStore";
 import { useThemeStore } from "../../store/themeStore";
+import LoginRequiredDialog from "./LoginRequiredDialog";
 import "./appheader.css";
 
 export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuthStore();
+  const { token, user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
+  const [loginGate, setLoginGate] = useState(null); // { feature, target }
 
   const handleAi = () => {
     if (onAi) onAi();
@@ -41,8 +44,16 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
           {tab("map", "지도", MapPin, handleMap, active === "map" && !aiOpen)}
           {tab("ai", "AI챗봇", Sparkles, handleAi, aiOpen)}
           {tab("roulette", "룰렛", Dices, () => navigate("/roulette"), active === "roulette")}
-          {tab("lunch", "랜덤런치", UsersRound, () => navigate("/lunch"), active === "lunch")}
-          {tab("room", "내 방", Home, () => navigate("/room"), active === "room")}
+          {tab(
+            "lunch",
+            "랜덤런치",
+            UsersRound,
+            () =>
+              token
+                ? navigate("/lunch")
+                : setLoginGate({ feature: "랜덤런치", target: "/lunch" }),
+            active === "lunch"
+          )}
           {tab("mypage", "마이페이지", UserRound, () => navigate("/mypage"), active === "mypage")}
           {user?.is_admin &&
             tab("admin", "관리자", Settings, () => navigate("/admin"), active === "admin")}
@@ -53,24 +64,6 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
         <button className="ah-review" onClick={() => navigate("/review/write")} aria-label="리뷰 쓰기">
           <Pencil size={15} /> <span>리뷰 쓰기</span>
         </button>
-        {user &&
-          (user.villager?.icon ? (
-            <img
-              className="ah-avatar-img"
-              src={user.villager.icon}
-              alt={user.villager.name_ko}
-              title={`${user.villager.name_ko} — 닮은꼴 다시 찾기`}
-              onClick={() => navigate("/villager-match")}
-            />
-          ) : (
-            <div
-              className="ah-avatar clickable"
-              title="나랑 닮은 주민 찾기"
-              onClick={() => navigate("/villager-match")}
-            >
-              {user.name?.[0] || "주"}
-            </div>
-          ))}
         {user?.is_admin && <span className="ah-admin">관리자</span>}
         <button
           className="ah-theme"
@@ -93,6 +86,14 @@ export default function AppHeader({ active, aiOpen = false, onAi, onMap }) {
           </button>
         )}
       </div>
+
+      {loginGate && (
+        <LoginRequiredDialog
+          feature={loginGate.feature}
+          target={loginGate.target}
+          onCancel={() => setLoginGate(null)}
+        />
+      )}
     </header>
   );
 }

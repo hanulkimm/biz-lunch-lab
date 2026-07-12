@@ -5,6 +5,7 @@ import { MapPin, Moon, Sun } from "lucide-react";
 
 import { getRestaurants } from "../api/restaurants";
 import AppHeader from "../components/common/AppHeader";
+import LoginRequiredDialog from "../components/common/LoginRequiredDialog";
 import ChatPanel from "../components/ChatPanel/ChatPanel";
 import KakaoMap from "../components/Map/KakaoMap";
 import MapSearch from "../components/Map/MapSearch";
@@ -16,11 +17,12 @@ import "./map.css";
 export default function Map() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { token, user } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
   const [restaurants, setRestaurants] = useState([]);
   const [selected, setSelected] = useState(null); // 선택한 식당(검색 결과/마커) place 객체
   const [chatOpen, setChatOpen] = useState(!!location.state?.openChat);
+  const [fishingGate, setFishingGate] = useState(false); // 비로그인 낚시터 클릭 안내
   const [searchKey, setSearchKey] = useState(0); // 검색창 초기화용 remount 키
 
   const focusId = location.state?.focusId; // 룰렛/런치/챗봇에서 넘어온 DB 식당 id
@@ -113,7 +115,9 @@ export default function Map() {
                   restaurants={restaurants}
                   selected={selected}
                   onPinClick={(r) => setSelected(r)}
-                  onFishingClick={() => navigate("/fishing")}
+                  onFishingClick={() =>
+                    token ? navigate("/fishing") : setFishingGate(true)
+                  }
                 />
                 <MapSearch
                   key={searchKey}
@@ -137,6 +141,14 @@ export default function Map() {
           </div>
         </div>
       </div>
+
+      {fishingGate && (
+        <LoginRequiredDialog
+          feature="청계천 낚시터"
+          target="/fishing"
+          onCancel={() => setFishingGate(false)}
+        />
+      )}
     </div>
   );
 }
