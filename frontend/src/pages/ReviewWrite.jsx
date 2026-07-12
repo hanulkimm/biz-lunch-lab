@@ -216,7 +216,7 @@ export default function ReviewWrite() {
           <div className="rw-award">
             <div className="leaf-burst">🍃</div>
             <h3>+{awarded}잎 획득!</h3>
-            <p>기록 고마워요! 나뭇잎으로 내 방을 꾸며보세요.</p>
+            <p>기록 고마워요! 나뭇잎이 차곡차곡 쌓이고 있어요.</p>
           </div>
         </div>
       )}
