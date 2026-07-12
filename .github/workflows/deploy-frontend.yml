@@ -1,0 +1,51 @@
+# 프론트엔드 AWS 자동 배포 — main에 frontend 변경이 push되면
+# 빌드 → S3 업로드 → CloudFront 캐시 무효화까지 자동 실행.
+# (Vercel은 자체 연동으로 병행 배포됨 — 주소 2개 모두 최신 유지)
+name: Deploy frontend to S3 + CloudFront
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/deploy-frontend.yml"
+  workflow_dispatch: {} # Actions 탭에서 수동 실행 버튼도 제공
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 프로덕션 빌드 (.env.production 자동 적용)
+        run: npm run build
+
+      - name: AWS 출입증 설정
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: S3 업로드 (변경분만 동기화, 삭제된 파일은 정리)
+        run: aws s3 sync dist s3://biz-lunch-lab-frontend --delete
+
+      - name: CloudFront 캐시 무효화
+        run: >
+          aws cloudfront create-invalidation
+          --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          --paths "/*"
