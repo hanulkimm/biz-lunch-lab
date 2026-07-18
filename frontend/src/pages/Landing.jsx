@@ -1,9 +1,13 @@
 // 메인 랜딩 — 민트 카드 안에 영상을 감싼 히어로(지도 페이지 톤). 로그인/회원가입 진입.
 import { Link } from "react-router-dom";
 
+import useIsMobile from "../hooks/useIsMobile";
 import "./landing-hero.css";
 
 export default function Landing() {
+  const isMobile = useIsMobile();
+  const videoSrc = isMobile ? "/main-bg-mobile.mp4" : "/main-bg.mp4";
+
   return (
     <div className="home">
       <div className="home-wrap">
@@ -12,8 +16,9 @@ export default function Landing() {
 
           <div className="home-screen">
             <video
+              key={videoSrc}
               className="home-video"
-              src="/main-bg.mp4"
+              src={videoSrc}
               autoPlay
               muted
               loop

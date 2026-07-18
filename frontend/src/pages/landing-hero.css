@@ -221,6 +221,56 @@
   box-shadow: inset 0 0 0 2px #2c4f4a, 0 12px 26px rgba(0, 0, 0, 0.4);
 }
 
+/* 모바일 — 세로 영상(main-bg-mobile.mp4)에 맞춰 프레임을 얇게, 화면을 길게 */
 @media (max-width: 640px) {
-  .home-title { font-size: 40px; }
+  .home {
+    padding: 14px;
+  }
+  .home-frame {
+    padding: 10px;
+    border-radius: 26px;
+  }
+  .home-screen {
+    height: min(78vh, 78svh);
+    border-radius: 20px;
+    border-width: 4px;
+  }
+  /* 세로 화면은 위·아래로 어둡게 깔아 가독성 확보 */
+  .home-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(58, 78, 38, 0.45) 0%,
+      rgba(58, 78, 38, 0.22) 42%,
+      rgba(58, 78, 38, 0.5) 100%
+    );
+  }
+  .home-content {
+    padding: 0 20px;
+  }
+  .home-brand {
+    margin-bottom: 20px;
+  }
+  .home-brand .brand-logo {
+    height: 36px;
+  }
+  .home-badge {
+    font-size: 13px;
+  }
+  .home-title {
+    font-size: 40px;
+  }
+  .home-desc {
+    font-size: 15px;
+  }
+  .home-cta {
+    margin-top: 26px;
+    gap: 10px;
+  }
+  .home-cta .btn-leaf,
+  .home-cta .btn-ghost {
+    height: 52px;
+    font-size: 17px;
+    justify-content: center;
+    flex: 1 1 100%;
+  }
 }

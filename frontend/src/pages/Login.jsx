@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { getDepartments, getTeams, login } from "../api/auth";
 import SelectField from "../components/common/SelectField";
+import useIsMobile from "../hooks/useIsMobile";
 import { useAuthStore } from "../store/authStore";
 import "../components/common/selectfield.css";
 import "./login.css";
@@ -13,6 +14,7 @@ export default function Login() {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/map";
   const loginSuccess = useAuthStore((s) => s.loginSuccess);
+  const isMobile = useIsMobile();
 
   const [departments, setDepartments] = useState([]);
   const [teams, setTeams] = useState([]);
@@ -68,14 +70,18 @@ export default function Login() {
         <div className="login-frame">
           <div className="login-sea" />
           <div className="login-screen">
-            <video
-              className="login-bg"
-              src="/login-bg.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-            />
+            {isMobile ? (
+              <img className="login-bg" src="/login-bg-mobile.jpeg" alt="" />
+            ) : (
+              <video
+                className="login-bg"
+                src="/login-bg.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            )}
             <div className="login-scrim" />
 
             <Link to="/map" className="login-back">🗺️ 지도로 돌아가기</Link>

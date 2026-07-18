@@ -34,6 +34,20 @@ export default function KakaoMap({ restaurants = [], selected, onPinClick, onFis
     return () => { cancelled = true; };
   }, []);
 
+  // 컨테이너 크기 변경(창 리사이즈·화면 회전 등) 시 지도 타일 재배치 + 중심 유지
+  useEffect(() => {
+    const map = mapRef.current;
+    const el = containerRef.current;
+    if (!map || !el || !ready) return;
+    const ro = new ResizeObserver(() => {
+      const center = map.getCenter();
+      map.relayout();
+      map.setCenter(center);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [ready]);
+
   // 청계천 낚시터 오버레이 (1회)
   useEffect(() => {
     const kakao = window.kakao;

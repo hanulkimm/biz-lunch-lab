@@ -86,7 +86,7 @@
   position: absolute;
   top: 22px;
   left: 26px;
-  z-index: 2;
+  z-index: 3; /* 카드(z-index 2)보다 위 — 좁은 화면에서 가려지지 않게 */
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -244,4 +244,68 @@
   color: var(--leaf);
   font-family: var(--font-display);
   text-decoration: none;
+}
+
+/* ─── 모바일: 세로 영상(login-bg-mobile.mp4) 배경 + 컴팩트한 중앙 카드 ─── */
+@media (max-width: 640px) {
+  .login-page {
+    padding: 14px;
+  }
+  .login-frame {
+    padding: 10px;
+    border-radius: 26px;
+  }
+  /* 화면을 세로로 길게 채우고 카드는 정중앙에 — 위(돌아가기 버튼)·아래로 영상이 보이게 */
+  .login-screen {
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 48px);
+    min-height: calc(100svh - 48px);
+    padding: 64px 16px 24px;
+    border-radius: 20px;
+    border-width: 4px;
+  }
+  .login-back {
+    top: 12px;
+    left: 12px;
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+
+  /* 카드 — 화면을 다 덮지 않는 컴팩트 사이즈, 중앙보다 살짝 아래 배치
+     (margin 대신 transform: 문서 높이를 늘리지 않아 스크롤이 안 생김) */
+  .login-card {
+    width: min(100%, 330px);
+    padding: 20px 18px 18px;
+    border-radius: 22px;
+    transform: translateY(28px);
+  }
+  .login-brand {
+    margin-bottom: 12px;
+  }
+  .login-brand .brand-logo {
+    height: 30px;
+  }
+  .login-title {
+    font-size: 22px;
+  }
+  .login-sub {
+    margin: 4px 0 12px;
+  }
+  .login-card label {
+    margin: 10px 0 5px;
+  }
+  .login-card select,
+  .login-card input {
+    height: 44px;
+    border-radius: 14px;
+  }
+  .login-card .btn-leaf {
+    margin-top: 18px;
+    height: 60px;
+    font-size: 18px;
+  }
+  .login-foot {
+    margin-top: 12px;
+  }
 }

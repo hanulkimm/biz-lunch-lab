@@ -87,7 +87,7 @@ export default function Map() {
   };
 
   return (
-    <div className="gw-page">
+    <div className="gw-page map-page">
       <AppHeader
         active="map"
         aiOpen={chatOpen}

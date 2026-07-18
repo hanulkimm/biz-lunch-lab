@@ -14,6 +14,43 @@
   padding: 26px 28px 0;
 }
 
+/* 지도 페이지 전용 — 헤더 아래 남은 화면을 지도가 꽉 채우도록 세로 플렉스 필 */
+.map-page {
+  height: 100vh;
+  height: 100dvh;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+.map-page .gw-wrap {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 22px;
+}
+.map-page .game-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.map-page .gc-body {
+  flex: 1;
+  min-height: 0;
+}
+.map-page .map-col {
+  min-height: 0;
+}
+.map-page .map-card {
+  height: 100%;
+  min-height: 380px;
+}
+.map-page .chat-col {
+  height: auto;
+}
+
 /* 게임 스크린 카드 */
 .game-card {
   position: relative;
@@ -600,6 +637,7 @@
 }
 .cp-input-row input {
   flex: 1;
+  min-width: 0; /* 좁은 화면에서 입력창이 줄어들지 못해 전송 버튼과 겹치는 것 방지 */
   border: none;
   outline: none;
   font-size: 14px;
@@ -736,6 +774,7 @@
    ───────────────────────────────────────────── */
 @media (max-width: 768px) {
   .gw-wrap { padding: 12px 10px 0; }
+  .map-page .gw-wrap { padding-bottom: 10px; }
   .game-card { padding: 10px; border-radius: 22px; }
   .gc-zigzag { inset: 6px; }
   .ribbon { margin-bottom: 12px; }
@@ -744,15 +783,15 @@
   .ribbon-inner svg { width: 22px; height: 22px; }
   .gc-sun { top: 14px; right: 14px; width: 38px; height: 38px; }
 
-  /* 본문: 2단 → 1단(세로) */
+  /* 본문: 2단 → 1단(세로) — 남은 높이를 지도(또는 챗봇)가 전부 사용 */
   .gc-body { flex-direction: column; gap: 12px; }
-  /* dvh: iOS Safari 주소창 영역으로 인한 100vh 오차 보정(미지원 시 vh 폴백) */
-  .map-card { height: 60vh; height: 60dvh; min-height: 340px; }
+  .map-page .map-col { flex: 1; }
+  .map-page .map-card { min-height: 300px; }
 
-  /* 챗봇: 전체폭. 열리면 지도를 숨기고 챗봇만 표시 */
-  .chat-col { width: 100%; height: 70vh; height: 70dvh; }
+  /* 챗봇: 전체폭. 열리면 지도를 숨기고 챗봇이 남은 높이를 채움 */
+  .chat-col { width: 100%; }
+  .map-page .chat-col { flex: 1; min-height: 0; }
   .gc-body.chat-open .map-col { display: none; }
-  .gc-body.chat-open .chat-col { height: calc(100vh - 150px); height: calc(100dvh - 150px); }
 
   /* 상단 검색바: 좌우 여백만 두고 전체폭 (가운데 정렬 해제) */
   .map-search {
