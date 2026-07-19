@@ -39,13 +39,16 @@ SYSTEM_PROMPT = (
     "- 후속 질문('거기 근처 다른 데는?', '더 조용한 곳')이면 대화 맥락을 반영해 query를 "
     "새로 구성해 다시 검색하세요.\n"
     "- 특정 식당을 깊게 확인해야 하면 get_restaurant_detail을 사용하세요.\n"
-    "- search_reviews에 조건에 맞는 곳이 마땅치 않으면 search_nearby_places로 광화문을 "
-    "실시간 검색해 새 식당을 발견할 수 있습니다(리뷰 없는 곳이니 answer에서 그 점을 알려주세요).\n"
+    "- search_reviews 결과가 없거나 조건에 맞지 않으면, 포기하기 전에 반드시 "
+    "search_nearby_places로 광화문 일대를 실시간 검색해 새 식당을 발굴하세요. "
+    "리뷰 없는 신규 식당이라도 조건에 맞으면 추천하되, answer에서 아직 사내 리뷰가 "
+    "없는 곳이라는 점을 알려주세요.\n"
     "- 충분히 파악했으면 반드시 recommend_restaurants를 호출해 마무리하세요. 이때 "
     "picks에는 검색·발견·조회로 확보한 id를 그대로 넣습니다.\n\n"
     "[추천 기준]\n"
     "- 조건에 잘 맞는 곳을 보통 1~2곳만 고릅니다. 여럿이 모두 부합할 때만 그 이상(최대 5).\n"
-    "- 조건에 맞는 곳이 없으면 picks를 빈 배열로 두고 answer에서 솔직히 없다고 안내하세요."
+    "- picks를 빈 배열로 두는 것은 search_reviews와 search_nearby_places를 모두 시도한 "
+    "뒤에도 조건에 맞는 곳이 없을 때만 허용됩니다. 그때는 answer에서 솔직히 없다고 안내하세요."
 )
 
 
@@ -130,12 +133,14 @@ SYSTEM_PROMPT_STREAM = (
     "가격·목적)을 자연어 query로 넘깁니다.\n"
     "- 후속 질문이면 대화 맥락을 반영해 query를 새로 구성해 다시 검색하세요.\n"
     "- 특정 식당을 깊게 확인해야 하면 get_restaurant_detail을 사용하세요.\n"
-    "- search_reviews에 조건에 맞는 곳이 마땅치 않으면 search_nearby_places로 광화문을 "
-    "실시간 검색해 새 식당을 발견할 수 있습니다(리뷰 없는 곳이니 안내에서 그 점을 알려주세요).\n"
+    "- search_reviews 결과가 없거나 조건에 맞지 않으면, 포기하기 전에 반드시 "
+    "search_nearby_places로 광화문 일대를 실시간 검색해 새 식당을 발굴하세요. "
+    "리뷰 없는 신규 식당이라도 조건에 맞으면 추천하세요.\n"
     "- 충분히 파악했으면 반드시 select_restaurants를 호출해 추천 식당 id를 확정하세요.\n\n"
     "[추천 기준]\n"
     "- 조건에 잘 맞는 곳을 보통 1~2곳만 고릅니다. 여럿이 모두 부합할 때만 그 이상(최대 5).\n"
-    "- 조건에 맞는 곳이 없으면 picks를 빈 배열로 두세요."
+    "- picks를 빈 배열로 두는 것은 search_reviews와 search_nearby_places를 모두 시도한 "
+    "뒤에도 조건에 맞는 곳이 없을 때만 허용됩니다."
 )
 
 ANSWER_SYSTEM = (
