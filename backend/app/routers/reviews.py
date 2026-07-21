@@ -163,6 +163,23 @@ def delete_review(review_id: str, user: dict = Depends(get_current_user)):
     return {"deleted": True}
 
 
+@router.get("")
+def list_reviews():
+    """전체 리뷰 목록 (최신순) — 식당·작성자·태그 포함. 목록보기용(공개)."""
+    return (
+        supabase.table("reviews")
+        .select(
+            "id, rating, comment, created_at, "
+            "restaurants(id, name, category), users(name), "
+            "review_tags(tags(id, category, name))"
+        )
+        .order("created_at", desc=True)
+        .limit(500)
+        .execute()
+        .data
+    )
+
+
 @router.get("/my")
 def my_reviews(user: dict = Depends(get_current_user)):
     return (

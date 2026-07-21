@@ -1,12 +1,15 @@
 // 메인 — 상단 헤더 + 동물의 숲 게임 카드(리본 + 지도, AI 탭으로 또리 챗봇 토글).
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MapPin, Moon, Sun } from "lucide-react";
+import { List, MapPin, Moon, Sun } from "lucide-react";
 
 import { getRestaurants } from "../api/restaurants";
 import AppHeader from "../components/common/AppHeader";
 import LoginRequiredDialog from "../components/common/LoginRequiredDialog";
+import NoticeModal from "../components/common/NoticeModal";
+import SiteFooter from "../components/common/SiteFooter";
 import ChatPanel from "../components/ChatPanel/ChatPanel";
+import RestaurantListPanel from "../components/RestaurantList/RestaurantListPanel";
 import KakaoMap from "../components/Map/KakaoMap";
 import MapSearch from "../components/Map/MapSearch";
 import RestaurantPanel from "../components/RestaurantPanel/RestaurantPanel";
@@ -22,22 +25,12 @@ export default function Map() {
   const [restaurants, setRestaurants] = useState([]);
   const [selected, setSelected] = useState(null); // 선택한 식당(검색 결과/마커) place 객체
   const [chatOpen, setChatOpen] = useState(!!location.state?.openChat);
+  const [listOpen, setListOpen] = useState(false); // 식당 목록 패널
   const [fishingGate, setFishingGate] = useState(false); // 비로그인 낚시터 클릭 안내
   const [searchKey, setSearchKey] = useState(0); // 검색창 초기화용 remount 키
 
   const focusId = location.state?.focusId; // 룰렛/런치/챗봇에서 넘어온 DB 식당 id
   const focusPlace = location.state?.focusPlace; // 룰렛 "새로운 발견" — DB에 없는 카카오 place
-
-  // 지도 페이지에서는 페이지 스크롤바를 감춘다(스크롤 기능은 유지).
-  // 스크롤 컨테이너가 html(documentElement)이므로 양쪽 모두에 적용.
-  useEffect(() => {
-    document.documentElement.classList.add("map-noscroll");
-    document.body.classList.add("map-noscroll");
-    return () => {
-      document.documentElement.classList.remove("map-noscroll");
-      document.body.classList.remove("map-noscroll");
-    };
-  }, []);
 
   useEffect(() => {
     getRestaurants()
@@ -79,19 +72,31 @@ export default function Map() {
     }
   };
 
-  // 상단 "지도" 탭 클릭 — 열린 패널(챗봇/상세) + 검색을 모두 닫고 지도만 보이게.
+  // 상단 "지도" 탭 클릭 — 열린 패널(챗봇/식당목록/상세) + 검색을 모두 닫고 지도만 보이게.
   const resetToMap = () => {
     setChatOpen(false);
+    setListOpen(false);
     setSelected(null);
     setSearchKey((k) => k + 1);
   };
 
+  // 한 번에 하나의 사이드 패널만 — 챗봇/식당목록은 서로 배타적으로 연다.
+  const openChatPanel = () => {
+    setListOpen(false);
+    setChatOpen(true);
+  };
+  const toggleListPanel = () => {
+    setChatOpen(false);
+    setListOpen((v) => !v);
+  };
+
   return (
+    <>
     <div className="gw-page map-page">
       <AppHeader
         active="map"
         aiOpen={chatOpen}
-        onAi={() => setChatOpen(true)}
+        onAi={openChatPanel}
         onMap={resetToMap}
       />
 
@@ -114,9 +119,16 @@ export default function Map() {
             </div>
           </div>
 
-          <div className={`gc-body${chatOpen ? " chat-open" : ""}`}>
+          <div className={`gc-body${chatOpen || listOpen ? " chat-open" : ""}`}>
             <div className="map-col">
               <div className="map-card">
+                <button
+                  className={`map-listbtn${listOpen ? " active" : ""}`}
+                  onClick={toggleListPanel}
+                  aria-label="식당 목록 보기"
+                >
+                  <List size={16} /> 식당 목록
+                </button>
                 <KakaoMap
                   restaurants={restaurants}
                   selected={selected}
@@ -144,17 +156,30 @@ export default function Map() {
                 onFocusRestaurant={focusFromChat}
               />
             )}
+
+            {listOpen && (
+              <RestaurantListPanel
+                restaurants={restaurants}
+                onClose={() => setListOpen(false)}
+                onSelect={(r) => setSelected(r)}
+              />
+            )}
           </div>
         </div>
       </div>
-
-      {fishingGate && (
-        <LoginRequiredDialog
-          feature="청계천 낚시터"
-          target="/fishing"
-          onCancel={() => setFishingGate(false)}
-        />
-      )}
     </div>
+
+    <SiteFooter />
+
+    <NoticeModal />
+
+    {fishingGate && (
+      <LoginRequiredDialog
+        feature="청계천 낚시터"
+        target="/fishing"
+        onCancel={() => setFishingGate(false)}
+      />
+    )}
+    </>
   );
 }

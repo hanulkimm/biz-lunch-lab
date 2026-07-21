@@ -1,6 +1,6 @@
 // 카카오 지도 — 동물의 숲 톤(필터 + 워시 + 비네팅) + 말랑 물방울 핀(CustomOverlay).
 import { useEffect, useRef, useState } from "react";
-import { Minus, Navigation, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 
 import { loadKakao } from "./loadKakao";
 
@@ -136,9 +136,6 @@ export default function KakaoMap({ restaurants = [], selected, onPinClick, onFis
       <div ref={containerRef} className="map-container" />
       <div className="map-wash" />
       <div className="map-vignette" />
-      <div className="map-region">
-        <Navigation size={14} /> 광화문 마을
-      </div>
       <div className="map-zoom">
         <button onClick={() => zoom(-1)} aria-label="확대"><Plus size={18} /></button>
         <button onClick={() => zoom(1)} aria-label="축소"><Minus size={18} /></button>

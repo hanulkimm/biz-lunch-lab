@@ -229,24 +229,6 @@
   box-shadow: inset 0 0 64px 22px rgba(46, 80, 72, 0.26), inset 0 6px 16px rgba(255, 255, 255, 0.45);
   z-index: 2;
 }
-.map-region {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  height: 38px;
-  padding: 0 15px;
-  background: var(--cream);
-  border: 2.5px solid var(--leaf);
-  border-radius: 999px;
-  box-shadow: 0 4px 0 rgba(46, 80, 72, 0.14);
-  font-family: var(--font-display);
-  font-size: 13px;
-  color: var(--ink-green);
-}
 /* 지도 위 식당 검색 */
 .map-search {
   position: absolute;
@@ -770,6 +752,73 @@
 .review-card p { margin: 8px 0 0; font-size: 13px; color: var(--ink); line-height: 1.5; }
 
 /* ─────────────────────────────────────────────
+   식당 목록 패널 (chat-col 재사용 — 챗봇과 동일 크기)
+   ───────────────────────────────────────────── */
+/* 지도 위 "식당 목록" 열기 버튼 (좌상단 플로팅) */
+.map-listbtn {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 15px;
+  border: 2.5px solid var(--leaf);
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink-green);
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(46, 80, 72, 0.14), 0 8px 20px rgba(46, 80, 72, 0.16);
+}
+.map-listbtn:hover { background: var(--leaf-soft); }
+.map-listbtn.active { background: var(--leaf); color: #fff; border-color: var(--leaf-dark); }
+
+.rv-head-ic {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: #eaf5dc;
+  border: 2.5px solid var(--leaf);
+  box-shadow: 0 4px 0 var(--leaf-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.rv-empty { text-align: center; color: var(--muted); padding: 40px 16px; }
+.rv-empty .e { font-size: 44px; }
+.rv-empty p { margin: 10px 0 0; font-size: 13.5px; line-height: 1.55; }
+
+.rl-list { gap: 11px; }
+.rl-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 2px solid var(--line-2);
+  border-radius: 16px;
+  background: var(--field);
+  padding: 13px 15px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+.rl-card:hover { border-color: var(--leaf); transform: translateY(-1px); }
+.rl-card-head { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rl-cat {
+  align-self: flex-start;
+  padding: 2px 9px; border-radius: 999px;
+  background: var(--leaf-soft); color: var(--ink-green-2);
+  font-size: 11px; font-weight: 700;
+}
+.rl-name { font-family: var(--font-display); font-size: 16px; color: var(--ink-green); }
+.rl-addr { display: flex; align-items: center; gap: 5px; margin-top: 7px; font-size: 12px; color: var(--muted); }
+.rl-rate { display: flex; align-items: center; gap: 7px; margin-top: 9px; }
+.rl-score { font-family: var(--font-display); font-size: 14px; color: var(--ink); }
+.rl-count { font-size: 12px; color: var(--muted); }
+.rl-go { display: inline-flex; align-items: center; gap: 5px; margin-top: 11px; font-size: 12px; font-weight: 700; color: var(--ink-green-2); }
+
+/* ─────────────────────────────────────────────
    모바일 (≤768px): 지도/챗봇 세로 스택, 패널 전체폭
    ───────────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -802,7 +851,6 @@
     width: auto;
   }
   /* 데코 라벨은 좁은 화면에서 숨김(리본에 이미 '광화문 일대' 있음) */
-  .map-region { display: none; }
   /* 줌 버튼은 검색바와 겹치지 않게 아래쪽으로 */
   .map-zoom { top: auto; bottom: 14px; right: 12px; }
 
