@@ -168,7 +168,7 @@ flowchart LR
 
 ![Biz Lunch Lab Architecture](docs/architecture.png)
 
-> 실선 = 런타임 흐름 (사용자 요청·API 호출) · 점선 = 배포 흐름 — **프론트는 GitHub Actions 자동 배포**, 백엔드는 SSH 수동 배포
+> 실선 = 런타임 흐름 (사용자 요청·API 호출) · 점선 = 배포 흐름 — **프론트·백엔드 모두 GitHub Actions 자동 배포** (백엔드는 SSM Run Command로 EC2 재빌드, SSH 포트 개방 없음)
 
 <details>
 <summary>논리 흐름도 (mermaid)</summary>
@@ -177,7 +177,7 @@ flowchart LR
 flowchart TD
     Dev["👩‍💻 Developers"] -->|git push| GH["GitHub"]
     GH -. "Actions: 빌드→S3→무효화 (자동)" .-> S3
-    GH -. "SSH 배포 (수동)" .-> EC2
+    GH -. "Actions: SSM Run Command→재빌드 (자동)" .-> EC2
 
     Client["👤 Client (브라우저)"] -->|화면 요청| CF
     Client -->|"API 호출 (HTTPS)"| NGINX
@@ -212,7 +212,8 @@ flowchart TD
 | **CloudFront** | 글로벌 엣지 캐시 + HTTPS. SPA 라우팅은 커스텀 에러 응답(403/404 → `/index.html`, 200)으로 처리 |
 | **EC2 상시 구동** | `t3.micro`(서울 리전)에 Docker 컨테이너로 FastAPI 상시 실행(`--restart unless-stopped`) — 무료 PaaS의 콜드 스타트 문제 원천 제거 |
 | **Nginx + Let's Encrypt** | 80/443 → 내부 8000 리버스 프록시, `certbot`으로 인증서 자동 발급·갱신. 도메인은 DuckDNS 서브도메인을 Elastic IP에 연결 |
-| **GitHub Actions 자동 배포** | main에 `frontend/**` push 시 빌드 → `aws s3 sync` → CloudFront invalidation까지 자동. 배포 전용 IAM 유저는 **최소 권한**(해당 버킷 3개 액션 + `cloudfront:CreateInvalidation`)만 부여, 키는 GitHub Secrets로 관리 |
+| **CI/CD (GitHub Actions)** | `main` push 시 자동 배포 — 프론트(`frontend/**`)는 빌드 → `aws s3 sync` → CloudFront invalidation, 백엔드(`backend/**`)는 **SSM Run Command**로 EC2에서 재빌드 스크립트 실행 |
+| **SSM 백엔드 배포 (무포트)** | EC2에 IAM 역할(`AmazonSSMManagedInstanceCore`)만 부여해 SSM 관리 노드로 등록 → Actions가 **인바운드 포트·SSH 키 없이** `aws ssm send-command`로 배포. 배포 IAM 유저는 **최소 권한**만(S3 3개 액션 + `cloudfront:CreateInvalidation` + 해당 인스턴스·`AWS-RunShellScript` 한정 `ssm:SendCommand`), 키는 GitHub Secrets |
 
 ### 기술 스택
 
@@ -243,6 +244,7 @@ flowchart TD
 ![Amazon S3](https://img.shields.io/badge/Amazon_S3-569A31?logo=amazons3&logoColor=white)
 ![CloudFront](https://img.shields.io/badge/CloudFront-8C4FFF?logo=amazonaws&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
+![AWS SSM](https://img.shields.io/badge/AWS_Systems_Manager-FF9900?logo=amazonaws&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
 ![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white)
 ![Let's Encrypt](https://img.shields.io/badge/Let's_Encrypt-003A70?logo=letsencrypt&logoColor=white)
@@ -261,7 +263,7 @@ flowchart TD
 | **React · Vite · Zustand** | SPA 화면·상태 관리 | 페이지·로그인 상태 관리, 서버 호출은 axios |
 | **Docker** | 배포 환경 일관성 | `backend/Dockerfile` 이미지 빌드 → EC2 컨테이너 상시 실행 |
 | **Nginx + Let's Encrypt** | HTTPS 리버스 프록시 | 80/443 → 내부 8000 전달, `certbot` 자동 갱신 |
-| **GitHub Actions** | 프론트 CI/CD | push → 빌드 → S3 sync → CloudFront invalidation 자동화 |
+| **GitHub Actions + AWS SSM** | 프론트·백엔드 CI/CD | push → (프론트) 빌드·S3 sync·CloudFront 무효화 / (백엔드) SSM Run Command로 EC2 재빌드 — 무포트 자동화 |
 
 ---
 
@@ -270,9 +272,9 @@ flowchart TD
 | 영역 | 플랫폼 | 방식 |
 |------|--------|------|
 | **Frontend** | S3 + CloudFront | **GitHub Actions 자동 배포** — main에 `frontend/**` push 시 `npm run build`(`.env.production` 적용) → `aws s3 sync --delete` → CloudFront invalidation(`/*`). Actions 탭에서 수동 실행(workflow_dispatch)도 가능 ([`deploy-frontend.yml`](.github/workflows/deploy-frontend.yml)) |
-| **Backend** | AWS EC2 (`t3.micro`, Ubuntu 24.04, 서울 리전) | Docker 컨테이너 상시 구동. 배포는 SSH 접속 후 `git pull` → `docker build` → 컨테이너 재생성 (수동, [`backend/Dockerfile`](backend/Dockerfile)) |
+| **Backend** | AWS EC2 (`t3.micro`, Ubuntu 24.04, 서울 리전) | Docker 컨테이너 상시 구동. **GitHub Actions 자동 배포** — main에 `backend/**` push 시 `aws ssm send-command`로 EC2에서 배포 스크립트(`git pull` → `docker build` → 컨테이너 재생성) 실행. SSH 포트 개방·키 노출 없음. SSH 수동 재빌드는 폴백 ([`deploy-backend.yml`](.github/workflows/deploy-backend.yml), [`backend/Dockerfile`](backend/Dockerfile)) |
 
-- 비밀 키는 저장소에 두지 않는다 — 백엔드는 EC2의 `.env`(`docker run --env-file`), 프론트 배포 자격증명은 GitHub Secrets.
+- 비밀 키는 저장소에 두지 않는다 — 백엔드 런타임 비밀은 EC2의 `.env`(`docker run --env-file`), 배포 자격증명(프론트·백엔드 공용 IAM 유저)은 GitHub Secrets.
 - 프론트 `VITE_*` 값은 빌드 결과물에 노출되는 공개 값(도메인 제한 키)만 사용, [`frontend/.env.production`](frontend/.env.production)으로 커밋.
 
 ---
@@ -412,7 +414,8 @@ erDiagram
 ```
 biz-lunch-lab/
 ├── .github/workflows/
-│   └── deploy-frontend.yml  # 프론트 자동 배포 (빌드 → S3 → CloudFront)
+│   ├── deploy-frontend.yml  # 프론트 자동 배포 (빌드 → S3 → CloudFront)
+│   └── deploy-backend.yml   # 백엔드 자동 배포 (SSM Run Command → EC2 재빌드)
 ├── backend/                 # FastAPI
 │   ├── app/
 │   │   ├── routers/         # auth, departments, restaurants, reviews, tags,
