@@ -17,6 +17,13 @@ export const saveVillagerProfile = (villager) =>
 export const clearVillagerProfile = () =>
   client.delete("/api/villager/profile").then((r) => r.data);
 
-// 내 주민의 배경 없는 전신 이미지 URL (낚시터 연출용)
+// 내 주민의 배경 없는 전신 이미지 URL (낚시터 연출용).
+// 백엔드가 프록시 경로(/api/villager/image/{name})를 주면 API 서버 주소를 붙인다
+// — 외부 이미지 CDN이 사내망에서 차단되는 문제 대응.
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 export const getVillagerRender = () =>
-  client.get("/api/villager/render").then((r) => r.data);
+  client.get("/api/villager/render").then((r) => {
+    const url = r.data.image_url;
+    return { image_url: url && url.startsWith("/api/") ? `${BASE}${url}` : url };
+  });
