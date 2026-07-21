@@ -89,6 +89,22 @@
   margin-bottom: 14px;
 }
 .fb-textarea:focus { border-color: var(--leaf); }
+.fb-anon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.fb-anon input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--leaf);
+  cursor: pointer;
+}
 .fb-error { margin: 0 0 12px; font-size: 13px; color: var(--coral-dark); }
 .fb-done { text-align: center; padding: 8px 0 4px; }
 .fb-done-e { font-size: 48px; }
