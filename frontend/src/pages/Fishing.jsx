@@ -301,7 +301,14 @@ export default function Fishing() {
           </svg>
 
           {/* 내 주민 (배경 없는 전신) */}
-          {villagerImg && <img className="fs-villager" src={villagerImg} alt="내 주민" />}
+          {villagerImg && (
+            <img
+              className="fs-villager"
+              src={villagerImg}
+              alt="내 주민"
+              onError={() => setVillagerImg("/ddori.png")}
+            />
+          )}
 
           {/* 찌 + 파문 */}
           {bobber && (
