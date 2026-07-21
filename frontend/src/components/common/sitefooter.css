@@ -23,8 +23,7 @@
   color: var(--ink);
 }
 .sf-brand { font-family: var(--font-display); color: var(--ink-green); }
-.sf-sep { color: var(--muted); }
-.sf-person { color: var(--ink); font-weight: 600; }
+.sf-by { font-size: 11.5px; font-weight: 400; color: var(--muted); }
 .sf-gh {
   display: inline-flex;
   align-items: center;

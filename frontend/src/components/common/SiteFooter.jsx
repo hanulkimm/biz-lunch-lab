@@ -24,8 +24,7 @@ export default function SiteFooter() {
       <div className="site-foot-inner">
         <div className="site-foot-maker">
           <span className="sf-brand">🍱 BizLunchLab</span>
-          <span className="sf-sep">·</span>
-          <span className="sf-person">기업사업본부 기업사업개발1담당 기업사업개발2팀 김하늘</span>
+          <span className="sf-by">기업사업본부 기업사업개발1담당 2팀 김하늘</span>
           <a className="sf-gh" href={REPO_URL} target="_blank" rel="noreferrer" aria-label="GitHub 저장소">
             <GithubMark size={14} /> GitHub
           </a>
@@ -35,10 +34,10 @@ export default function SiteFooter() {
         </div>
 
         <p className="site-foot-note">
-          개인이 만든 비영리 사이드 프로젝트입니다. ‘동물의 숲(Animal Crossing)’은 닌텐도(Nintendo)의
-          상표이며, 본 프로젝트는 닌텐도와 제휴·후원 관계가 없는 비공식 팬 창작물입니다.
-          디자인은 해당 컨셉에서 영감을 받았을 뿐이고, 관련 상표·저작권은 각 권리자에게 있습니다.
-          문제가 될 경우 알려주시면 조치하겠습니다.
+          기업사업본부 AI Innovator 프로그램의 일환으로 제작된 개인 비영리 사이드 프로젝트입니다.
+          ‘동물의 숲(Animal Crossing)’은 닌텐도(Nintendo)의 상표이며, 본 프로젝트는 닌텐도와
+          제휴·후원 관계가 없는 비공식 팬 창작물입니다. 디자인은 해당 컨셉에서 영감을 받았을 뿐이고,
+          관련 상표·저작권은 각 권리자에게 있습니다. 문제가 될 경우 알려주시면 조치하겠습니다.
         </p>
       </div>
 
