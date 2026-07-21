@@ -1,6 +1,7 @@
 // 메인 랜딩 — 민트 카드 안에 영상을 감싼 히어로(지도 페이지 톤). 로그인/회원가입 진입.
 import { Link } from "react-router-dom";
 
+import SiteFooter from "../components/common/SiteFooter";
 import useIsMobile from "../hooks/useIsMobile";
 import "./landing-hero.css";
 
@@ -59,8 +60,9 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="home-foot reveal">🍱 BizLunchLab · 광화문 점심 무인도</div>
       </div>
+
+      <SiteFooter />
     </div>
   );
 }
