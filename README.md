@@ -35,16 +35,17 @@
 
 | 기능 | 설명 |
 |------|------|
-| 🔐 **인증** | 담당·팀·이름 + 4자리 PIN(bcrypt) 기반 회원가입/로그인, JWT 발급 |
-| 🗺️ **맛집 지도** | 카카오 로컬 API로 광화문 권역 **음식점·카페 실시간 검색** → 식당 정보 보기(리뷰 없어도) → 바로 리뷰 작성. 리뷰 있는 곳은 별점·태그·동료 리뷰까지 표시 |
+| 🔐 **인증** | 이름 + 4자리 PIN(bcrypt)만으로 회원가입/로그인(본부 제한 없음, 이름 전역 고유), JWT 발급. 부문·본부·담당·팀 등 소속은 가입 후 마이페이지에서 기입 |
+| 🗺️ **맛집 지도** | 카카오 로컬 API로 광화문 권역 **음식점·카페 실시간 검색** → 식당 정보 보기(리뷰 없어도) → 바로 리뷰 작성. 리뷰 있는 곳은 별점·태그·동료 리뷰까지 표시하고, **식당 목록 패널**로 모아보기(카드 클릭 시 지도 이동) |
 | 🤖 **AI 챗봇 (또리)** | **Tool Use 기반 AI 에이전트** — Claude가 리뷰 검색·식당 상세·카카오 실시간 검색 도구를 스스로 호출해 추천. 평문 답변 + 추천 식당 카드, SSE 스트리밍 (→ [§4](#4-ai-파이프라인--rag에서-에이전트까지)) |
 | ✍️ **리뷰 작성** | 카카오 검색(또는 지도에서 식당 선택) → 별점·태그(4분류)·코멘트 → 임베딩 후 Pinecone 색인. 작성 보상 **나뭇잎 +50잎**(알찬 리뷰는 +20잎 보너스) |
 | 🎲 **메뉴 룰렛** | 8개 카테고리 스피너 → **사내 리뷰 맛집과 카카오 실시간 발굴을 반반 혼합** 추천. 리뷰 없는 식당은 "🌱 새로운 발견" 뱃지와 함께 첫 리뷰 작성으로 연결 |
 | 🍱 **랜덤 런치** | 취향 입력 후 신청 → 관리자 매칭 실행 → **Claude가 4~6인 그룹 + 식당 추천** |
 | 🏝️ **닮은꼴 주민 찾기** | 성격 퀴즈(+선택 사진) → 동물의 숲 주민 413명 중 **Claude Vision이 닮은꼴 1명 + 러너업 2명** 선정. 결과는 프로필로 저장 |
 | 🎣 **청계천 낚시터** | 실사 영상 배경의 낚시 미니게임. **실제 시각·계절(KST)에 맞는 어종 46종**이 출현하고, 잡은 물고기는 도감에 기록·판매해 나뭇잎 획득 (→ [§4.5](#45-청계천-낚시터--서버-판정-설계)) |
-| 👤 **마이페이지** | 내 닮은꼴 주민 프로필 + 내 리뷰 목록 수정/삭제 |
-| 🛠️ **관리자** | 런치 회차 생성/마감/매칭, 구성원 PIN 리셋 |
+| 👤 **마이페이지** | 소속 정보(부문·본부·담당·팀) 기입 + 내 닮은꼴 주민 프로필 + 내 리뷰 목록 수정/삭제 |
+| 🛠️ **관리자** | 런치 회차 생성/마감/매칭, 구성원 PIN 리셋, 건의함 조회·관리 |
+| 💌 **건의 창구** | 방문자가 수정 요청·기능 제안을 익명/실명으로 제출 → 관리자 페이지 건의함에서 확인·읽음·삭제 |
 | 🌗 **다크 모드** | 라이트/다크 테마 토글 (지도 타일까지 야간 톤 전환) |
 
 ---
@@ -66,7 +67,7 @@ flowchart LR
 ```
 
 **예시 시나리오 — "신규 입사자 민지의 첫 점심"**
-1. 사내 링크로 접속 → **담당·팀·이름·PIN**으로 가입.
+1. 사내 링크로 접속 → **이름·PIN**으로 가입(본부 제한 없음, 소속은 나중에 마이페이지에서).
 2. **닮은꼴 주민 찾기** 퀴즈로 내 아바타 주민을 만들고 시작.
 3. **지도**에서 동료들이 남긴 리뷰 맛집을 둘러보고, "국밥"으로 검색해 마커로 이동.
 4. **또리 AI 챗봇**에 "조용하고 가성비 좋은 점심 추천해줘" → 사내 리뷰 기반 답변.
@@ -286,7 +287,7 @@ flowchart TD
 ```mermaid
 erDiagram
     departments ||--o{ teams : has
-    teams ||--o{ users : belongs
+    teams |o--o{ users : belongs
     users ||--o{ reviews : writes
     restaurants ||--o{ reviews : receives
     reviews ||--o{ review_tags : tagged
@@ -300,6 +301,7 @@ erDiagram
     restaurants ||--o{ lunch_match_restaurants : suggested
     users ||--o{ user_fish : catches
     users ||--o{ leaf_logs : earns
+    users |o--o{ feedback : submits
 
     departments {
         uuid id PK
@@ -312,8 +314,12 @@ erDiagram
     }
     users {
         uuid id PK
-        text name
-        uuid team_id FK
+        text name UK
+        uuid team_id FK "nullable"
+        text division
+        text headquarters
+        text part
+        text team_name
         text password_hash
         bool is_admin
         jsonb villager
@@ -386,6 +392,13 @@ erDiagram
         int amount
         text reason
     }
+    feedback {
+        uuid id PK
+        text content
+        text author_name
+        uuid user_id FK "nullable"
+        bool is_read
+    }
 ```
 
 > 전체 정의: [`backend/db/schema.sql`](backend/db/schema.sql)
@@ -394,16 +407,17 @@ erDiagram
 
 | 영역 | 메서드 & 엔드포인트 | 설명 |
 |------|------|------|
-| 인증 | `POST /api/auth/signup` · `POST /api/auth/login` · `GET /api/auth/me` | 회원가입 / 로그인 / 내 정보 |
-| 조직 | `GET /api/departments` · `GET /api/departments/{id}/teams` | 담당 / 팀 목록 (드롭다운) |
+| 인증 | `POST /api/auth/signup` · `POST /api/auth/login` · `GET /api/auth/me` · `PATCH /api/auth/me` | 이름+PIN 회원가입 / 로그인 / 내 정보 / 소속 정보 수정 |
+| 조직 | `GET /api/departments` · `GET /api/departments/{id}/teams` | 담당 / 팀 목록 (레거시 조직 데이터) |
 | 태그 | `GET /api/tags` | 리뷰 태그 목록 (4분류) |
 | 식당 | `GET /api/restaurants` · `GET /api/restaurants/{id}` · `GET /api/restaurants/by-kakao/{kakao_place_id}` · `GET /api/restaurants/kakao/search` · `GET /api/restaurants/roulette` | 마커 목록 / 상세 / 카카오 place_id로 상세 / 카카오 검색 / 룰렛(DB+카카오 발굴 혼합) |
-| 리뷰 | `POST /api/reviews` · `PUT /api/reviews/{id}` · `DELETE /api/reviews/{id}` · `GET /api/reviews/my` | 작성(나뭇잎 보상) / 수정 / 삭제 / 내 리뷰 — Pinecone 동기화 |
+| 리뷰 | `POST /api/reviews` · `PUT /api/reviews/{id}` · `DELETE /api/reviews/{id}` · `GET /api/reviews` · `GET /api/reviews/my` | 작성(나뭇잎 보상) / 수정 / 삭제 / 전체 리뷰 / 내 리뷰 — Pinecone 동기화 |
 | 챗봇 | `POST /api/chat` · `POST /api/chat/stream` | Tool Use 에이전트 맛집 추천 (일반 / SSE 스트리밍) |
 | 랜덤 런치 | `GET·POST /api/lunch/rounds` · `PATCH /api/lunch/rounds/{id}/status` · `POST /api/lunch/apply` · `DELETE /api/lunch/apply/{id}` · `GET /api/lunch/apply/count` · `POST /api/lunch/match` · `GET /api/lunch/result/{id}` | 회차 / 신청 / 매칭 / 결과 |
 | 닮은꼴 주민 | `POST /api/villager/match` · `POST /api/villager/profile` · `GET /api/villager/render` | 퀴즈+사진 매칭 / 프로필 저장 / 주민 전신 이미지 |
 | 낚시터 | `GET /api/fishing/pond` · `POST /api/fishing/cast` · `POST /api/fishing/land` · `GET /api/fishing/collection` · `POST /api/fishing/sell` | 물때 정보 / 캐스팅(토큰 발급) / 낚기 확정 / 도감 / 판매 |
 | 관리자 | `GET /api/admin/users` · `PATCH /api/admin/users/{id}/pin` · `GET /api/admin/rounds` | 사용자·회차 관리 (관리자 전용) |
+| 건의 | `POST /api/feedback` · `GET /api/feedback` · `PATCH /api/feedback/{id}/read` · `DELETE /api/feedback/{id}` | 건의 제출(익명/실명) / 관리자 조회·읽음·삭제 |
 
 > 인터랙티브 문서: https://biz-lunch-lab.duckdns.org/docs (Swagger UI)
 
@@ -419,7 +433,7 @@ biz-lunch-lab/
 ├── backend/                 # FastAPI
 │   ├── app/
 │   │   ├── routers/         # auth, departments, restaurants, reviews, tags,
-│   │   │                    #   chat, lunch, villager, fishing, admin
+│   │   │                    #   chat, lunch, villager, fishing, admin, feedback
 │   │   ├── services/        # rag_service(에이전트 루프), agent_tools(Tool Use 도구),
 │   │   │                    #   embedding, pinecone_client, kakao, lunch_match,
 │   │   │                    #   villager_match(Claude Vision), fishing, leaf_economy
