@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Sparkles, Star, Trash2 } from "lucide-react";
 
+import { updateProfile } from "../api/auth";
 import { deleteReview, getMyReviews, getTags, updateReview } from "../api/reviews";
 import AppHeader from "../components/common/AppHeader";
 import ConfirmDialog from "../components/common/ConfirmDialog";
@@ -135,6 +136,100 @@ function VillagerBuddy() {
   );
 }
 
+const ORG_FIELDS = [
+  { key: "division", label: "부문", placeholder: "예: 기업고객부문" },
+  { key: "headquarters", label: "본부", placeholder: "예: OO본부" },
+  { key: "part", label: "담당", placeholder: "예: OO담당" },
+  { key: "team_name", label: "팀", placeholder: "예: OO팀" },
+];
+
+function OrgProfile() {
+  const { user, setUser } = useAuthStore();
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    division: user?.division || "",
+    headquarters: user?.headquarters || "",
+    part: user?.part || "",
+    team_name: user?.team_name || "",
+  });
+
+  const filled = ORG_FIELDS.filter((f) => (user?.[f.key] || "").trim());
+
+  const startEdit = () => {
+    setForm({
+      division: user?.division || "",
+      headquarters: user?.headquarters || "",
+      part: user?.part || "",
+      team_name: user?.team_name || "",
+    });
+    setEditing(true);
+  };
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      const updated = await updateProfile(form);
+      setUser({ ...user, ...updated });
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="mp-org">
+      <div className="mp-org-head">
+        <b>🏢 소속 정보</b>
+        {!editing && (
+          <button className="mp-btn" onClick={startEdit}>
+            <Pencil size={14} /> {filled.length ? "수정" : "입력"}
+          </button>
+        )}
+      </div>
+
+      {editing ? (
+        <>
+          <div className="mp-org-grid">
+            {ORG_FIELDS.map((f) => (
+              <label key={f.key} className="mp-org-field">
+                <span>{f.label}</span>
+                <input
+                  value={form[f.key]}
+                  onChange={(e) => setForm((p) => ({ ...p, [f.key]: e.target.value }))}
+                  placeholder={f.placeholder}
+                  maxLength={50}
+                />
+              </label>
+            ))}
+          </div>
+          <div className="mp-org-actions">
+            <button className="mp-cancel" onClick={() => setEditing(false)} disabled={saving}>
+              취소
+            </button>
+            <button className="btn-leaf" onClick={save} disabled={saving}>
+              {saving ? <><Spinner size={18} /> 저장 중…</> : "저장하기"}
+            </button>
+          </div>
+        </>
+      ) : filled.length ? (
+        <div className="mp-org-view">
+          {filled.map((f) => (
+            <div key={f.key} className="mp-org-row">
+              <span className="k">{f.label}</span>
+              <span className="v">{user[f.key]}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="mp-org-empty">
+          아직 소속 정보가 없어요. 부문·본부·담당·팀을 입력해두면 다른 주민들이 알아볼 수 있어요.
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function MyPage() {
   const [reviews, setReviews] = useState(null);
   const [tags, setTags] = useState([]);
@@ -170,6 +265,8 @@ export default function MyPage() {
         </p>
 
         <VillagerBuddy />
+
+        <OrgProfile />
 
         {reviews?.length === 0 && (
           <div className="mp-empty">

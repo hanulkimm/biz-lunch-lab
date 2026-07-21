@@ -1,9 +1,8 @@
-// 회원가입 — 로그인과 동일한 민트 프레임 레이아웃. 담당→팀→이름→PIN(확인 포함).
-import { useEffect, useState } from "react";
+// 회원가입 — 이름과 PIN 4자리만으로 가입. 조직정보는 가입 후 마이페이지에서.
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { getDepartments, getTeams, signup } from "../api/auth";
-import SelectField from "../components/common/SelectField";
+import { signup } from "../api/auth";
 import useIsMobile from "../hooks/useIsMobile";
 import { useAuthStore } from "../store/authStore";
 import "../components/common/selectfield.css";
@@ -14,41 +13,17 @@ export default function Signup() {
   const loginSuccess = useAuthStore((s) => s.loginSuccess);
   const isMobile = useIsMobile();
 
-  const [departments, setDepartments] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [deptId, setDeptId] = useState("");
-  const [teamId, setTeamId] = useState("");
   const [name, setName] = useState("");
   const [pin, setPin] = useState("");
   const [pinConfirm, setPinConfirm] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [loadingDepts, setLoadingDepts] = useState(true);
-  const [loadingTeams, setLoadingTeams] = useState(false);
-
-  useEffect(() => {
-    getDepartments()
-      .then(setDepartments)
-      .catch(() => setError("담당 목록을 불러오지 못했습니다. 새로고침 해주세요."))
-      .finally(() => setLoadingDepts(false));
-  }, []);
-
-  useEffect(() => {
-    setTeamId("");
-    setTeams([]);
-    if (!deptId) return;
-    setLoadingTeams(true);
-    getTeams(deptId)
-      .then(setTeams)
-      .catch(() => {})
-      .finally(() => setLoadingTeams(false));
-  }, [deptId]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (!teamId || !name || pin.length !== 4) {
-      setError("모든 항목을 입력해주세요. (PIN은 4자리)");
+    if (!name.trim() || pin.length !== 4) {
+      setError("이름과 PIN 4자리를 입력해주세요.");
       return;
     }
     if (pin !== pinConfirm) {
@@ -57,7 +32,7 @@ export default function Signup() {
     }
     setSubmitting(true);
     try {
-      const { token, user } = await signup({ name, team_id: teamId, pin });
+      const { token, user } = await signup({ name: name.trim(), pin });
       loginSuccess(token, user);
       navigate("/map");
     } catch (err) {
@@ -96,28 +71,15 @@ export default function Signup() {
               </div>
 
               <h1 className="login-title">주민 등록</h1>
-              <p className="login-sub">담당·팀·이름과 PIN 4자리로 마을 주민이 되어요.</p>
-
-              <label>담당</label>
-              <SelectField
-                value={deptId}
-                onChange={setDeptId}
-                placeholder={loadingDepts ? "서버 깨우는 중…" : "담당 선택"}
-                disabled={loadingDepts}
-                options={departments.map((d) => ({ value: d.id, label: d.name }))}
-              />
-
-              <label>팀</label>
-              <SelectField
-                value={teamId}
-                onChange={setTeamId}
-                placeholder={loadingTeams ? "팀 불러오는 중…" : "팀 선택"}
-                disabled={!deptId || loadingTeams}
-                options={teams.map((t) => ({ value: t.id, label: t.name }))}
-              />
+              <p className="login-sub">이름과 PIN 4자리면 누구나 마을 주민이 되어요.</p>
 
               <label>이름</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="이름" />
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="마을에서 쓸 이름"
+                maxLength={50}
+              />
 
               <label>PIN (4자리)</label>
               <input
@@ -147,6 +109,9 @@ export default function Signup() {
                 {submitting ? "가입 중…" : "주민 등록하기"}
               </button>
 
+              <p className="login-foot">
+                부문·본부·담당·팀은 가입 후 마이페이지에서 입력할 수 있어요.
+              </p>
               <p className="login-foot">
                 이미 주민이신가요? <Link to="/login">로그인</Link>
               </p>

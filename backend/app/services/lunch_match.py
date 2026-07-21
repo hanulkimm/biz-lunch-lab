@@ -46,7 +46,7 @@ def _applicants_for_round(round_id: str) -> list[dict]:
         supabase.table("lunch_applications")
         .select(
             "id, user_id, food_preferences, food_exclusions, atmosphere_pref, "
-            "users(name, teams(name))"
+            "users(name, team_name, teams(name))"
         )
         .eq("round_id", round_id)
         .execute()
@@ -55,7 +55,7 @@ def _applicants_for_round(round_id: str) -> list[dict]:
     out = []
     for r in rows:
         user = r.get("users") or {}
-        team = (user.get("teams") or {}).get("name", "")
+        team = user.get("team_name") or (user.get("teams") or {}).get("name", "")
         out.append(
             {
                 "user_id": r["user_id"],
@@ -262,7 +262,7 @@ def get_result(round_id: str) -> dict:
         supabase.table("lunch_matches")
         .select(
             "id, group_no, "
-            "lunch_match_members(users(id, name, teams(name))), "
+            "lunch_match_members(users(id, name, team_name, teams(name))), "
             "lunch_match_restaurants(reason, sort_order, restaurants(id, name, category))"
         )
         .eq("round_id", round_id)
@@ -276,7 +276,8 @@ def get_result(round_id: str) -> dict:
             {
                 "id": (mm.get("users") or {}).get("id"),
                 "name": (mm.get("users") or {}).get("name"),
-                "team": ((mm.get("users") or {}).get("teams") or {}).get("name"),
+                "team": (mm.get("users") or {}).get("team_name")
+                or ((mm.get("users") or {}).get("teams") or {}).get("name"),
             }
             for mm in (m.get("lunch_match_members") or [])
         ]

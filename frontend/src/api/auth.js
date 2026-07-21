@@ -14,3 +14,7 @@ export const login = (data) =>
   client.post("/api/auth/login", data).then((r) => r.data);
 
 export const getMe = () => client.get("/api/auth/me").then((r) => r.data);
+
+// 마이페이지 조직정보(부문·본부·담당·팀) 수정
+export const updateProfile = (data) =>
+  client.patch("/api/auth/me", data).then((r) => r.data);

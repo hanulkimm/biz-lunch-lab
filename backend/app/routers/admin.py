@@ -18,7 +18,10 @@ def list_users(_: dict = Depends(require_admin)):
     """전체 사용자 + 팀/담당명. PIN 리셋 대상 선택용."""
     rows = (
         supabase.table("users")
-        .select("id, name, is_admin, created_at, teams(name, departments(name))")
+        .select(
+            "id, name, is_admin, created_at, part, team_name, "
+            "teams(name, departments(name))"
+        )
         .order("created_at")
         .execute()
         .data
@@ -31,8 +34,9 @@ def list_users(_: dict = Depends(require_admin)):
             {
                 "id": r["id"],
                 "name": r["name"],
-                "team": team.get("name"),
-                "department": dept,
+                # 자유 기입 값 우선, 없으면 기존 조직 구조 값으로 폴백
+                "team": r.get("team_name") or team.get("name"),
+                "department": r.get("part") or dept,
                 "is_admin": r["is_admin"],
                 "created_at": r["created_at"],
             }

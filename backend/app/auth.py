@@ -11,6 +11,7 @@ from app.database import supabase
 
 ALGORITHM = "HS256"
 security = HTTPBearer()
+optional_security = HTTPBearer(auto_error=False)  # 토큰 없어도 통과(익명 허용)
 
 
 # ─── PIN 해싱 ───
@@ -50,7 +51,10 @@ def get_current_user(
 
     res = (
         supabase.table("users")
-        .select("id, name, team_id, is_admin, villager")
+        .select(
+            "id, name, team_id, is_admin, villager, "
+            "division, headquarters, part, team_name"
+        )
         .eq("id", user_id)
         .limit(1)
         .execute()
@@ -58,6 +62,28 @@ def get_current_user(
     if not res.data:
         raise cred_exc
     return res.data[0]
+
+
+# ─── 의존성: 선택적 사용자(비로그인 허용) ───
+def get_optional_user(
+    credentials: HTTPAuthorizationCredentials = Depends(optional_security),
+) -> dict | None:
+    """토큰이 있으면 사용자를, 없거나 유효하지 않으면 None. 건의(익명 허용)용."""
+    if not credentials:
+        return None
+    try:
+        payload = jwt.decode(
+            credentials.credentials, settings.jwt_secret_key, algorithms=[ALGORITHM]
+        )
+        user_id = payload.get("sub")
+        if not user_id:
+            return None
+    except JWTError:
+        return None
+    res = (
+        supabase.table("users").select("id, name").eq("id", user_id).limit(1).execute()
+    )
+    return res.data[0] if res.data else None
 
 
 # ─── 의존성: 관리자만 ───

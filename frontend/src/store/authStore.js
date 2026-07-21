@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 export const useAuthStore = create((set) => ({
   token: localStorage.getItem("token") || null,
-  user: null, // { id, name, team_id, is_admin } — /api/auth/me로 채움
+  user: null, // { id, name, is_admin, division, headquarters, part, team_name, ... } — /api/auth/me로 채움
 
   setToken: (token) => {
     if (token) localStorage.setItem("token", token);

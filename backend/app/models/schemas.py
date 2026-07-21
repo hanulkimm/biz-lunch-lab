@@ -19,22 +19,33 @@ class Team(BaseModel):
 # ─── 인증 ───
 class SignupRequest(BaseModel):
     name: str = Field(min_length=1, max_length=50)
-    team_id: str
     pin: str = Field(pattern=r"^\d{4}$", description="4자리 숫자 PIN")
 
 
 class LoginRequest(BaseModel):
     name: str
-    team_id: str
     pin: str = Field(pattern=r"^\d{4}$")
 
 
 class UserOut(BaseModel):
     id: str
     name: str
-    team_id: str
+    team_id: str | None = None
     is_admin: bool = False
     villager: dict | None = None  # 닮은꼴 주민 프로필 {id, name_ko, icon, ...}
+    # 자유 기입 조직정보 (마이페이지에서 각자 입력)
+    division: str | None = None      # 부문
+    headquarters: str | None = None  # 본부
+    part: str | None = None          # 담당
+    team_name: str | None = None     # 팀
+
+
+class ProfileUpdate(BaseModel):
+    """마이페이지 조직정보 수정 — 모두 선택. 빈 문자열은 미입력으로 처리."""
+    division: str | None = Field(default=None, max_length=50)
+    headquarters: str | None = Field(default=None, max_length=50)
+    part: str | None = Field(default=None, max_length=50)
+    team_name: str | None = Field(default=None, max_length=50)
 
 
 class AuthResponse(BaseModel):
@@ -116,6 +127,11 @@ class LunchApply(BaseModel):
     food_preferences: list[str] = []          # 예: ["한식", "고기"]
     food_exclusions: str | None = None         # 못 먹는/기피 음식 자유 입력
     atmosphere_pref: str = "상관없음"          # 조용한 / 활기찬 / 상관없음
+
+
+# ─── 건의 ───
+class FeedbackCreate(BaseModel):
+    content: str = Field(min_length=1, max_length=2000)
 
 
 # ─── 관리자 ───
