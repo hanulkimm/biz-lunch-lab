@@ -1,9 +1,10 @@
 // 관리자 화면 — 런치 회차 관리(생성/마감/재개/매칭) + 사용자 PIN 리셋.
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { KeyRound, Loader2, Plus, Sparkles, Users } from "lucide-react";
+import { Check, Inbox, KeyRound, Loader2, Plus, Sparkles, Trash2, Users } from "lucide-react";
 
 import { getAllRounds, getUsers, resetPin } from "../api/admin";
+import { deleteFeedback, getFeedback, markFeedbackRead } from "../api/feedback";
 import { createRound, runMatch, setRoundStatus } from "../api/lunch";
 import AppHeader from "../components/common/AppHeader";
 import "./admin.css";
@@ -15,6 +16,7 @@ export default function Admin() {
 
   const [rounds, setRounds] = useState([]);
   const [users, setUsers] = useState([]);
+  const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null); // 진행 중인 회차/유저 id
   const [newTitle, setNewTitle] = useState("");
@@ -27,11 +29,30 @@ export default function Admin() {
   const load = async () => {
     setLoading(true);
     try {
-      const [r, u] = await Promise.all([getAllRounds(), getUsers()]);
+      const [r, u, f] = await Promise.all([getAllRounds(), getUsers(), getFeedback()]);
       setRounds(r);
       setUsers(u);
+      setFeedback(f);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const readFeedback = async (id) => {
+    setFeedback((prev) => prev.map((f) => (f.id === id ? { ...f, is_read: true } : f)));
+    try {
+      await markFeedbackRead(id);
+    } catch {
+      load();
+    }
+  };
+
+  const removeFeedback = async (id) => {
+    setFeedback((prev) => prev.filter((f) => f.id !== id));
+    try {
+      await deleteFeedback(id);
+    } catch {
+      load();
     }
   };
 
@@ -202,7 +223,7 @@ export default function Admin() {
                           {u.is_admin && <span className="adm-admin-tag">관리자</span>}
                         </span>
                         <span className="adm-user-org">
-                          {u.department} · {u.team}
+                          {[u.department, u.team].filter(Boolean).join(" · ") || "소속 미입력"}
                         </span>
                       </div>
                       {editing ? (
@@ -239,6 +260,43 @@ export default function Admin() {
                   );
                 })}
               </ul>
+            </section>
+
+            {/* ─── 건의함 ─── */}
+            <section className="adm-card">
+              <div className="adm-card-title">
+                <Inbox size={18} /> 건의함 ({feedback.filter((f) => !f.is_read).length}개 안 읽음)
+              </div>
+              {feedback.length === 0 ? (
+                <p className="adm-empty">아직 들어온 건의가 없어요.</p>
+              ) : (
+                <ul className="adm-feedback">
+                  {feedback.map((f) => (
+                    <li key={f.id} className={f.is_read ? "adm-fb read" : "adm-fb"}>
+                      <div className="adm-fb-top">
+                        <span className="adm-fb-who">
+                          {f.author_name || "익명"}
+                          {!f.is_read && <span className="adm-fb-new">NEW</span>}
+                        </span>
+                        <span className="adm-fb-date">
+                          {(f.created_at || "").slice(0, 10).replace(/-/g, ".")}
+                        </span>
+                      </div>
+                      <p className="adm-fb-content">{f.content}</p>
+                      <div className="adm-fb-actions">
+                        {!f.is_read && (
+                          <button className="adm-btn" onClick={() => readFeedback(f.id)}>
+                            <Check size={14} /> 읽음
+                          </button>
+                        )}
+                        <button className="adm-btn danger" onClick={() => removeFeedback(f.id)}>
+                          <Trash2 size={14} /> 삭제
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           </>
         )}
